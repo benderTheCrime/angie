@@ -14,7 +14,12 @@ class $$CookieFactory {
         this.$$cookies = {};
     }
     get (key) {
-        const $request = $Injector.get('$request');
+        let $request;
+        try {
+            request = $Injector.get('$request');
+        } catch(e) {
+            request = {};
+        }
 
         if (
             !Object.keys(this.$$cookies).length &&
@@ -25,17 +30,20 @@ class $$CookieFactory {
         }
 
         if (this.$$cookies.hasOwnProperty(key)) {
-            return this.$$cookies[ key ];
+            return this.$$cookies[ key ].value;
         }
     }
     set (key, value, expiry = +new Date()) {
         let cookieStr = '';
 
-        this.$$cookies[ key ] =
-            `${value};expires=${new Date(expiry).toUTCString()}`;
+        this.$$cookies[ key ] = {
+            value,
+            expiry: new Date(expiry).toUTCString()
+        };
 
         for (let key in this.$$cookies) {
-            cookieStr += `${key}=${this.$$cookies[ key ]},`;
+            let value = this.$$cookies[ key ];
+            cookieStr += `${key}=${value.value};expires=${value.expiry},`;
         }
 
         // TODO two options here...we can store the cookie values in an object
@@ -47,8 +55,6 @@ class $$CookieFactory {
         return true;
     }
 }
-
-// TODO set the $request and $response cookies
 
 const $Cookie = new $$CookieFactory();
 export default $Cookie;

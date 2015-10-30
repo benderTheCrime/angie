@@ -229,6 +229,8 @@ function $$fetch() {
         $Cookie.set('ANGIE_SESSION_COOKIE', sessionId);
     }
 
+    console.log($Cookie.$$cookies);
+
     sessionStorage.put(sessionId, obj);
     return obj.$scope;
 }

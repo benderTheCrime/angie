@@ -21,6 +21,7 @@ import {
 } from                                          '../factories/template-cache';
 import $compile from                            '../factories/$Compile';
 import $MimeType from                           '../services/mime-type';
+import $Cookie from                             '../services/cookie';
 import $Util, { $FileUtil } from                '../util/util';
 
 const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
@@ -39,12 +40,15 @@ const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
  */
 class $Response {
     constructor(response) {
+        const responseCache = new $CacheFactory('responses');
 
         // Define $Response based instance of createServer.prototype.response
         this.response = response;
 
         // Define the Angie content string
         this.response.content = '';
+
+        responseCache.put($Cookie.get('ANGIE_SESSION_COOKIE'), response);
     }
 
     /**
@@ -644,6 +648,12 @@ function controllerTemplateRouteResponse() {
     }
 }
 
+function $$fetch() {
+    return new $CacheFactory('responses').get(
+        $Cookie.get('ANGIE_SESSION_COOKIE')
+    );
+}
+
 export default $Response;
 export {
     BaseResponse,
@@ -653,5 +663,6 @@ export {
     RedirectResponse,
     UnknownResponse,
     ErrorResponse,
-    $CustomResponse
+    $CustomResponse,
+    $$fetch
 };

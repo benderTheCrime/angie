@@ -7,10 +7,13 @@
 // System Modules
 import url from                     'url';
 import { Form } from                'multiparty';
+import $Injector from               'angie-injector';
 
 // Angie Modules
 import $Routes from                 '../factories/routes';
+import $CacheFactory from           '../factories/$CacheFactory';
 import * as $Responses from         './$Response';
+import $Cookie from                 './cookie';
 import $Util, { $StringUtil } from  '../util/util';
 
 /**
@@ -23,6 +26,7 @@ import $Util, { $StringUtil } from  '../util/util';
  */
 class $Request {
     constructor(request) {
+        const requestCache = new $Cache('requests');
         let $routes;
 
         $Util._extend(this, request);
@@ -40,6 +44,8 @@ class $Request {
         // Declare the routes on the local request object
         this.routes = $routes.routes;
         this.otherwise = $routes.otherwise;
+
+        requestCache.put($Cookie.get('ANGIE_SESSION_COOKIE'), request);
     }
 
     /**
@@ -179,4 +185,11 @@ class $Request {
     }
 }
 
+function $$fetch() {
+    return new $CacheFactory('requests').get(
+        $Cookie.get('ANGIE_SESSION_COOKIE')
+    );
+}
+
 export default $Request;
+export { $$fetch };
