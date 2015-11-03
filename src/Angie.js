@@ -297,6 +297,10 @@ class Angie {
         let me = this,
             proms = [];
 
+        if (!app.$dependencyConfig) {
+            app.$dependencyConfig = {};
+        }
+
         // Make sure we do not load duplicate dependencies
         dependencies = dependencies.filter(
             (v) => me.$dependencies.indexOf(v) === -1
@@ -331,12 +335,9 @@ class Angie {
 
                                 // Find any sub dependencies for recursive module
                                 // loading
-                                subDependencies = config.dependencies;
+                                subDependencies = $config.dependencies;
 
                                 // Set the config in dependency configs (just in case)
-                                if (!app.$dependencyConfig) {
-                                    app.$dependencyConfig = {};
-                                }
                             } else {
 
                                 // Not an Angie package, pass
