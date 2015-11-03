@@ -10,6 +10,7 @@ import cluster from                     'cluster';
 import repl from                        'repl';
 import http from                        'http';
 import https from                       'https';
+import uuid from                        'node-uuid';
 import { argv } from                    'yargs';
 import { Client } from                  'fb-watchman';
 import { cyan } from                    'chalk';
@@ -223,13 +224,25 @@ function $$cluster() {
  * @access private
  */
 function $$server(args = []) {
-    const PORT = $$port(args);
 
     // Load necessary app components
     app.$$load().then(function() {
+        const PORT = $$port(args);
+
+        const $Cookie = $Injector.get('$Cookie');
 
         // Start a webserver, use http/https based on port
+<<<<<<< HEAD
         webserver = (PORT === 443 ? https : http).createServer(function(req, res) {
+=======
+        webserver = (PORT === 443 ? https : http).createServer((req, res) => {
+
+            if (!$Cookie.get('ANGIE_SESSION_COOKIE')) {
+                $Cookie.set('ANGIE_SESSION_COOKIE', uuid.v4());
+            }
+
+
+>>>>>>> origin/feature/binding
             let $request = new $Request(req),
 
                 // The service response instance
@@ -256,7 +269,15 @@ function $$server(args = []) {
                 }
 
                 // Add Angie components for the request and response objects
+<<<<<<< HEAD
                 app.service('$request', $request).service('$response', response);
+=======
+                // app.service(
+                //     '$request', $request
+                // ).service(
+                //     '$response', response
+                // );
+>>>>>>> origin/feature/binding
 
                 // Set a request error timeout so that we ensure every request
                 // resolves to something

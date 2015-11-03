@@ -140,6 +140,7 @@ class $$ScopeProvider {
     }
 }
 
+<<<<<<< HEAD:src/controllers/$ScopeProvider.js
 /**
  * @desc $scope is the instance of $$ScopeProvider allocated to resources
  * @since 0.3.1
@@ -148,3 +149,28 @@ class $$ScopeProvider {
 const $scope = new $$ScopeProvider();
 export default $$ScopeProvider;
 export {$scope};
+=======
+function $$fetch() {
+    const [ $Cookie, $Cache ] = $Injector.get('$Cookie', '$Cache'),
+        obj = {
+            $scope: new $$ScopeFactory(),
+            expiry: 1
+        },
+        sessionStorage = new $Cache('sessions');
+    let sessionId = $Cookie.get('ANGIE_SESSION_COOKIE');
+
+    // Now, look too see if we already have an ANGIE_SESSION_COOKIE
+    if (!sessionId) {
+        sessionId = uuid.v4();
+        $Cookie.set('ANGIE_SESSION_COOKIE', sessionId);
+    }
+
+    console.log($Cookie.$$cookies);
+
+    sessionStorage.put(sessionId, obj);
+    return obj.$scope;
+}
+
+export default $$ScopeFactory;
+export { $$fetch };
+>>>>>>> origin/feature/binding:src/factories/scope.js
