@@ -30,6 +30,9 @@ class $$CookieFactory {
         }
 
         if (this.$$cookies.hasOwnProperty(key)) {
+
+            console.log(this.$$cookies[ key ]);
+            // TODO this could be the root of your problem
             return this.$$cookies[ key ].value;
         }
     }
@@ -45,10 +48,6 @@ class $$CookieFactory {
             let value = this.$$cookies[ key ];
             cookieStr += `${key}=${value.value};expires=${value.expiry},`;
         }
-
-        // TODO two options here...we can store the cookie values in an object
-        // and set the hash equal to that object...or we can just manipulate the
-        // value on the fly...let's manupulate the value on the fly
 
         // Cannot really use getters and setters here
         $Injector.get('$response').setHeader('Set-Cookie', cookieStr);
