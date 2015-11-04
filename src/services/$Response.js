@@ -24,7 +24,7 @@ import $MimeType from                           '../services/mime-type';
 import $Cookie from                             '../services/cookie';
 import $Util, { $FileUtil } from                '../util/util';
 
-const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
+const responseCache = new $CacheFactory('responses');
 
 /**
  * @desc The $Response class controls all of the content contained in the
@@ -40,7 +40,6 @@ const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
  */
 class $Response {
     constructor(response) {
-        const responseCache = new $CacheFactory('responses');
 
         // Define $Response based instance of createServer.prototype.response
         this.response = response;
@@ -477,12 +476,16 @@ class ErrorResponse extends BaseResponse {
     /**
      * @desc Loads the error response message and the response via BaseResponse
      * @since 0.4.0
+     * @todo $compile the template 500.html with the error if it exists
      * @access private
      */
     constructor(e) {
         super();
 
+        const RESPONSE_HEADER_MESSAGES =
+            $Injector.get('RESPONSE_HEADER_MESSAGES');
         let html = '<h1>';
+
         if (e && config.development === true) {
             html += `${e}</h1><p>${e.stack || 'No Traceback'}</p>`;
         } else {
@@ -649,9 +652,7 @@ function controllerTemplateRouteResponse() {
 }
 
 function $$fetch() {
-    return new $CacheFactory('responses').get(
-        $Cookie.get('ANGIE_SESSION_COOKIE')
-    );
+    return new responseCache.get($Cookie.get('ANGIE_SESSION_COOKIE'));
 }
 
 export default $Response;

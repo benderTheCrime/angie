@@ -234,9 +234,11 @@ function $$server(args = []) {
 
         // Start a webserver, use http/https based on port
         webserver = (PORT === 443 ? https : http).createServer((req, res) => {
+            let sessionKey;
 
-            if (!$Cookie.get('ANGIE_SESSION_COOKIE')) {
-                $Cookie.set('ANGIE_SESSION_COOKIE', uuid.v4());
+
+            if (!(sessionKey = $Cookie.get('ANGIE_SESSION_COOKIE'))) {
+                $Cookie.set('ANGIE_SESSION_COOKIE', sessionKey = uuid.v4());
             }
 
             let $request = new $Request(req),
@@ -301,7 +303,7 @@ function $$server(args = []) {
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(response);
+                end(sessionKey, response);
             }).catch(function(e) {
                 new ErrorResponse(e).head().writeSync();
                 $LogProvider.error(
@@ -312,7 +314,7 @@ function $$server(args = []) {
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(response);
+                end(sessionKey, response);
             });
         }).listen(PORT);
 
@@ -323,13 +325,15 @@ function $$server(args = []) {
         $LogProvider.info(`Serving on port ${PORT}`);
 
         function end(response) {
-
-            // End the response
-            response.end();
+            const $Cache = $Injector.get('$Cache');
 
             // After we have finished with the response, we can tear down
             // request/response specific components
-            // app.$$tearDown('$request', '$response');
+            new $Cache('$requests').remove(sessionKey);
+            new $Cache('$response').remove(sessionKey);
+
+            // End the response
+            response.end();
         }
 
         // Force an ended response with a timeout

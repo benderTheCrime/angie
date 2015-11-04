@@ -16,6 +16,8 @@ import * as $Responses from         './$Response';
 import $Cookie from                 './cookie';
 import $Util, { $StringUtil } from  '../util/util';
 
+const requestCache = new $CacheFactory('$requests');
+
 /**
  * @desc The $Request class processes all of the incoming Angie requests. It
  * can be required using a module import, but probably should not be unless it
@@ -26,7 +28,6 @@ import $Util, { $StringUtil } from  '../util/util';
  */
 class $Request {
     constructor(request) {
-        const requestCache = new $Cache('requests');
         let $routes;
 
         $Util._extend(this, request);
@@ -186,9 +187,7 @@ class $Request {
 }
 
 function $$fetch() {
-    return new $CacheFactory('requests').get(
-        $Cookie.get('ANGIE_SESSION_COOKIE')
-    );
+    return new requestCache.get($Cookie.get('ANGIE_SESSION_COOKIE'));
 }
 
 export default $Request;
