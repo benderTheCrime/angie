@@ -228,27 +228,21 @@ function $$server(args = []) {
 
     // Load necessary app components
     app.$$load().then(function() {
-        const PORT = $$port(args);
-
-        const $Cookie = $Injector.get('$Cookie');
+        const PORT = $$port(args),
+            $Cache = $Injector.get('$Cache');
 
         // Start a webserver, use http/https based on port
         webserver = (PORT === 443 ? https : http).createServer((req, res) => {
-            let sessionKey;
 
-
-            if (!(sessionKey = $Cookie.get('ANGIE_SESSION_COOKIE'))) {
-                $Cookie.set('ANGIE_SESSION_COOKIE', sessionKey = uuid.v4());
-            }
-
-            let $request = new $Request(req),
+            let sessionKey = uuid.v4(),
+                $request = new $Request(req),
 
                 // The service response instance
                 $response = new $Response(res),
-
-                // The base NodeJS response
-                response = $response.response,
                 requestTimeout;
+
+            new $Cache('$requests').put(sessionKey, $request);
+            new $Cache('$responses').put(sessionKey, res);
 
             // Instantiate the request, get the data
             $request.$$data().then(function() {
@@ -264,24 +258,17 @@ function $$server(args = []) {
                     );
                 }
 
-                // Add Angie components for the request and response objects
-                // app.service(
-                //     '$request', $request
-                // ).service(
-                //     '$response', response
-                // );
-
                 // Set a request error timeout so that we ensure every request
                 // resolves to something
                 requestTimeout = setTimeout(
-                    forceEnd.bind(null, $request.path, response),
+                    forceEnd.bind(null, $request.path, res),
                     config.hasOwnProperty('responseErrorTimeout') ?
                         config.responseErrorTimeout : 5000
                 );
 
             // Route the request
             }).then(() => $request.$$route()).then(function() {
-                let code = response.statusCode,
+                let code = res.statusCode,
                     log = 'error';
 
                 // Clear the request error because now we are guaranteed some
@@ -298,23 +285,23 @@ function $$server(args = []) {
                 $LogProvider[ log ](
                     req.method,
                     $request.path,
-                    response._header || ''
+                    res._header || ''
                 );
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(sessionKey, response);
+                end(sessionKey, res);
             }).catch(function(e) {
                 new ErrorResponse(e).head().writeSync();
                 $LogProvider.error(
                     req.method,
                     $request.path,
-                    response._header || ''
+                    res._header || ''
                 );
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(sessionKey, response);
+                end(sessionKey, res);
             });
         }).listen(PORT);
 
@@ -324,13 +311,13 @@ function $$server(args = []) {
         // Info
         $LogProvider.info(`Serving on port ${PORT}`);
 
-        function end(response) {
-            const $Cache = $Injector.get('$Cache');
+        function end(sessionKey, response) {
 
+            // TODO this
             // After we have finished with the response, we can tear down
             // request/response specific components
-            new $Cache('$requests').remove(sessionKey);
-            new $Cache('$response').remove(sessionKey);
+            // new $Cache('$requests').remove(sessionKey);
+            // new $Cache('$response').remove(sessionKey);
 
             // End the response
             response.end();

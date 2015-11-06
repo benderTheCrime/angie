@@ -12,7 +12,7 @@ import { $injectionBinder } from            'angie-injector';
 
 // Angie Modules
 import { config } from                      './Config';
-import { $$fetch as fetchScope } from       './factories/scope';
+// import { $$fetch as fetchScope } from       './factories/scope';
 import $Routes from                         './factories/routes';
 import $CacheFactory from                   './factories/$CacheFactory';
 import $compile from                        './factories/$Compile';
@@ -20,10 +20,9 @@ import {
     $templateCache,
     $resourceLoader
 } from                                      './factories/template-cache';
-import { $$fetch as fetchRequest } from     './services/$Request';
-import { $$fetch as fetchResponse } from    './services/$Response';
+// import { $$fetch as fetchRequest } from     './services/$Request';
+// import { $$fetch as fetchResponse } from    './services/$Response';
 import $MimeType from                       './services/mime-type';
-import $Cookie from                         './services/cookie';
 import * as $Exceptions from                './services/$Exceptions';
 import $$ngieIgnoreFactory from             './directives/ngie-ignore';
 import $$ngieRepeatFactory from             './directives/ngie-repeat';
@@ -583,8 +582,6 @@ if (!app) {
     ).service(
         '$MimeType', $MimeType
     ).service(
-        '$Cookie', $Cookie
-    ).service(
         '$Exceptions', $Exceptions
     );
 
@@ -596,6 +593,10 @@ if (!app) {
     ).directive(
         'ngieIf', $$ngieIfFactory
     );
+}
+
+fetchProvider(name, currentSessionKey) {
+
 }
 
 export default app;

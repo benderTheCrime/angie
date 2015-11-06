@@ -214,24 +214,24 @@ class $$ScopeFactory {
     }
 }
 
-function $$fetch() {
-    const [ $Cookie, $Cache ] = $Injector.get('$Cookie', '$Cache'),
-        obj = {
-            $scope: new $$ScopeFactory(),
-            expiry: 1
-        },
-        sessionStorage = new $Cache('sessions');
-    let sessionId = $Cookie.get('ANGIE_SESSION_COOKIE');
-
-    // Now, look too see if we already have an ANGIE_SESSION_COOKIE
-    if (!sessionId) {
-        sessionId = uuid.v4();
-        $Cookie.set('ANGIE_SESSION_COOKIE', sessionId);
-    }
-
-    sessionStorage.put(sessionId, obj);
-    return obj.$scope;
-}
+// function $$fetch() {
+//     const [ $Cookie, $Cache ] = $Injector.get('$Cookie', '$Cache'),
+//         obj = {
+//             $scope: new $$ScopeFactory(),
+//             expiry: 1
+//         },
+//         sessionStorage = new $Cache('sessions');
+//     let sessionId = $Cookie.get('ANGIE_SESSION_COOKIE');
+//
+//     // Now, look too see if we already have an ANGIE_SESSION_COOKIE
+//     if (!sessionId) {
+//         sessionId = uuid.v4();
+//         $Cookie.set('ANGIE_SESSION_COOKIE', sessionId);
+//     }
+//
+//     sessionStorage.put(sessionId, obj);
+//     return obj.$scope;
+// }
 
 export default $$ScopeFactory;
-export { $$fetch };
+// export { $$fetch };

@@ -13,10 +13,8 @@ import $Injector from               'angie-injector';
 import $Routes from                 '../factories/routes';
 import $CacheFactory from           '../factories/$CacheFactory';
 import * as $Responses from         './$Response';
-import $Cookie from                 './cookie';
+import $CookieFactory from          './cookie';
 import $Util, { $StringUtil } from  '../util/util';
-
-const requestCache = new $CacheFactory('$requests');
 
 /**
  * @desc The $Request class processes all of the incoming Angie requests. It
@@ -46,7 +44,8 @@ class $Request {
         this.routes = $routes.routes;
         this.otherwise = $routes.otherwise;
 
-        requestCache.put($Cookie.get('ANGIE_SESSION_COOKIE'), request);
+        // Grab cookies
+        this.cookieJar = new $CookieFactory(request);
     }
 
     /**
@@ -186,9 +185,10 @@ class $Request {
     }
 }
 
-function $$fetch() {
-    return new requestCache.get($Cookie.get('ANGIE_SESSION_COOKIE'));
-}
+// function $$fetch() {
+//     const $request = requestCache.get(sessionId);
+//     return $request;
+// }
 
 export default $Request;
-export { $$fetch };
+// export { $$fetch };

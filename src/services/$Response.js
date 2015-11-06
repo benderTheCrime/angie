@@ -24,8 +24,6 @@ import $MimeType from                           '../services/mime-type';
 import $Cookie from                             '../services/cookie';
 import $Util, { $FileUtil } from                '../util/util';
 
-const responseCache = new $CacheFactory('responses');
-
 /**
  * @desc The $Response class controls all of the content contained in the
  * response from the Angie application. This is an extended NodeJS http/https
@@ -46,8 +44,6 @@ class $Response {
 
         // Define the Angie content string
         this.response.content = '';
-
-        responseCache.put($Cookie.get('ANGIE_SESSION_COOKIE'), response);
     }
 
     /**
@@ -651,9 +647,10 @@ function controllerTemplateRouteResponse() {
     }
 }
 
-function $$fetch() {
-    return new responseCache.get($Cookie.get('ANGIE_SESSION_COOKIE'));
-}
+// function $$fetch() {
+//     console.log('IN RESPONSE CACHE');
+//     return responseCache.get(sessionId);
+// }
 
 export default $Response;
 export {
@@ -665,5 +662,5 @@ export {
     UnknownResponse,
     ErrorResponse,
     $CustomResponse,
-    $$fetch
+    // $$fetch
 };
