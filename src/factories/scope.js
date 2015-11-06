@@ -34,10 +34,9 @@ setInterval(function() {
  */
 class $$ScopeFactory {
     constructor() {
-        this.$$id = 1;
+        this.$$iid = uuid.v4();
         this.$$bindings = {};
     }
-
 
     $bind(key, model, ignoreKeys) {
 

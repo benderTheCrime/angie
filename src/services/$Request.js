@@ -7,6 +7,7 @@
 // System Modules
 import url from                     'url';
 import { Form } from                'multiparty';
+import uuid from                    'node-uuid';
 import $Injector from               'angie-injector';
 
 // Angie Modules
@@ -27,6 +28,8 @@ import $Util, { $StringUtil } from  '../util/util';
 class $Request {
     constructor(request) {
         let $routes;
+
+        this.$$iid = uuid.v4();
 
         $Util._extend(this, request);
         this.$$request = request;
@@ -185,10 +188,4 @@ class $Request {
     }
 }
 
-// function $$fetch() {
-//     const $request = requestCache.get(sessionId);
-//     return $request;
-// }
-
 export default $Request;
-// export { $$fetch };

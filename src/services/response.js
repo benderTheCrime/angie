@@ -1,11 +1,12 @@
 /**
- * @module $Response.js
+ * @module response.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 8/16/2015
  */
 
 // System Modules
 import util from                                'util';
+import uuid from                                'node-uuid';
 import { blue } from                            'chalk';
 import $Injector, { $injectionBinder } from     'angie-injector';
 import $LogProvider from                        'angie-log';
@@ -13,6 +14,7 @@ import $LogProvider from                        'angie-log';
 // Angie Modules
 import { config } from                            '../Config';
 import app from                                 '../Angie';
+import $ScopeFactory from                       '../factories/scope';
 import $CacheFactory from                       '../factories/$CacheFactory';
 import {
     $templateCache,
@@ -23,6 +25,8 @@ import $compile from                            '../factories/$Compile';
 import $MimeType from                           '../services/mime-type';
 import $Cookie from                             '../services/cookie';
 import $Util, { $FileUtil } from                '../util/util';
+
+const $Scopes = new $CacheFactory('$scopes');
 
 /**
  * @desc The $Response class controls all of the content contained in the
@@ -37,13 +41,19 @@ import $Util, { $FileUtil } from                '../util/util';
  * @example $Injector.get('$response');
  */
 class $Response {
-    constructor(response) {
+    constructor(sessionKey, response) {
+
+        // This is never exposed, but is maintained for consistency
+        this.$$iid = uuid.v4();
 
         // Define $Response based instance of createServer.prototype.response
         this.response = response;
 
         // Define the Angie content string
         this.response.content = '';
+
+        // Define a scope for our session
+        $Scopes.put(sessionKey, new $ScopeFactory());
     }
 
     /**
@@ -58,224 +68,6 @@ class $Response {
         this.response.setHeader(k, v);
 
         return this;
-    }
-}
-
-/**
- * @desc BaseResponse defines the default Angie response. It is responsible for
- * serving the default response and setting up the headers associated with the
- * default response.
- * @todo Move Content-Type resolution to $Response constructor
- * @since 0.4.0
- * @access private
- */
-class BaseResponse {
-    constructor() {
-        let request,
-            contentType;
-        [ request, this.response ]  = $Injector.get('$request', '$response');
-
-        // Set the route and otherwise
-        [
-            this.path,
-            this.route,
-            this.otherwise
-        ] = [
-            request.path,
-            request.route,
-            request.otherwise
-        ];
-
-        // Parse out the response content type
-        contentType = request.headers ? request.headers.accept : null;
-        if (contentType && contentType.indexOf(',') > -1) {
-            contentType = contentType.split(',')[0];
-        } else {
-            contentType = $MimeType.fromPath(request.path);
-        }
-
-        // Set the response headers
-        this.response.$headers = { 'Content-Type': contentType };
-    }
-
-    /**
-     * @desc Sets up the headers associated with the Asset Response
-     * @since 0.4.0
-     * @access private
-     */
-    head(code = 200) {
-        this.response.statusCode = code;
-
-        for (let header in this.response.$headers) {
-            this.response.setHeader(header, this.response.$headers[ header ]);
-        }
-
-        return this;
-    }
-
-    /**
-     * @desc Loads the default Angie template html file, `index.html`, and
-     * writes the file to the response.
-     * @since 0.4.0
-     * @access private
-     */
-    write() {
-        let me = this;
-
-        return new Promise(function(resolve) {
-            me.writeSync();
-            resolve();
-        });
-    }
-
-    /**
-     * @desc Loads the default Angie template html file, `index.html`, and
-     * writes the file to the response synchronously
-     * @since 0.4.0
-     * @access private
-     */
-    writeSync() {
-        this.response.write($$templateLoader('html/index.html'));
-    }
-}
-
-/**
- * @desc AssetResponse defines any Angie response that has a path which can be
- * mapped to a path in the Angie `staticDir`s which could not be routed via a
- * controller. It is responsible for serving the asset response and setting up
- * the headers associated with the served asset.
- * @since 0.4.0
- * @access private
- * @extends {BaseResponse}
- */
-class AssetResponse extends BaseResponse {
-    constructor() {
-        super();
-
-        // Set the content type based on the asset path
-        this.path = $Injector.get('$request').path;
-    }
-
-    /**
-     * @desc Sets up the headers associated with the AssetResponse
-     * @since 0.4.0
-     * @access private
-     */
-    head() {
-        return super.head();
-    }
-
-    /**
-     * @desc Finds the asset and writes it to the response.
-     * @since 0.4.0
-     * @access private
-     */
-    write() {
-        let assetCache = new $CacheFactory('staticAssets'),
-            asset = this.response.content =
-                assetCache.get(this.path) ||
-                    $$templateLoader(this.path, 'static'),
-            me = this;
-        return new Promise(function(resolve) {
-            if (asset) {
-                me.response.write(asset);
-            } else {
-                return new UnknownResponse().head().write();
-            }
-            resolve();
-        });
-    }
-
-    /**
-     * @desc Determines whether or not the response has an asset to which it can
-     * be associated.
-     * @param {string} path The relative url of the asset path from the
-     * AngieFile.json staticDirs
-     * @returns {boolean} Does the relative staticDirs path exist
-     * @since 0.4.0
-     * @access private
-     */
-    static $isRoutedAssetResourceResponse(path) {
-        let foundAssetPath = false;
-
-        for (let dir of $Injector.get('ANGIE_STATIC_DIRS')) {
-            if (!!$FileUtil.find(dir, path)) {
-                foundAssetPath = true;
-                break;
-            }
-        }
-
-        return foundAssetPath;
-    }
-}
-
-/**
- * @desc ControllerResponse defines any Angie response that has a path which is
- * associated with a template or template path. It is responsible for calling
- * the controller and any post-processed templating.
- * @since 0.4.0
- * @access private
- * @extends {BaseResponse}
- */
-class ControllerResponse extends BaseResponse {
-    constructor() {
-        super();
-    }
-
-    /**
-     * @desc Sets up the headers associated with the ControllerResponse
-     * @since 0.4.0
-     * @access private
-     */
-    head() {
-        return super.head();
-    }
-
-    /**
-     * @desc Performs the Controller and calls any templating in the response
-     * @since 0.4.0
-     * @access private
-     */
-    write() {
-        this.$scope = $Injector.get('$scope');
-
-        let me = this;
-        return new Promise(function(resolve) {
-            let controller = me.route.Controller || me.route.controller;
-
-            // Assign a function that can be called to resolve async
-            // behavior in Controllers
-            app.services.$response.Controller = { done: resolve };
-
-            // Get controller and compile scope
-            if (typeof controller === 'function') {
-                controller = controller;
-            } else if (typeof controller === 'string') {
-                if (app.Controllers[ controller ]) {
-                    controller = app.Controllers[ controller ];
-                } else {
-                    throw new $$ControllerNotFoundError(controller);
-                }
-            } else {
-                return resolve();
-            }
-
-            // Call the bound controller function
-            let controllerResponse = new $injectionBinder(
-                controller,
-                'controller'
-            ).call(me.$scope, resolve);
-
-            // Resolve the Promise if the controller does not return a
-            // function
-            if (
-                !controllerResponse ||
-                !controllerResponse.constructor ||
-                controllerResponse.constructor.name !== 'Promise'
-            ) {
-                resolve(controller);
-            }
-        });
     }
 }
 
@@ -647,11 +439,6 @@ function controllerTemplateRouteResponse() {
     }
 }
 
-// function $$fetch() {
-//     console.log('IN RESPONSE CACHE');
-//     return responseCache.get(sessionId);
-// }
-
 export default $Response;
 export {
     BaseResponse,
@@ -661,6 +448,5 @@ export {
     RedirectResponse,
     UnknownResponse,
     ErrorResponse,
-    $CustomResponse,
-    // $$fetch
+    $CustomResponse
 };

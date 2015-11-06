@@ -238,10 +238,10 @@ function $$server(args = []) {
                 $request = new $Request(req),
 
                 // The service response instance
-                $response = new $Response(res),
+                $response = new $Response(sessionKey, res),
                 requestTimeout;
 
-            new $Cache('$requests').put(sessionKey, $request);
+            new $Cache('$requests').put($request.$$iid, $request);
             new $Cache('$responses').put(sessionKey, res);
 
             // Instantiate the request, get the data

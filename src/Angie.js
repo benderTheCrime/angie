@@ -12,7 +12,6 @@ import { $injectionBinder } from            'angie-injector';
 
 // Angie Modules
 import { config } from                      './Config';
-// import { $$fetch as fetchScope } from       './factories/scope';
 import $Routes from                         './factories/routes';
 import $CacheFactory from                   './factories/$CacheFactory';
 import $compile from                        './factories/$Compile';
@@ -20,8 +19,7 @@ import {
     $templateCache,
     $resourceLoader
 } from                                      './factories/template-cache';
-// import { $$fetch as fetchRequest } from     './services/$Request';
-// import { $$fetch as fetchResponse } from    './services/$Response';
+import $Resource from                       './services/resource';
 import $MimeType from                       './services/mime-type';
 import * as $Exceptions from                './services/$Exceptions';
 import $$ngieIgnoreFactory from             './directives/ngie-ignore';
@@ -555,17 +553,13 @@ if (!app) {
 
     // Factories
     app.factory(
-        '$scope', fetchScope
-    ).factory(
-        '$request', fetchRequest
-    ).factory(
-        '$response', fetchResponse
-    ).factory(
         '$Routes', $Routes
     ).factory(
         '$Cache', $CacheFactory
     ).factory(
         '$Log', $LogProvider
+    ).factory(
+        '$Injector', $Injector
     ).factory(
         '$compile', $compile
     ).factory(
@@ -574,11 +568,13 @@ if (!app) {
 
     // Services
     app.service(
-
-        // Expose the webserver so that we can use it in sockets
         '$server', {}
     ).service(
         '$templateCache', $templateCache
+    ).service(
+        '$http', $Resource
+    ).service(
+        '$https', $Resource
     ).service(
         '$MimeType', $MimeType
     ).service(
@@ -593,10 +589,6 @@ if (!app) {
     ).directive(
         'ngieIf', $$ngieIfFactory
     );
-}
-
-fetchProvider(name, currentSessionKey) {
-
 }
 
 export default app;
