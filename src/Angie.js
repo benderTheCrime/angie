@@ -491,7 +491,7 @@ class Angie {
         }).then(function() {
 
             // Once all of the modules are loaded, run the configs
-            me.configs.map((v) => v.fn).forEach(function(v) {
+            me.configs.map(v => v.fn).forEach(function(v) {
                 new $injectionBinder(v, 'config')();
             });
 

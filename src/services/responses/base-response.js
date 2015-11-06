@@ -1,7 +1,7 @@
 /**
  * @module base-response.js
  * @author Joe Groseclose <@benderTheCrime>
- * @date 8/16/2015
+ * @date 11/6/2015
  */
 
 /**

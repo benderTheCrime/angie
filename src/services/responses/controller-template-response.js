@@ -1,4 +1,10 @@
 /**
+ * @module controller-template-response.js
+ * @author Joe Groseclose <@benderTheCrime>
+ * @date 11/6/2015
+ */
+
+/**
  * @desc ControllerTemplateResponse defines any Angie response that has a path
  * which is associated with a template. It is responsible for calling the
  * controller and any post-processed templating.
