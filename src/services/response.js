@@ -72,44 +72,6 @@ class $Response {
 }
 
 /**
- * @desc ControllerTemplateResponse defines any Angie response that has a path
- * which is associated with a template. It is responsible for calling the
- * controller and any post-processed templating.
- * @since 0.4.0
- * @access private
- * @extends {ControllerResponse}
- */
-class ControllerTemplateResponse extends ControllerResponse {
-    constructor() {
-        super();
-    }
-
-    /**
-     * @desc Sets up the headers associated with the ControllerTemplateResponse
-     * @since 0.4.0
-     * @access private
-     */
-    head() {
-        return super.head();
-    }
-
-    /**
-     * @desc Performs the Controller templating
-     * @since 0.4.0
-     * @access private
-     */
-    write() {
-        let me = this;
-
-        return super.write().then(function() {
-            me.template = me.route.template;
-        }).then(
-            controllerTemplateRouteResponse.bind(this)
-        );
-    }
-}
-
-/**
  * @desc ControllerTemplatePathResponse defines any Angie response that has a
  * path which is associated with a template path. It is responsible for calling
  * the controller and any post-processed templating.
@@ -364,78 +326,6 @@ class $CustomResponse extends BaseResponse {
      */
     writeSync(data) {
         this.response.write(data);
-    }
-}
-
-/**
- * @desc Resolves any situation in which a Controller is referenced where it
- * does not exist
- * @since 0.4.0
- * @access private
- * @extends {Reference}
- */
-class $$ControllerNotFoundError extends ReferenceError {
-
-    /**
-     * @param {string} name Controller Name
-     * @since 0.4.0
-     * @access private
-     */
-    constructor(name) {
-        $LogProvider.error(`Unknown Controller ${blue(name)}`);
-        super();
-    }
-}
-
-// Performs the templating inside of Controller Classes
-function controllerTemplateRouteResponse() {
-    if (this.template) {
-        let match = this.template.toString().match(/!doctype ([a-z]+)/i),
-            mime;
-
-        // In the context where MIME type is not set, but we have a
-        // DOCTYPE tag, we can force set the MIME
-        // We want this here instead of the explicit template definition
-        // in case the MIME failed earlier
-        if (match && !this.response.$headers.hasOwnProperty('Content-Type')) {
-            mime = this.response.$headers[ 'Content-Type' ] =
-                $MimeType.$$(match[ 1 ].toLowerCase());
-        } else {
-            mime = this.response.$headers[ 'Content-Type' ];
-        }
-
-        // Check to see if this is an HTML template and has a DOCTYPE
-        // and that the proper configuration options are set
-        if (
-            mime === 'text/html' &&
-            config.loadDefaultScriptFile // &&
-            // (
-                // this.route.hasOwnProperty('useDefaultScriptFile') ||
-                // this.route.useDefaultScriptFile !== false
-            // )
-        ) {
-            $resourceLoader(config.loadDefaultScriptFile);
-        }
-
-        // Pull the response back in from wherever it was before
-        this.content = this.response.content;
-
-        // Render the template into the resoponse
-        let me = this;
-        return new Promise(function(resolve) {
-
-            // $Compile to parse template strings and app.directives
-            return $compile(me.template)(
-
-                // In the context of the scope
-                me.$scope
-            ).then(function(template) {
-                resolve(template);
-            });
-        }).then(function(template) {
-            me.response.content = me.content += template;
-            me.response.write(me.content);
-        });
     }
 }
 

@@ -104,6 +104,26 @@ class $$InvalidDirectiveConfigError extends $$InvalidModuleConfigError {
     }
 }
 
+/**
+ * @desc Resolves any situation in which a Controller is referenced where it
+ * does not exist
+ * @since 0.4.0
+ * @access private
+ * @extends {Reference}
+ */
+class $$ControllerNotFoundError extends ReferenceError {
+
+    /**
+     * @param {string} name Controller Name
+     * @since 0.4.0
+     * @access private
+     */
+    constructor(name) {
+        $LogProvider.error(`Unknown Controller ${blue(name)}`);
+        super();
+    }
+}
+
 export {
     $$InvalidConfigError,
     $$InvalidServiceConfigError,
