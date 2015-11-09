@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc AssetResponse defines any Angie response that has a path which can be
  * mapped to a path in the Angie `staticDir`s which could not be routed via a
@@ -14,11 +17,11 @@
  * @extends {BaseResponse}
  */
 class AssetResponse extends BaseResponse {
-    constructor() {
-        super();
+    constructor(scoping) {
+        super(scoping);
 
         // Set the content type based on the asset path
-        this.path = $Injector.get('$request').path;
+        this.path = $Injector.get('$request', scoping).path;
     }
 
     /**

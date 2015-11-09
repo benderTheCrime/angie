@@ -13,7 +13,7 @@ import $$InvalidModuleConfigError from  './invalid-module-config-error';
  * @since 0.4.4
  * @access public
  * @extends {$$InvalidModuleConfigError}
- * @example new $Exceptions().$$InvalidDirectiveConfigError();
+ * @example $Exceptions.$$InvalidDirectiveConfigError();
  */
 class $$InvalidDirectiveConfigError extends $$InvalidModuleConfigError {
     constructor(name) {

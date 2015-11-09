@@ -13,7 +13,7 @@ import $$InvalidModuleConfigError from  './invalid-module-config-error';
  * @since 0.4.4
  * @access public
  * @extends {$$InvalidModuleConfigError}
- * @example new $Exceptions().$$InvalidServiceConfigError();
+ * @example $Exceptions.$$InvalidServiceConfigError();
  */
 class $$InvalidServiceConfigError extends $$InvalidModuleConfigError {
     constructor(name) {

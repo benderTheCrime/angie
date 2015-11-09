@@ -8,7 +8,7 @@
 import fs from                          'fs';
 
 // Angie Modules
-import { $$InvalidConfigError } from    './services/$Exceptions';
+import { $$InvalidConfigError } from    './services/exceptions';
 import $Util, { $FileUtil } from        './util/util';
 
 const CWD = process.cwd();

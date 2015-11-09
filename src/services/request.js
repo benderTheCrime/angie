@@ -1,5 +1,5 @@
 /**
- * @module $Request.js
+ * @module request.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 8/16/2015
  */
@@ -13,7 +13,7 @@ import $Injector from               'angie-injector';
 // Angie Modules
 import $Routes from                 '../factories/routes';
 import $CacheFactory from           '../factories/$CacheFactory';
-import * as $Responses from         './$Response';
+import * as $Responses from         './response';
 import $CookieFactory from          './cookie';
 import $Util, { $StringUtil } from  '../util/util';
 
@@ -68,7 +68,7 @@ class $Request {
      * @since 0.4.0
      * @access private
      */
-    $$route() {
+    $$route(scoping) {
 
         // Check against all of the RegExp routes in Reverse
         let regExpRoutes = Object.keys(this.routes.regExp || {}).reverse();
@@ -127,7 +127,11 @@ class $Request {
             }
 
             // Perform the specified response type
-            return new $Responses[ `${ResponseType}Response` ]().head().write();
+            return new $Responses[
+                `${ResponseType}Response`
+            ](
+                scoping.$request.$$iid
+            ).head().write();
         } catch(e) {
 
             // Throw an error response if no other response type was specified
@@ -172,6 +176,7 @@ class $Request {
         })
 
         proms.push(prom);
+
         prom.then(function() {
             let rawData = arguments[0][0] || {},
                 files = arguments[0][1] || {},

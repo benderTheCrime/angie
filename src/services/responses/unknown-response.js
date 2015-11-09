@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc UnknownResponse writes any Angie response that has a path which cannot
  * be mapped to a route or a static asset. It is responsible for serving an

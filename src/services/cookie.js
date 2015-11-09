@@ -9,7 +9,7 @@ import cookie from          'cookie';
 import $Injector from       'angie-injector';
 
 // TODO lookup getters and setters on classes
-class $$CookieFactory {
+class $CookieFactory {
     constructor(request) {
 
         let cookies;

@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc ErrorResponse defines a generic error response from Angie. It is called
  * in the event that no routes or static assets are found, there is an issue

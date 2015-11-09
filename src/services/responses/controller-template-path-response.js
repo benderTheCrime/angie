@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import ControllerResponse from  './controller-response';
+
 /**
  * @desc ControllerTemplatePathResponse defines any Angie response that has a
  * path which is associated with a template path. It is responsible for calling
@@ -13,8 +16,8 @@
  * @extends {ControllerResponse}
  */
 class ControllerTemplatePathResponse extends ControllerResponse {
-    constructor() {
-        super();
+    constructor(scoping) {
+        super(scoping);
     }
 
     /**

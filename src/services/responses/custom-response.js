@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc $CustomResponse is an exposed custom response method which can be used
  * to defined any response outside of the pre-canned response classes. It is,
@@ -53,4 +56,4 @@ class $CustomResponse extends BaseResponse {
     }
 }
 
-export default CustomResponse;
+export default $CustomResponse;

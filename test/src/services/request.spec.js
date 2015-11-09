@@ -8,8 +8,8 @@ import { Form } from                'multiparty';
 // Angie Modules
 const TEST_ENV =                    global.TEST_ENV || 'src',
     $Routes =                       require(`../../../${TEST_ENV}/factories/routes`),
-    $Responses =                    require(`../../../${TEST_ENV}/services/$Response`),
-    $Request =                      require(`../../../${TEST_ENV}/services/$Request`),
+    $Responses =                    require(`../../../${TEST_ENV}/services/response`),
+    $Request =                      require(`../../../${TEST_ENV}/services/request`),
     $Util =                         require(`../../../${TEST_ENV}/util/util`).default;
 
 describe('$Request', function() {

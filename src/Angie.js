@@ -5,27 +5,27 @@
  */
 
 // System Modules
-import fs from                              'fs';
-import { magenta, blue } from               'chalk';
-import $LogProvider from                    'angie-log';
-import { $injectionBinder } from            'angie-injector';
+import fs from                                  'fs';
+import { magenta, blue } from                   'chalk';
+import $LogProvider from                        'angie-log';
+import $Injector, { $injectionBinder } from     'angie-injector';
 
 // Angie Modules
-import { config } from                      './Config';
-import $Routes from                         './factories/routes';
-import $CacheFactory from                   './factories/$CacheFactory';
-import $compile from                        './factories/$Compile';
+import { config } from                          './Config';
+import $Routes from                             './factories/routes';
+import $CacheFactory from                       './factories/$CacheFactory';
+import $compile from                            './factories/$Compile';
 import {
     $templateCache,
     $resourceLoader
-} from                                      './factories/template-cache';
-import $Resource from                       './services/resource';
-import $MimeType from                       './services/mime-type';
-import * as $Exceptions from                './services/$Exceptions';
-import $$ngieIgnoreFactory from             './directives/ngie-ignore';
-import $$ngieRepeatFactory from             './directives/ngie-repeat';
-import $$ngieIfFactory from                 './directives/ngie-if';
-import $Util, { $StringUtil } from          './util/util';
+} from                                          './factories/template-cache';
+import $Resource from                           './services/resource';
+import $MimeType from                           './services/mime-type';
+import * as $Exceptions from                    './services/exceptions';
+import $$ngieIgnoreFactory from                 './directives/ngie-ignore';
+import $$ngieRepeatFactory from                 './directives/ngie-repeat';
+import $$ngieIfFactory from                     './directives/ngie-if';
+import $Util, { $StringUtil } from              './util/util';
 
 const CWD = process.cwd(),
     $$require = v => {
@@ -191,7 +191,7 @@ class Angie {
      */
     directive(name, obj) {
         const dir = typeof obj !== 'function' ?
-            obj : new $injectionBinder(obj, 'directive')();
+            obj : new $injectionBinder(obj, { type: 'directive' })();
 
         if (dir.hasOwnProperty('Controller')) {
             if (typeof dir.Controller !== 'string') {
@@ -492,7 +492,7 @@ class Angie {
 
             // Once all of the modules are loaded, run the configs
             me.configs.map(v => v.fn).forEach(function(v) {
-                new $injectionBinder(v, 'config')();
+                new $injectionBinder(v, { type: 'config' })();
             });
 
             // Once the configs object has been copied destroy it to prevent
@@ -563,6 +563,10 @@ if (!app) {
     ).factory(
         '$compile', $compile
     ).factory(
+        '$http', $Resource
+    ).factory(
+        '$https', $Resource
+    ).factory(
         '$resourceLoader', $resourceLoader
     );
 
@@ -571,10 +575,6 @@ if (!app) {
         '$server', {}
     ).service(
         '$templateCache', $templateCache
-    ).service(
-        '$http', $Resource
-    ).service(
-        '$https', $Resource
     ).service(
         '$MimeType', $MimeType
     ).service(

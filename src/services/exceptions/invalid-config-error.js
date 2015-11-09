@@ -18,7 +18,7 @@ import $LogProvider from    'angie-log';
  * @returns {object} Error
  * @since 0.4.4
  * @access public
- * @example new $Exceptions.$$InvalidConfigError();
+ * @example $Exceptions.$$InvalidConfigError();
  */
 class $$InvalidConfigError {
     constructor() {

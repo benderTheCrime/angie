@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// System modules
+import $Injector from   'angie-injector';
+
 /**
  * @desc BaseResponse defines the default Angie response. It is responsible for
  * serving the default response and setting up the headers associated with the
@@ -13,10 +16,13 @@
  * @access private
  */
 class BaseResponse {
-    constructor() {
+    constructor(scoping) {
         let request,
             contentType;
-        [ request, this.response ]  = $Injector.get('$request', '$response');
+        [
+            request,
+            this.response
+        ]  = $Injector.get('$request', '$response', scoping);
 
         // Set the route and otherwise
         [
@@ -28,6 +34,8 @@ class BaseResponse {
             request.route,
             request.otherwise
         ];
+
+        this.scoping = scoping;
 
         // Parse out the response content type
         contentType = request.headers ? request.headers.accept : null;

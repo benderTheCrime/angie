@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc RedirectResponse is either forced as a byproduct of the controller or
  * when no other route can be matched and an "otherwise" route is defined. It
@@ -43,7 +46,7 @@ class RedirectResponse extends BaseResponse {
     write() {
 
         // There is no content in this method
-        return new Promise((r) => r());
+        return new Promise(r => r());
     }
 
     /**

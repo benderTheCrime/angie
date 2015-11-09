@@ -20,11 +20,11 @@ import $LogProvider from                'angie-log';
 // Angie Modules
 import { config } from                  './Config';
 import app from                         './Angie';
-import $Request from                    './services/$Request';
+import $Request from                    './services/request';
 import $Response, {
     ErrorResponse,
     $CustomResponse
-} from                                  './services/$Response';
+} from                                  './services/response';
 
 const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES'),
     CLIENT = new Client(),
@@ -236,13 +236,26 @@ function $$server(args = []) {
 
             let sessionKey = uuid.v4(),
                 $request = new $Request(req),
-
-                // The service response instance
                 $response = new $Response(sessionKey, res),
-                requestTimeout;
+                requestTimeout,
+                $scoping = {
+                    $request: {
+                        $$iid: $request.$$iid,
+                        val: $request
+                    },
+                    $response: {
+                        $$iid: $response.$$iid,
+                        val: $response
+                    },
+                    $scope: {
+                        $$iid: $response.$scope.$$iid,
+                        val: $response.$scope
+                    }
+                };
 
             new $Cache('$requests').put($request.$$iid, $request);
             new $Cache('$responses').put(sessionKey, res);
+            new $Cache('$scopes').put($response.$scope.$$iid, $response.$scope);
 
             // Instantiate the request, get the data
             $request.$$data().then(function() {
@@ -267,7 +280,7 @@ function $$server(args = []) {
                 );
 
             // Route the request
-            }).then(() => $request.$$route()).then(function() {
+            }).then($request.$$route.bind(null, $scoping)).then(function() {
                 let code = res.statusCode,
                     log = 'error';
 

@@ -4,6 +4,12 @@
  * @date 11/6/2015
  */
 
+// System Modules
+import util from            'util';
+
+// Angie modules
+import BaseResponse from    './base-response';
+
 /**
  * @desc ControllerResponse defines any Angie response that has a path which is
  * associated with a template or template path. It is responsible for calling
@@ -13,8 +19,8 @@
  * @extends {BaseResponse}
  */
 class ControllerResponse extends BaseResponse {
-    constructor() {
-        super();
+    constructor(scoping) {
+        super(scoping);
     }
 
     /**
@@ -32,9 +38,8 @@ class ControllerResponse extends BaseResponse {
      * @access private
      */
     write() {
-        this.$scope = $Injector.get('$scope');
-
         let me = this;
+
         return new Promise(function(resolve) {
             let controller = me.route.Controller || me.route.controller;
 
@@ -58,7 +63,7 @@ class ControllerResponse extends BaseResponse {
             // Call the bound controller function
             let controllerResponse = new $injectionBinder(
                 controller,
-                'controller'
+                util._extend({ type: 'controller' }, this.scoping)
             ).call(me.$scope, resolve);
 
             // Resolve the Promise if the controller does not return a
@@ -92,14 +97,7 @@ class ControllerResponse extends BaseResponse {
 
             // Check to see if this is an HTML template and has a DOCTYPE
             // and that the proper configuration options are set
-            if (
-                mime === 'text/html' &&
-                config.loadDefaultScriptFile // &&
-                // (
-                    // this.route.hasOwnProperty('useDefaultScriptFile') ||
-                    // this.route.useDefaultScriptFile !== false
-                // )
-            ) {
+            if (mime === 'text/html' && config.loadDefaultScriptFile) {
                 $resourceLoader(config.loadDefaultScriptFile);
             }
 

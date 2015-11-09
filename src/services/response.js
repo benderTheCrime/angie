@@ -12,7 +12,7 @@ import $Injector, { $injectionBinder } from     'angie-injector';
 import $LogProvider from                        'angie-log';
 
 // Angie Modules
-import { config } from                            '../Config';
+import { config } from                          '../Config';
 import app from                                 '../Angie';
 import $ScopeFactory from                       '../factories/scope';
 import $CacheFactory from                       '../factories/$CacheFactory';
@@ -22,10 +22,10 @@ import {
     $resourceLoader
 } from                                          '../factories/template-cache';
 import $compile from                            '../factories/$Compile';
-import $MimeType from                           '.mime-type';
+import $MimeType from                           './mime-type';
 import $Cookie from                             './cookie';
 import AssetResponse from                       './responses/asset-response';
-import ControllerResponse from                  './responses/controller-template-response';
+import ControllerTemplateResponse from          './responses/controller-template-response';
 import ControllerTemplatePathResponse from      './responses/controller-template-path-response';
 import RedirectResponse from                    './responses/redirect-response';
 import UnknownResponse from                     './responses/unknown-response';
@@ -60,7 +60,7 @@ class $Response {
         this.response.content = '';
 
         // Define a scope for our session
-        $Scopes.put(sessionKey, new $ScopeFactory());
+        this.$scope = new $ScopeFactory();
     }
 
     /**
@@ -80,7 +80,6 @@ class $Response {
 
 export default $Response;
 export {
-    BaseResponse,
     AssetResponse,
     ControllerTemplateResponse,
     ControllerTemplatePathResponse,
