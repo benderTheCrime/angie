@@ -234,9 +234,8 @@ function $$server(args = []) {
         // Start a webserver, use http/https based on port
         webserver = (PORT === 443 ? https : http).createServer((req, res) => {
 
-            let sessionKey = uuid.v4(),
-                $request = new $Request(req),
-                $response = new $Response(sessionKey, res),
+            let $request = new $Request(req),
+                $response = new $Response(res),
                 requestTimeout,
                 $scoping = {
                     $request: {
@@ -254,7 +253,7 @@ function $$server(args = []) {
                 };
 
             new $Cache('$requests').put($request.$$iid, $request);
-            new $Cache('$responses').put(sessionKey, res);
+            new $Cache('$responses').put($response.$$iid, res);
             new $Cache('$scopes').put($response.$scope.$$iid, $response.$scope);
 
             // Instantiate the request, get the data
@@ -314,7 +313,7 @@ function $$server(args = []) {
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(sessionKey, res);
+                end(res);
             });
         }).listen(PORT);
 
@@ -324,7 +323,7 @@ function $$server(args = []) {
         // Info
         $LogProvider.info(`Serving on port ${PORT}`);
 
-        function end(sessionKey, response) {
+        function end(response) {
 
             // TODO this
             // After we have finished with the response, we can tear down
@@ -337,10 +336,10 @@ function $$server(args = []) {
         }
 
         // Force an ended response with a timeout
-        function forceEnd(path, response) {
+        function forceEnd(path, $scoping, response) {
 
             // Send a custom response for gateway timeout
-            new $CustomResponse().head(504, null, {
+            new $CustomResponse($scoping).head(504, null, {
                 'Content-Type': 'text/html'
             }).writeSync(`<h1>${RESPONSE_HEADER_MESSAGES[ 504 ]}</h1>`);
 

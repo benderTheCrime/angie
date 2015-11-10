@@ -105,8 +105,8 @@ function $$templateLoader(url, type = 'template', encoding) {
  * @access public
  * @example $resourceLoader('test.js');
  */
-function $resourceLoader(files = [], loadStyle = 'src') {
-    let [ $request, $response ] = $Injector.get('$request', '$response');
+function $resourceLoader(files = [], scoping, loadStyle = 'src') {
+    let [ $request, $response ] = $Injector.get('$request', '$response', scoping);
     if (
         !$request || typeof $request !== 'object' ||
         !$response || typeof $response !== 'object'

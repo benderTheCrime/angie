@@ -188,11 +188,11 @@ function $$processDirective(el, scope, directive, type) {
 
                 // Assign a function that can be called to resolve async
                 // behavior in directives
-                try {
-                    $response = $Injector.get('$response');
-                } catch(e) {} finally {
-                    $response.done = resolve;
-                }
+                // try {
+                //     $response = $Injector.get('$response');
+                // } catch(e) {} finally {
+                //     $response.done = resolve;
+                // }
 
                 const link = directive.link.call(
                     scope,
@@ -202,13 +202,7 @@ function $$processDirective(el, scope, directive, type) {
                     resolve
                 );
 
-                if (
-                    !link ||
-                    !link.constructor ||
-                    link.constructor.name !== 'Promise'
-                ) {
-                    resolve(link);
-                }
+                resolve(link);
             });
         }).then(function() {
             if (el.attr) {

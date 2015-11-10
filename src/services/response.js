@@ -48,7 +48,7 @@ const $Scopes = new $CacheFactory('$scopes');
  * @example $Injector.get('$response');
  */
 class $Response {
-    constructor(sessionKey, response) {
+    constructor(response) {
 
         // This is never exposed, but is maintained for consistency
         this.$$iid = uuid.v4();

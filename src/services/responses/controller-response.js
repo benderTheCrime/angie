@@ -98,7 +98,7 @@ class ControllerResponse extends BaseResponse {
             // Check to see if this is an HTML template and has a DOCTYPE
             // and that the proper configuration options are set
             if (mime === 'text/html' && config.loadDefaultScriptFile) {
-                $resourceLoader(config.loadDefaultScriptFile);
+                $resourceLoader(config.loadDefaultScriptFile, this.scoping);
             }
 
             // Pull the response back in from wherever it was before
@@ -112,7 +112,7 @@ class ControllerResponse extends BaseResponse {
                 return $compile(me.template)(
 
                     // In the context of the scope
-                    me.$scope
+                    $Injector.get('$scope', me.scoping)
                 ).then(function(template) {
                     resolve(template);
                 });

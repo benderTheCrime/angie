@@ -129,9 +129,7 @@ class $Request {
             // Perform the specified response type
             return new $Responses[
                 `${ResponseType}Response`
-            ](
-                scoping.$request.$$iid
-            ).head().write();
+            ](scoping).head().write();
         } catch(e) {
 
             // Throw an error response if no other response type was specified
