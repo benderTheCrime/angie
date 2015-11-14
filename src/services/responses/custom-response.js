@@ -18,8 +18,8 @@ import BaseResponse from    './base-response';
  * @extends {BaseResponse}
  */
 class $CustomResponse extends BaseResponse {
-    constructor() {
-        super();
+    constructor(scoping) {
+        super(scoping);
     }
 
     /**

@@ -19,6 +19,9 @@ class BaseResponse {
     constructor(scoping) {
         let request,
             contentType;
+
+        console.log('IN REQ');
+
         [
             request,
             this.response

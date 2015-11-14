@@ -231,6 +231,8 @@ function $$server(args = []) {
         const PORT = $$port(args),
             $Cache = $Injector.get('$Cache');
 
+        // console.log('$CACHE', $Cache);
+
         // Start a webserver, use http/https based on port
         webserver = (PORT === 443 ? https : http).createServer((req, res) => {
 
@@ -252,9 +254,15 @@ function $$server(args = []) {
                     }
                 };
 
-            new $Cache('$requests').put($request.$$iid, $request);
-            new $Cache('$responses').put($response.$$iid, res);
-            new $Cache('$scopes').put($response.$scope.$$iid, $response.$scope);
+            // console.log('$CACHE', $Cache);
+
+            // new $Cache('$requests').put($request.$$iid, $request, true);
+            // new $Cache('$responses').put($response.$$iid, res, true);
+            // new $Cache('$scopes').put(
+            //     $response.$scope.$$iid,
+            //     $response.$scope,
+            //     true
+            // );
 
             // Instantiate the request, get the data
             $request.$$data().then(function() {
@@ -273,7 +281,7 @@ function $$server(args = []) {
                 // Set a request error timeout so that we ensure every request
                 // resolves to something
                 requestTimeout = setTimeout(
-                    forceEnd.bind(null, $request.path, res),
+                    forceEnd.bind(null, $request.path, $scoping, res),
                     config.hasOwnProperty('responseErrorTimeout') ?
                         config.responseErrorTimeout : 5000
                 );
