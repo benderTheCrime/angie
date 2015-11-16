@@ -7,6 +7,9 @@
 // System modules
 import $Injector from   'angie-injector';
 
+// Angie Modules
+import $MimeType from   '../mime-type';
+
 /**
  * @desc BaseResponse defines the default Angie response. It is responsible for
  * serving the default response and setting up the headers associated with the
@@ -20,7 +23,12 @@ class BaseResponse {
         let request,
             contentType;
 
-        console.log('IN REQ');
+        if (typeof scoping === 'object') {
+            scoping.type = 'Controller';
+            this.scoping = scoping;
+        } else {
+            throw new Error('Invalid scope');
+        }
 
         [
             request,
@@ -37,8 +45,6 @@ class BaseResponse {
             request.route,
             request.otherwise
         ];
-
-        this.scoping = scoping;
 
         // Parse out the response content type
         contentType = request.headers ? request.headers.accept : null;
@@ -61,7 +67,7 @@ class BaseResponse {
         this.response.statusCode = code;
 
         for (let header in this.response.$headers) {
-            this.response.setHeader(header, this.response.$headers[ header ]);
+            this.response.header(header, this.response.$headers[ header ]);
         }
 
         return this;

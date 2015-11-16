@@ -5,10 +5,16 @@
  */
 
 // System Modules
-import util from            'util';
+import util from                        'util';
+import $Injector from                   'angie-injector';
 
-// Angie modules
-import BaseResponse from    './base-response';
+// Angie Modules
+import { config } from                  '../../Config';
+import BaseResponse from                './base-response';
+import $$ControllerNotFoundError from   '../exceptions/controller-not-found-error';
+import $MimeType from                   '../mime-type';
+import { $resourceLoader } from         '../../factories/template-cache';
+import $compile from                    '../../factories/$Compile';
 
 /**
  * @desc ControllerResponse defines any Angie response that has a path which is
@@ -43,14 +49,8 @@ class ControllerResponse extends BaseResponse {
         return new Promise(function(resolve) {
             let controller = me.route.Controller || me.route.controller;
 
-            // Assign a function that can be called to resolve async
-            // behavior in Controllers
-            app.services.$response.Controller = { done: resolve };
-
             // Get controller and compile scope
-            if (typeof controller === 'function') {
-                controller = controller;
-            } else if (typeof controller === 'string') {
+            if (typeof controller === 'string') {
                 if (app.Controllers[ controller ]) {
                     controller = app.Controllers[ controller ];
                 } else {
@@ -66,15 +66,7 @@ class ControllerResponse extends BaseResponse {
                 util._extend({ type: 'controller' }, this.scoping)
             ).call(me.$scope, resolve);
 
-            // Resolve the Promise if the controller does not return a
-            // function
-            if (
-                !controllerResponse ||
-                !controllerResponse.constructor ||
-                controllerResponse.constructor.name !== 'Promise'
-            ) {
-                resolve(controller);
-            }
+            resolve(controllerResponse);
         });
     }
 
@@ -105,18 +97,15 @@ class ControllerResponse extends BaseResponse {
             this.content = this.response.content;
 
             // Render the template into the resoponse
-            let me = this;
-            return new Promise(function(resolve) {
+            let me = this,
+                scope = me.scoping.$scope.val;
 
-                // $Compile to parse template strings and app.directives
-                return $compile(me.template)(
+            // $Compile to parse template strings and app.directives
+            return $compile(me.template)(
 
-                    // In the context of the scope
-                    $Injector.get('$scope', me.scoping)
-                ).then(function(template) {
-                    resolve(template);
-                });
-            }).then(function(template) {
+                // In the context of the scope
+                scope
+            ).then(function(template) {
                 me.response.content = me.content += template;
                 me.response.write(me.content);
             });

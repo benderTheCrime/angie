@@ -4,8 +4,10 @@
  * @date 11/6/2015
  */
 
-// Angie modules
+// Angie Modules
 import ControllerResponse from  './controller-response';
+import { $templateCache } from  '../../factories/template-cache';
+import $MimeType from           '../mime-type';
 
 /**
  * @desc ControllerTemplatePathResponse defines any Angie response that has a
@@ -46,9 +48,7 @@ class ControllerTemplatePathResponse extends ControllerResponse {
             me.response.$headers[ 'Content-Type' ] =
                 $MimeType.fromPath(me.route.templatePath);
             me.template = template;
-        }).then(
-            controllerTemplateRouteResponse.bind(this)
-        );
+        }).then(() => me.controllerTemplateRouteResponse());
     }
 }
 

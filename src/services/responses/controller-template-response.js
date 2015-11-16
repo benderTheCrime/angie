@@ -4,7 +4,7 @@
  * @date 11/6/2015
  */
 
-// Angie modules
+// Angie Modules
 import ControllerResponse from  './controller-response';
 
 
@@ -40,9 +40,7 @@ class ControllerTemplateResponse extends ControllerResponse {
 
         return super.write().then(function() {
             me.template = me.route.template;
-        }).then(
-            controllerTemplateRouteResponse.bind(this)
-        );
+        }).then(() => me.controllerTemplateRouteResponse());
     }
 }
 

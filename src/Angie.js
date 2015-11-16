@@ -190,7 +190,6 @@ class Angie {
      * });
      */
     directive(name, obj) {
-        console.log('DIRECTIVE NAME', name);
         const dir = typeof obj !== 'function' ?
             obj : new $injectionBinder(obj, { type: 'directive' })();
 

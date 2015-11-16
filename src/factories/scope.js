@@ -57,8 +57,6 @@ class $$ScopeFactory {
             if (typeof model === 'object') {
                 let valid = false;
 
-                console.log(model);
-
                 // We now need to compare the keys on the $scope value and on
                 // the model
                 // TODO we ignore keys if they are in ignoreKeys and

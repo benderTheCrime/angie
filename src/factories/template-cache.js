@@ -5,16 +5,16 @@
  */
 
 // System Modules
-import fs from                      'fs';
-import {default as $Injector} from  'angie-injector';
+import fs from                          'fs';
+import { default as $Injector } from    'angie-injector';
 
 // Angie Modules
-import {config} from                '../Config';
-import $CacheFactory from           './$CacheFactory';
+import { config } from                  '../Config';
+import $CacheFactory from               './$CacheFactory';
 import {
     $StringUtil,
     $FileUtil
-} from                              '../util/util';
+} from                                  '../util/util';
 
 /**
  * @desc `$TemplateCache` is a subclass wrapper around `$CacheFactory`. It

@@ -72,7 +72,6 @@ class $Request {
 
         // Check against all of the RegExp routes in Reverse
         let regExpRoutes = Object.keys(this.routes.regExp || {}).reverse();
-
         for (let i = 0; i < regExpRoutes.length; ++i) {
 
             // Slice characters we do not need to instantiate a new RegExp
@@ -85,7 +84,6 @@ class $Request {
                     regExpRoute,
                     this.routes.regExp[ regExpRoutes[ i ] ].flags
                 );
-
             if (pattern.test(this.path)) {
                 this.route = this.routes.regExp[ regExpRoutes[ i ] ];
 
@@ -107,8 +105,9 @@ class $Request {
 
         // Route the request based on whether the route exists and what the
         // route states its response should contain.
-        let ResponseType;
         try {
+            let ResponseType;
+
             if (this.route) {
                 ResponseType = 'ControllerTemplate';
                 if (this.route.templatePath) {
@@ -125,6 +124,8 @@ class $Request {
             } else {
                 ResponseType = 'Unknown';
             }
+
+            console.log(this.path, ResponseType);
 
             // Perform the specified response type
             return new $Responses[

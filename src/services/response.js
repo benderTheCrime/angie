@@ -22,7 +22,6 @@ import {
     $resourceLoader
 } from                                          '../factories/template-cache';
 import $compile from                            '../factories/$Compile';
-import $MimeType from                           './mime-type';
 import $Cookie from                             './cookie';
 import AssetResponse from                       './responses/asset-response';
 import ControllerTemplateResponse from          './responses/controller-template-response';
@@ -73,6 +72,11 @@ class $Response {
      */
     header(k = '', v = '') {
         this.response.setHeader(k, v);
+
+        return this;
+    }
+    write(c) {
+        this.response.write(c);
 
         return this;
     }

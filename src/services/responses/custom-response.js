@@ -4,7 +4,10 @@
  * @date 11/6/2015
  */
 
-// Angie modules
+// System Modules
+import util from            'util';
+
+// Angie Modules
 import BaseResponse from    './base-response';
 
 /**

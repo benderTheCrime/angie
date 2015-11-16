@@ -4,7 +4,7 @@
  * @date 11/6/2015
  */
 
-// Angie modules
+// Angie Modules
 import BaseResponse from    './base-response';
 
 /**

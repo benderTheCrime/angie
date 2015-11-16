@@ -4,8 +4,15 @@
  * @date 11/6/2015
  */
 
-// Angie modules
-import BaseResponse from    './base-response';
+// System Modules
+import $Injector from               'angie-injector';
+
+// Angie Modules
+import BaseResponse from            './base-response';
+import UnknownResponse from         './unknown-response';
+import $CacheFactory from           '../../factories/$CacheFactory';
+import { $$templateLoader } from    '../../factories/template-cache';
+import { $FileUtil } from           '../../util/util';
 
 /**
  * @desc AssetResponse defines any Angie response that has a path which can be
@@ -42,8 +49,9 @@ class AssetResponse extends BaseResponse {
         let assetCache = new $CacheFactory('staticAssets'),
             asset = this.response.content =
                 assetCache.get(this.path) ||
-                    $$templateLoader(this.path, 'static'),
+                    $$templateLoader(this.path, 'static', 'utf8'),
             me = this;
+
         return new Promise(function(resolve) {
             if (asset) {
                 me.response.write(asset);
