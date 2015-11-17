@@ -17,6 +17,7 @@ const MIME_TYPE = {
         png: 'image/png',
         rss: 'application/rss+xml',
         svg: 'image/svg+xml',
+        ttf: 'application/octet-stream',
         xml: 'application/xml'
     },
     DEFAULT_TYPE = 'text/plain',

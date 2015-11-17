@@ -5,7 +5,8 @@
  */
 
 // Angie Modules
-import BaseResponse from    './base-response';
+import BaseResponse from            './base-response';
+import { $$templateLoader } from    '../../factories/template-cache';
 
 /**
  * @desc UnknownResponse writes any Angie response that has a path which cannot

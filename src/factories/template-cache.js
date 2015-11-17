@@ -161,6 +161,8 @@ function $resourceLoader(files = [], scoping, loadStyle = 'src') {
 
         const BODY = '</body>',
             STR = $response.content;
+
+        console.log('STRING', STR);
         if (STR.indexOf(BODY) > -1) {
             let body = STR.lastIndexOf(BODY);
             $response.content =
