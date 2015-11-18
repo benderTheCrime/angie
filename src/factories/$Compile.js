@@ -139,6 +139,8 @@ function $compile(t) {
 
 // Private function responsible for parsing directives
 // TODO observance on attributes
+// TODO consider removing all attributes from the element and keying off which
+// are preserved in the link function, or finding the diff
 function $$processDirective(el, scope, directive, type) {
     let template,
         prom;
@@ -184,22 +186,8 @@ function $$processDirective(el, scope, directive, type) {
     ) {
         prom = prom.then(function() {
             return new Promise(function(resolve) {
-                let $response = {};
-
-                // Assign a function that can be called to resolve async
-                // behavior in directives
-                // try {
-                //     $response = $Injector.get('$response');
-                // } catch(e) {} finally {
-                //     $response.done = resolve;
-                // }
-
                 const link = directive.link.call(
-                    scope,
-                    scope,
-                    type !== 'M' ? el : null,
-                    parsedAttrs,
-                    resolve
+                    scope, scope, el, parsedAttrs
                 );
 
                 resolve(link);

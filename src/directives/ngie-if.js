@@ -1,5 +1,5 @@
 /**
- * @module ngieRepeat.js
+ * @module ngie-repeat.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 10/01/2015
  */

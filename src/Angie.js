@@ -25,6 +25,7 @@ import * as $Exceptions from                    './services/exceptions';
 import $$ngieIgnoreFactory from                 './directives/ngie-ignore';
 import $$ngieRepeatFactory from                 './directives/ngie-repeat';
 import $$ngieIfFactory from                     './directives/ngie-if';
+import $$ngieValueFactory from                  './directives/ngie-value';
 import $Util, { $StringUtil } from              './util/util';
 
 const CWD = process.cwd(),
@@ -491,10 +492,9 @@ class Angie {
         }).then(function() {
 
             // Once all of the modules are loaded, run the configs
-            me.configs.map(v => v.fn).forEach(v => {
-                console.log(v.toString());
-                new $injectionBinder(v, { type: 'config' })();
-            });
+            me.configs.map(v => v.fn).forEach(v =>
+                new $injectionBinder(v, { type: 'config' })()
+            );
 
             // Once the configs object has been copied destroy it to prevent
             // those functions from ever being fired again in this or future
@@ -589,7 +589,9 @@ if (!app) {
         'ngieRepeat', $$ngieRepeatFactory
     ).directive(
         'ngieIf', $$ngieIfFactory
-    );
+    ).directive(
+        'ngieValue', $$ngieValueFactory
+    )
 }
 
 export default app;

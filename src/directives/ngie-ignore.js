@@ -1,5 +1,5 @@
 /**
- * @module ngieIgnore.js
+ * @module ngie-ignore.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 10/06/2015
  */

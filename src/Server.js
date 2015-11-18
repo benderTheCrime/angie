@@ -295,8 +295,6 @@ function $$server(args = []) {
                     res._header || ''
                 );
 
-                console.log('HERE');
-
                 // Call this inside route block to make sure that we only
                 // return once
                 end(res);
@@ -321,14 +319,6 @@ function $$server(args = []) {
         $LogProvider.info(`Serving on port ${PORT}`);
 
         function end(response) {
-
-            console.log('BACK FROM REQUEST');
-
-            // TODO this
-            // After we have finished with the response, we can tear down
-            // request/response specific components
-            // new $Cache('$requests').remove(sessionKey);
-            // new $Cache('$response').remove(sessionKey);
 
             // End the response
             response.end();

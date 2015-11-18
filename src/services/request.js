@@ -98,8 +98,6 @@ class $Request {
             }
         }
 
-        console.log(this.routes);
-
         // Check for a matching string path
         if (!this.route && this.routes[ this.path ]) {
             this.route = this.routes[ this.path ];
@@ -109,8 +107,6 @@ class $Request {
         // route states its response should contain.
         try {
             let ResponseType;
-
-            console.log(this.route, 'ROUTE');
 
             if (this.route) {
                 ResponseType = 'ControllerTemplate';
@@ -128,8 +124,6 @@ class $Request {
             } else {
                 ResponseType = 'Unknown';
             }
-
-            console.log(this.path, ResponseType);
 
             // Perform the specified response type
             return new $Responses[

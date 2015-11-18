@@ -46,8 +46,6 @@ class ControllerResponse extends BaseResponse {
     write() {
         let me = this;
 
-        console.log('IN WRITE');
-
         return new Promise(function(resolve) {
             let controller = me.route.Controller || me.route.controller;
 
