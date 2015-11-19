@@ -5,11 +5,12 @@
  */
 
 // System Modules
-import uuid from    'node-uuid';
+import uuid from        'node-uuid';
+import $Injector from   'angie-injector';
 
 const t = s => s.toString().replace(/\s{2,}/g, '');
 
-function $$ngieValueFactory($Bind) {
+function $$ngieValueFactory($Log) {
     return {
         priority: 1,
         restrict: 'A',
@@ -21,6 +22,7 @@ function $$ngieValueFactory($Bind) {
         fieldName: '',
         model: 'model.field',
         link($scope, el, attrs) {
+            const $Bind = $Injector.get('$Bind');
 
             // Value listeners are set up on the front end, for now, we just
             // implement an $$iid and REST the property
@@ -30,6 +32,7 @@ function $$ngieValueFactory($Bind) {
             // TODO throw conflated element uuids on the front end
             // We deliberately do not drop the attribute
             const UUID = uuid.v4();
+            let bindingUUID;
 
             // TODO IMPORTANT!! If this is not included all rows will be
             // returned
@@ -66,13 +69,13 @@ function $$ngieValueFactory($Bind) {
                 attrs.value = attrs.ngieValue;
                 el.removeAttr('ngie-value');
             } else {
-                $Bind(uuid, { id, model, field });
+                bindingUUID = $Bind(uuid, { id, model, field });
             }
 
 
             // TODO figure out how this is registered on the backend listeners
             // and how the front end replicates those listeners
-            attrs.test = 'BLAH';
+            attrs.ngieIid = bindingUUID || attrs.ngieIid || UUID;
         }
     };
 }
