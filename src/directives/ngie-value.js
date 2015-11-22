@@ -6,6 +6,7 @@
 
 // System Modules
 import uuid from        'node-uuid';
+import { cyan } from    'chalk';
 import $Injector from   'angie-injector';
 
 const t = s => s.toString().replace(/\s{2,}/g, '');
@@ -31,7 +32,7 @@ function $$ngieValueFactory($Log) {
             // TODO this needs to be better - how is this extensible for a user?
             // TODO throw conflated element uuids on the front end
             // We deliberately do not drop the attribute
-            const UUID = uuid.v4();
+            const UUID = attrs.ngieIid = bindingUUID || attrs.ngieIid || uuid.v4();
             let bindingUUID;
 
             // TODO IMPORTANT!! If this is not included all rows will be
@@ -63,19 +64,18 @@ function $$ngieValueFactory($Log) {
 
             if (!(field && model)) {
                 $Log.warn(t`
-                    Model Name or Field Name missing from value, falling back to
-                    default functionality
+                    Model Name or Field Name missing from ${cyan('ngieValue')},
+                    falling back to default functionality
                 `);
                 attrs.value = attrs.ngieValue;
                 el.removeAttr('ngie-value');
             } else {
-                bindingUUID = $Bind(uuid, { id, model, field });
+                bindingUUID = $Bind(UUID, { id, model, field });
             }
 
 
             // TODO figure out how this is registered on the backend listeners
             // and how the front end replicates those listeners
-            attrs.ngieIid = bindingUUID || attrs.ngieIid || UUID;
         }
     };
 }
