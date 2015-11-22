@@ -9,28 +9,15 @@ import uuid from        'node-uuid';
 import { cyan } from    'chalk';
 import $Injector from   'angie-injector';
 
-const t = s => s.toString().replace(/\s{2,}/g, '');
-
 function $$ngieValueFactory($Log) {
     return {
         priority: 1,
         restrict: 'A',
-
-        // TODO this won't work because these props are shared across many
-        // directives - do we define the binding in the html and then process it
-        // with a uuid in here?
-        modelName: '',
-        fieldName: '',
-        model: 'model.field',
         link($scope, el, attrs) {
             const $Bind = $Injector.get('$Bind');
 
             // Value listeners are set up on the front end, for now, we just
             // implement an $$iid and REST the property
-
-            // TODO add unit $$iid
-            // TODO this needs to be better - how is this extensible for a user?
-            // TODO throw conflated element uuids on the front end
             // We deliberately do not drop the attribute
             const UUID = attrs.ngieIid = bindingUUID || attrs.ngieIid || uuid.v4();
             let bindingUUID;
@@ -38,6 +25,7 @@ function $$ngieValueFactory($Log) {
             // TODO IMPORTANT!! If this is not included all rows will be
             // returned
             let id,
+                filters,
                 model,
                 field;
 
@@ -46,6 +34,16 @@ function $$ngieValueFactory($Log) {
                 attrs.ngieModel.indexOf('.') > -1
             ) {
                 [ model, field ] = attrs.ngieModel.split('.');
+            }
+
+            if (typeof attrs.ngieModelFilters === 'string') {
+                try {
+                    filters = JSON.parse(attrs.ngieModelFilters);
+                } catch(e) {
+                    $Log.warn(
+                        `Invalid filter object passed to ${cyan('ngieValue')}`
+                    );
+                }
             }
 
             // These attributes take precedence over their compound equivalent
@@ -62,25 +60,22 @@ function $$ngieValueFactory($Log) {
                 id = +attrs.ngieModelId;
             }
 
-            if (!(field && model)) {
-                $Log.warn(t`
-                    Model Name or Field Name missing from ${cyan('ngieValue')},
+            if (!model) {
+                $Log.warn(`
+                    Model Name missing from ${cyan('ngieValue')},
                     falling back to default functionality
                 `);
                 attrs.value = attrs.ngieValue;
                 el.removeAttr('ngie-value');
             } else {
-                bindingUUID = $Bind(UUID, { id, model, field });
+                bindingUUID = $Bind(UUID, { id, filters, model, field });
             }
 
-
-            // TODO figure out how this is registered on the backend listeners
-            // and how the front end replicates those listeners
+            el.removeAttr('ngie-model');
+            el.removeAttr('ngie-model-id');
+            el.removeAttr('ngie-model-filters');
         }
     };
 }
 
 export default $$ngieValueFactory;
-
-// TODO we don't want to expose the model name, so we make the directive a
-// specialized directive
