@@ -14,16 +14,12 @@ function $$ngieValueFactory($Log) {
         priority: 1,
         restrict: 'A',
         link($scope, el, attrs) {
-            const $Bind = $Injector.get('$Bind');
 
             // Value listeners are set up on the front end, for now, we just
             // implement an $$iid and REST the property
             // We deliberately do not drop the attribute
-            const UUID = attrs.ngieIid = bindingUUID || attrs.ngieIid || uuid.v4();
-            let bindingUUID;
-
-            // TODO IMPORTANT!! If this is not included all rows will be
-            // returned
+            const $Bind = $Injector.get('$Bind'),
+                UUID = attrs.ngieIid = attrs.ngieIid || uuid.v4();
             let id,
                 filters,
                 model,
@@ -34,11 +30,13 @@ function $$ngieValueFactory($Log) {
                 attrs.ngieModel.indexOf('.') > -1
             ) {
                 [ model, field ] = attrs.ngieModel.split('.');
+                delete attrs.ngieModel;
             }
 
             if (typeof attrs.ngieModelFilters === 'string') {
                 try {
                     filters = JSON.parse(attrs.ngieModelFilters);
+                    delete attrs.ngieModelFilters;
                 } catch(e) {
                     $Log.warn(
                         `Invalid filter object passed to ${cyan('ngieValue')}`
@@ -49,15 +47,18 @@ function $$ngieValueFactory($Log) {
             // These attributes take precedence over their compound equivalent
             if (typeof attrs.ngieModelName === 'string') {
                 model = attrs.ngieModelName;
+                delete attrs.ngieModelName;
             }
 
             // TODO many fields
             if (typeof attrs.ngieFieldName === 'string') {
                 field = attrs.ngieFieldName;
+                delete attrs.ngieFieldName;
             }
 
             if (typeof attrs.ngieModelId === 'string') {
                 id = +attrs.ngieModelId;
+                delete attrs.ngieModelId;
             }
 
             if (!model) {
@@ -65,15 +66,17 @@ function $$ngieValueFactory($Log) {
                     Model Name missing from ${cyan('ngieValue')},
                     falling back to default functionality
                 `);
-                attrs.value = attrs.ngieValue;
-                el.removeAttr('ngie-value');
+                attrs.value = attrs.ngieValue || '';
             } else {
-                bindingUUID = $Bind(UUID, { id, filters, model, field });
+                $Bind(UUID, { id, filters, model, field });
             }
 
-            el.removeAttr('ngie-model');
-            el.removeAttr('ngie-model-id');
-            el.removeAttr('ngie-model-filters');
+            el.removeAttr('ngie-value')
+                .removeAttr('ngie-model')
+                .removeAttr('ngie-model-name')
+                .removeAttr('ngie-field-name')
+                .removeAttr('ngie-model-id')
+                .removeAttr('ngie-model-filters');
         }
     };
 }
