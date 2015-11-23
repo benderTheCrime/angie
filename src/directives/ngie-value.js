@@ -68,7 +68,7 @@ function $$ngieValueFactory($Log) {
                 `);
                 attrs.value = attrs.ngieValue || '';
             } else {
-                $Bind(UUID, { id, filters, model, field });
+                attrs.ngieIid = $Bind(UUID, { id, filters, model, field });
             }
 
             el.removeAttr('ngie-value')
