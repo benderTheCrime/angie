@@ -95,15 +95,18 @@ function $$createProject({ name, dir }) {
             'models'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkSub}/${v}`);
+            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, '');
         });
 
         // Create static folders
         [
+            'proto',
             'test',
             'static',
             'templates'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkDirFiles}${v}`);
+            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, '');
         });
     } catch(e) {
         throw new $$ProjectCreationError(e);
@@ -111,7 +114,6 @@ function $$createProject({ name, dir }) {
 
         // This is where we create our AngieFile, we can pick certain values with
         // which we can populate our config:
-
         // cacheStaticAssets
         let staticCache = false,
 
