@@ -13,7 +13,9 @@ import fs from                          'fs';
 import util from                        'util';
 import chalk, {
     bold,
-    green
+    green,
+    blue,
+    magenta
 } from                                  'chalk';
 import $LogProvider from                'angie-log';
 
@@ -21,7 +23,8 @@ import $LogProvider from                'angie-log';
 import { $StringUtil } from             '../util';
 
 const p = process,
-      breen = (v) => bold(green(v));
+      breen = v => bold(green(v)),
+      t = s => s.toString().replace(/\s{2,}/g, '');
 
 /**
  * @desc $$createProject is the function called when the CLI attempts to create
@@ -184,6 +187,19 @@ function $$createProject({ name, dir }) {
             );
 
             $LogProvider.info('Project successfully created');
+            console.log(bold(`
+                You're well on your way to creating a robust full stack
+                application! At this point, I recommend that you do the
+                following:\n
+                ${green('1.')}  Following the instructions to install
+                the ORM (and Protocol Buffers).\n
+                ${green('2.')}  Visit the quickstart documentation in
+                the "md" folder of this application.\n
+                ${green('3.')}  Look at some of the extensions you can
+                use in tandem with your Angie application.\n
+                ${green('4.')}  Use the ${blue('AngieFile.json')}
+                documentation to customize your application settings.
+            `));
             p.exit(0);
         });
     }
