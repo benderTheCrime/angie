@@ -21,7 +21,6 @@ import {
     $$server
 } from                              './Server';
 
-const t = s => s.toString().replace(/\s{2,}/g, '');
 let args = [];
 
 // Remove trivial arguments
@@ -44,23 +43,23 @@ if (argv.help || argv.h) {
         case 'server':
             $$server(args);
             break;
-        case 'watch':
-            $$watch(args);
-            break;
         case 's':
             $$server(args);
+            break;
+        case 'watch':
+            $$watch(args);
             break;
         case 'cluster':
             $$cluster();
             break;
+        case 'create':
+            handleCreationTask();
+            break;
+        case 'c':
+            handleCreationTask();
+            break;
         case 'createproject':
             $$createProject({ name: args[ 1 ], dir: args[ 2 ] });
-            break;
-        case 'syncdb':
-            require('angie-orm');
-            break;
-        case 'migrate':
-            require('angie-orm');
             break;
         case 'test':
             runTests();
@@ -71,6 +70,7 @@ if (argv.help || argv.h) {
         default:
             help();
     }
+    process.exit(0);
 }
 
 function runTests() {
@@ -88,6 +88,20 @@ function runTests() {
     });
 }
 
+function handleCreationTask() {
+    if (argv._.includes('project')) {
+        $$createProject({ name: args[ 1 ], dir: args[ 2 ] });
+    } else if (argv._.includes('model')) {
+        require('./Angie');
+        require('angie-orm');
+    } else {
+        $LogProvider.error(
+            "No create command component specified, please see the help " +
+            "commands for more options"
+        );
+    }
+}
+
 function help() {
     const GRAY = (...args) => console.log(gray.apply(null, args)),
         BOLD = (...args) => console.log(bold.apply(null, args));
@@ -101,7 +115,7 @@ function help() {
     BOLD('Commands:');
 
     console.log('angie server [-p=<port>] [--port=<port>] [--usessl]');
-    GRAY(t`
+    GRAY(String.raw`
         Start the Angie Webserver (shortcut with s). Default port
         is 3000. "usessl" forces the port to 443.
     `);
@@ -109,23 +123,31 @@ function help() {
     console.log(
         'angie watch [-p=<port>] [--port=<port>] [-d] [--devmode] [--usessl]'
     );
-    GRAY(t`
+    GRAY(String.raw`
         Starts the Angie Webserver as a watched process and watches the
         project directory. If started in "devmode," watch will target
         the Angie module "src" directory
     `);
 
     console.log('cluster [-p=<port>] [--port=<port>] [--usessl] [--norefork]');
-    GRAY(t`
+    GRAY(String.raw`
         Start the Angie Webserver as a cluster of forked webserver processes.
-        Unless \`--norefork\` option is passed, forks will respawn on exit
+        Unless "--norefork" option is passed, forks will respawn on exit
+    `);
+
+    console.log('angie create <component> <?name> [-n=<name>][--name=<name>]');
+    GRAY(String.raw`
+        Create a new Angie component in the current or component directory with
+        the specified name. Currently, the possibilities include the following:
+            - project
+            - model
     `);
 
     console.log('angie project [-n=<name>][--name=<name>] [--dir=<directory>]');
     console.log(
         'angie createproject [-n=<name>][--name=<name>] [--dir=<directory>]'
     );
-    GRAY(t`
+    GRAY(String.raw`
         Create a new Angie project with the specified name in the
         current directory.
     `);

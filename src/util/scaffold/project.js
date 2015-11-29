@@ -23,8 +23,7 @@ import $LogProvider from                'angie-log';
 import { $StringUtil } from             '../util';
 
 const p = process,
-      breen = v => bold(green(v)),
-      t = s => s.toString().replace(/\s{2,}/g, '');
+      breen = v => bold(green(v));
 
 /**
  * @desc $$createProject is the function called when the CLI attempts to create
@@ -95,7 +94,7 @@ function $$createProject({ name, dir }) {
             'models'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkSub}/${v}`);
-            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, '');
+            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, 'Keep this directory');
         });
 
         // Create static folders
