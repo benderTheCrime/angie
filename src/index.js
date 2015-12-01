@@ -70,7 +70,6 @@ if (argv.help || argv.h) {
         default:
             help();
     }
-    process.exit(0);
 }
 
 function runTests() {
@@ -140,7 +139,7 @@ function help() {
         Create a new Angie component in the current or component directory with
         the specified name. Currently, the possibilities include the following:
             - project
-            - model
+            - model [-d=<database name>] [--database=<database name]
     `);
 
     console.log('angie project [-n=<name>][--name=<name>] [--dir=<directory>]');
@@ -154,4 +153,5 @@ function help() {
 
     console.log('angie test');
     GRAY('Runs the Angie test suite and prints the results in the console');
+    process.exit(0);
 }

@@ -198,7 +198,7 @@ function $$createProject({ name, dir }) {
                 the "md" folder of this application.\n
                 ${green('3.')}  Look at some of the extensions you can
                 use in tandem with your Angie application.\n
-                ${green('4.')}  Use the ${blue('AngieFile.json')}
+                ${green('4.')}  Use the ${cyan('AngieFile.json')}
                 documentation to customize your application settings.
             `));
             p.exit(0);

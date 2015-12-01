@@ -26,7 +26,10 @@ import $$ngieIgnoreFactory from                 './directives/ngie-ignore';
 import $$ngieRepeatFactory from                 './directives/ngie-repeat';
 import $$ngieIfFactory from                     './directives/ngie-if';
 import $$ngieValueFactory from                  './directives/ngie-value';
-import $Util, { $StringUtil } from              './util/util';
+import $Util, {
+    $StringUtil,
+    $FileUtil
+} from              './util/util';
 
 const CWD = process.cwd(),
     $$require = v => {
@@ -569,6 +572,12 @@ if (!app) {
         '$https', $Resource
     ).factory(
         '$resourceLoader', $resourceLoader
+    ).factory(
+        '$Util', $Util
+    ).factory(
+        '$StringUtil', $StringUtil
+    ).factory(
+        '$FileUtil', $FileUtil
     );
 
     // Services
