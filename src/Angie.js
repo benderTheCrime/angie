@@ -428,6 +428,7 @@ class Angie {
                         }
                     }
                 }).catch(function(e) {
+                    console.log(e);
                     if (e.code !== 'ENOENT') {
                         $LogProvider.error(e);
                     }
