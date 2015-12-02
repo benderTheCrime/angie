@@ -11,12 +11,12 @@
  */
 
 // System Modules
-import uuid from            'node-uuid';
-import { cyan } from        'chalk';
-import $Injector from       'angie-injector';
+import uuid from                'node-uuid';
+import { cyan } from            'chalk';
+import $Injector from           'angie-injector';
 
 // Angie Modules
-import { default as link }
+import { default as link } from     './ngie-value';
 
 export default function($Log) {
     return {
@@ -28,7 +28,7 @@ export default function($Log) {
                 return;
             }
 
-
+            // TODO call link
         }
     };
 }

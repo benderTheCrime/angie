@@ -67,6 +67,11 @@ $Util = util._extend($Util, util);
  */
 class $StringUtil {
 
+    static capitalize(str) {
+        return (str[ 0 ] ? str[ 0 ].toUpperCase() : '') +
+            (str.length > 1 ? str.slice(1) : '');
+    }
+
     /**
      * @desc Util helper to replace leading slashes
      * @since 0.2.3
@@ -133,6 +138,10 @@ class $StringUtil {
      */
     static toDash(str) {
         return this.toFormat(str, '-');
+    }
+
+    static toClassCase(str) {
+        return this.capitalize(this.toCamel(str));
     }
 
     /**
