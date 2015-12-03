@@ -224,6 +224,9 @@ class Angie {
     view(name, obj) {
         return this.directive.call(this, name, obj);
     }
+    component(name, obj) {
+        return this.directive.call(this, name, obj);
+    }
     config(fn) {
         if (typeof fn === 'function') {
             this.configs.push({
