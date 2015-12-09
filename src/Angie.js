@@ -26,10 +26,7 @@ import $$ngieIgnoreFactory from                 './directives/ngie-ignore';
 import $$ngieRepeatFactory from                 './directives/ngie-repeat';
 import $$ngieIfFactory from                     './directives/ngie-if';
 import $$ngieValueFactory from                  './directives/ngie-value';
-import $Util, {
-    $StringUtil,
-    $FileUtil
-} from              './util/util';
+import * as $Util from                         './util/util';
 
 const CWD = process.cwd(),
     $$require = v => {
@@ -55,7 +52,6 @@ const CWD = process.cwd(),
  *
  * @since 0.0.1
  * @access public
- * @extends {$Util}
  * @example Angie.noop() // = undefined
  */
 class Angie {
@@ -320,7 +316,7 @@ class Angie {
         // Add dependencies
         this.$dependencies = this.$dependencies.concat(dependencies);
         dependencies.forEach(function(v) {
-            let dependency = $StringUtil.removeTrailingLeadingSlashes(v),
+            let dependency = $Util.string.removeTrailingLeadingSlashes(v),
 
                 // This will load all of the modules, overwriting a module name
                 // will replace it
@@ -417,7 +413,7 @@ class Angie {
                                             typeof service === 'object' ? 'service' :
                                                 'constant'
                                     ](
-                                        name || $StringUtil.toCamel(dependency),
+                                        name || $Util.string.toCamel(dependency),
                                         service
                                     );
                                 }
@@ -431,7 +427,6 @@ class Angie {
                         }
                     }
                 }).catch(function(e) {
-                    console.log(e);
                     if (e.code !== 'ENOENT') {
                         $LogProvider.error(e);
                     }
@@ -452,7 +447,7 @@ class Angie {
     $$bootstrap(dir = CWD) {
         let me = this,
             src = typeof config.projectRoot === 'string' ?
-                $StringUtil.removeTrailingLeadingSlashes(config.projectRoot) :
+                $Util.string.removeTrailingLeadingSlashes(config.projectRoot) :
                 'src';
 
         return new Promise(function(resolve) {
@@ -577,11 +572,9 @@ if (!app) {
     ).factory(
         '$resourceLoader', $resourceLoader
     ).factory(
-        '$Util', $Util
+        '$StringUtil', $Util.string
     ).factory(
-        '$StringUtil', $StringUtil
-    ).factory(
-        '$FileUtil', $FileUtil
+        '$FileUtil', $Util.file
     );
 
     // Services
@@ -593,6 +586,8 @@ if (!app) {
         '$MimeType', $MimeType
     ).service(
         '$Exceptions', $Exceptions
+    ).service(
+        '$Util', $Util
     );
 
     // Directives
@@ -604,7 +599,7 @@ if (!app) {
         'ngieIf', $$ngieIfFactory
     ).directive(
         'ngieValue', $$ngieValueFactory
-    )
+    );
 }
 
 export default app;

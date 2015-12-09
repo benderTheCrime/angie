@@ -33,10 +33,9 @@ process.argv.forEach(function(v) {
 if (argv.help || argv.h) {
     help();
 } else {
-    let main = (args[0] || argv._).toLowerCase();
 
     // Route the CLI request to a specific command
-    switch (main) {
+    switch ((args[ 0 ] || argv._ || '').toLowerCase()) {
         case 'help':
             help();
             break;
@@ -90,7 +89,7 @@ function runTests() {
 function handleCreationTask() {
     if (argv._.includes('project')) {
         $$createProject({ name: args[ 1 ], dir: args[ 2 ] });
-    } else if (argv._.includes('model')) {
+    } else if (argv._.includes('model') || argv._.includes('migration')) {
         require('./Angie');
         require('angie-orm');
     } else {

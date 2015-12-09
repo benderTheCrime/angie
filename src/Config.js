@@ -5,11 +5,11 @@
  */
 
 // System Modules
-import fs from                          'fs';
+import fs from                              'fs';
 
 // Angie Modules
-import { $$InvalidConfigError } from    './services/exceptions';
-import $Util, { $FileUtil } from        './util/util';
+import { $$InvalidConfigError } from        './services/exceptions';
+import * as $Util from                      './util/util';
 
 const CWD = process.cwd();
 let config = {};
@@ -54,7 +54,7 @@ class Config {
         for (let i = acceptedFileNames.length - 1; i >= 0; --i) {
 
             // Check to see if we can find the absolute path to our configs
-            file = $FileUtil.find(process.cwd(), acceptedFileNames[ i ]);
+            file = $Util.file.find(CWD, acceptedFileNames[ i ]);
             if (file) {
 
                 // Get the file extension, so we know how to parse the configs

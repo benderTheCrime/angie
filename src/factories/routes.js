@@ -5,10 +5,11 @@
  */
 
 // System Modules
+import util from                    'util';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
-import $Util, { $StringUtil } from  '../util/util';
+import { string } from              '../util/util';
 
 const IGNORE_KEYS = [
     'Controller',
@@ -77,7 +78,7 @@ class $Routes {
             // We have to deliberately strip off the flags
 
             // Set a RegExp route
-            routes.regExp[ path ] = $Util._extend(obj, { flags: path.flags });
+            routes.regExp[ path ] = util._extend(obj, { flags: path.flags });
         } else {
 
             // Set a string route
@@ -108,7 +109,7 @@ class $Routes {
                     // RegExp
                     childPath = this.$$stringsToRegExp(
                         path,
-                        $StringUtil.removeTrailingLeadingSlashes(key)
+                        string.removeTrailingLeadingSlashes(key)
                     );
                 } else {
 
@@ -194,7 +195,7 @@ class $Routes {
      */
     static $$stringsToRegExp() {
         const args = Array.prototype.slice.call(arguments).map(
-                v => $StringUtil.removeTrailingLeadingSlashes(v.toString())
+                v => string.removeTrailingLeadingSlashes(v.toString())
             ),
             flags = args.slice(-1)[ 0 ],
 
@@ -225,7 +226,7 @@ class $Routes {
         if (pattern && path) {
 
             // Strip slashes
-            $StringUtil.removeTrailingLeadingSlashes(
+            string.removeTrailingLeadingSlashes(
                 path.replace(pattern, '$1|$2|$3|$4|$5')
             ).split('|').forEach(
 

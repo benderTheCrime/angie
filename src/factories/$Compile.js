@@ -13,7 +13,7 @@ import $LogProvider from            'angie-log';
 // Angie Modules
 import app from                     '../Angie';
 import { $$templateLoader } from    './template-cache';
-import $Util, { $StringUtil } from  '../util/util';
+import * as $Util from              '../util/util';
 
 /**
  * @desc $compile is provided to any service, Controller, directive, Model, or

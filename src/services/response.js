@@ -5,7 +5,6 @@
  */
 
 // System Modules
-import util from                                'util';
 import uuid from                                'node-uuid';
 import { blue } from                            'chalk';
 import $Injector, { $injectionBinder } from     'angie-injector';
@@ -30,9 +29,6 @@ import RedirectResponse from                    './responses/redirect-response';
 import UnknownResponse from                     './responses/unknown-response';
 import ErrorResponse from                       './responses/error-response';
 import $CustomResponse from                     './responses/custom-response';
-import $Util, { $FileUtil } from                '../util/util';
-
-const $Scopes = new $CacheFactory('$scopes');
 
 /**
  * @desc The $Response class controls all of the content contained in the

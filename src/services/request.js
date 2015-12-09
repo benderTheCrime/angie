@@ -6,6 +6,7 @@
 
 // System Modules
 import url from                     'url';
+import util from                    'util';
 import { Form } from                'multiparty';
 import uuid from                    'node-uuid';
 import $Injector from               'angie-injector';
@@ -15,7 +16,7 @@ import $Routes from                 '../factories/routes';
 import $CacheFactory from           '../factories/$CacheFactory';
 import * as $Responses from         './response';
 import $CookieFactory from          './cookie';
-import $Util, { $StringUtil } from  '../util/util';
+import { string } from              '../util/util';
 
 /**
  * @desc The $Request class processes all of the incoming Angie requests. It
@@ -31,7 +32,7 @@ class $Request {
 
         this.$$iid = uuid.v4();
 
-        $Util._extend(this, request);
+        util._extend(this, request);
         this.$$request = request;
 
         // Define URI
@@ -76,7 +77,7 @@ class $Request {
 
             // Slice characters we do not need to instantiate a new RegExp
             let regExpRoute =
-                $StringUtil.removeTrailingLeadingSlashes(regExpRoutes[ i ]),
+                string.removeTrailingLeadingSlashes(regExpRoutes[ i ]),
 
                 // Cast the string key of the routes.regExp object as a
                 // RegExp object and add any matching flags
@@ -89,7 +90,7 @@ class $Request {
 
                 // Hooray, we've set our route, now we need to do some additional
                 // param parsing
-                $Util._extend(
+                util._extend(
                     this.query,
                     $Routes.$$parseURLParams(pattern, this.path)
                 );

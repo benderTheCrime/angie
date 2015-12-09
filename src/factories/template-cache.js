@@ -124,11 +124,6 @@ function $resourceLoader(files = [], scoping, loadStyle = 'src') {
 
     for (let resource of files) {
 
-        // TODO Return if not a js file
-        // if (resource.split('.').pop() !== 'js') {
-        //     return;
-        // }
-
         // TODO put this into a template?
         // TODO you can use $Util.format
         let asset = '<script type="text/javascript" async defer';
