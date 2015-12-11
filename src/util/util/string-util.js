@@ -13,7 +13,7 @@
 class StringUtil {
 
     static capitalize(str) {
-        return (str[ 0 ] ? str[ 0 ].toUpperCase() : '') +
+        return this.isString(str) && (str[ 0 ] ? str[ 0 ].toUpperCase() : '') +
             (str.length > 1 ? str.slice(1) : '');
     }
 
@@ -25,7 +25,7 @@ class StringUtil {
      * @example 'test' === $StringUtil.removeTrailingLeadingSlashes('/test'); // true
      */
     static removeLeadingSlashes(str = '') {
-        return str.replace(/(^(\/))/g, '');
+        return this.isString(str) && str.replace(/(^(\/))/g, '');
     }
 
     /**
@@ -36,7 +36,7 @@ class StringUtil {
      * @example 'test' === $StringUtil.removeTrailingLeadingSlashes('test/'); // true
      */
     static removeTrailingSlashes(str = '') {
-        return str.replace(/((\/)$)/g, '');
+        return this.isString(str) && str.replace(/((\/)$)/g, '');
     }
 
     /**
@@ -47,7 +47,7 @@ class StringUtil {
      * @example 'test' === $StringUtil.removeTrailingLeadingSlashes('/test/'); // true
      */
     static removeTrailingLeadingSlashes(str = '') {
-        return str.replace(/(^(\/)|(\/)$)/g, '');
+        return this.isString(str) && str.replace(/(^(\/)|(\/)$)/g, '');
     }
 
     /**
@@ -58,7 +58,7 @@ class StringUtil {
      * @example $StringUtil.toCamel('test-test'); // = 'testTest'
      */
     static toCamel(str) {
-        return str.toLowerCase().replace(
+        return this.isString(str) && str.toLowerCase().replace(
             /[-_][A-Za-z]/g, m => m.toUpperCase().replace(/[-_]/g, '')
         );
     }
@@ -71,7 +71,7 @@ class StringUtil {
      * @example $StringUtil.toCamel('testTest'); // = 'test_test'
      */
     static toUnderscore(str) {
-        return this.toFormat(str, '_');
+        return this.isString(str) && this.toFormat(str, '_');
     }
 
     /**
@@ -82,11 +82,11 @@ class StringUtil {
      * @example $StringUtil.toDash('testTest'); // = 'test-test'
      */
     static toDash(str) {
-        return this.toFormat(str, '-');
+        return this.isString(str) && this.toFormat(str, '-');
     }
 
     static toClassCase(str) {
-        return this.capitalize(this.toCamel(str));
+        return this.isString(str) && this.capitalize(this.toCamel(str));
     }
 
     /**
@@ -100,7 +100,12 @@ class StringUtil {
      * @example $StringUtil.toFormat('testTest', '_'); // = 'test_test'
      */
     static toFormat(str, del) {
-        return str.replace(/([A-Z]+)/g, `${del}$1`).toLowerCase();
+        return this.isString(str) && str.replace(/([A-Z]+)/g, `${del}$1`)
+            .toLowerCase();
+    }
+
+    static isString(str) {
+        return typeof str === 'string';
     }
 }
 
