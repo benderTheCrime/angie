@@ -56,7 +56,7 @@ let webserver,
  */
 function $$watch(args = []) {
     const PORT = $$port(args),
-        ACTION = args[0] || 'watch',
+        ACTION = args[ 0 ] || 'watch',
         WATCH_DIR = argv.devmode || argv.d ? __dirname : process.cwd();
 
     // Check to see whether or not the config specifies the app as `development`

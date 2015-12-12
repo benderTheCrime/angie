@@ -21,32 +21,26 @@ import {
     $$server
 } from                              './Server';
 
-let args = [];
-
-// Remove trivial arguments
-process.argv.forEach(function(v) {
-    if (!v.match(/((babel-)?node|iojs|index|angie|--?)/)) {
-        args.push(v);
-    }
-});
+const ERR = c => `No valid ${c} command component specified, please see the ` +
+        "help commands for more options";
 
 if (argv.help || argv.h) {
     help();
 } else {
 
     // Route the CLI request to a specific command
-    switch ((args[ 0 ] || argv._ || '').toLowerCase()) {
+    switch ((argv._[ 0 ] || '').toLowerCase()) {
         case 'help':
             help();
             break;
         case 'server':
-            $$server(args);
+            $$server(argv._);
             break;
         case 's':
-            $$server(args);
+            $$server(argv._);
             break;
         case 'watch':
-            $$watch(args);
+            $$watch(argv._);
             break;
         case 'cluster':
             $$cluster();
@@ -54,17 +48,23 @@ if (argv.help || argv.h) {
         case 'create':
             handleCreationTask();
             break;
+        case 'createproject':
+            $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
+            break;
         case 'c':
             handleCreationTask();
             break;
-        case 'createproject':
-            $$createProject({ name: args[ 1 ], dir: args[ 2 ] });
+        case 'run':
+            handleRunTask();
+            break;
+        case 'r':
+            handleRunTask();
             break;
         case 'test':
             runTests();
             break;
         case 'shell':
-            $$watch(args);
+            $$watch(argv._);
             break;
         default:
             help();
@@ -88,15 +88,21 @@ function runTests() {
 
 function handleCreationTask() {
     if (argv._.includes('project')) {
-        $$createProject({ name: args[ 1 ], dir: args[ 2 ] });
+        $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
     } else if (argv._.includes('model') || argv._.includes('migration')) {
         require('./Angie');
         require('angie-orm');
     } else {
-        $LogProvider.error(
-            "No create command component specified, please see the help " +
-            "commands for more options"
-        );
+        $LogProvider.error(ERR('create'));
+    }
+}
+
+function handleRunTask() {
+    if (argv._.includes('migrations') || argv._.includes('migration')) {
+        require('./Angie');
+        require('angie-orm');
+    } else {
+        $LogProvider.error(ERR('run'));
     }
 }
 
@@ -104,6 +110,7 @@ function help() {
     const GRAY = (...args) => console.log(gray.apply(null, args)),
         BOLD = (...args) => console.log(bold.apply(null, args));
 
+    console.log('\r');
     BOLD('Angie');
     console.log('A Module-Based NodeJS Web Application Framework in ES6');
     console.log('\r');
@@ -127,13 +134,15 @@ function help() {
         the Angie module "src" directory
     `);
 
-    console.log('cluster [-p=<port>] [--port=<port>] [--usessl] [--norefork]');
+    console.log(
+        'angie cluster [-p=<port>] [--port=<port>] [--usessl] [--norefork]'
+    );
     GRAY(String.raw`
         Start the Angie Webserver as a cluster of forked webserver processes.
         Unless "--norefork" option is passed, forks will respawn on exit
     `);
 
-    console.log('angie create <component> <?name> [-n=<name>][--name=<name>]');
+    console.log('angie create <component> <?name> [-n=<name>] [--name=<name>]');
     GRAY(String.raw`
         Create a new Angie component in the current or component directory with
         the specified name. Currently, the possibilities include the following:
@@ -141,16 +150,28 @@ function help() {
             - model [-d=<database name>] [--database=<database name]
     `);
 
-    console.log('angie project [-n=<name>][--name=<name>] [--dir=<directory>]');
     console.log(
-        'angie createproject [-n=<name>][--name=<name>] [--dir=<directory>]'
+        'angie project [-n=<name>] [--name=<name>] [--dir=<directory>]'
+    );
+    console.log(
+        'angie createproject [-n=<name>] [--name=<name>] [--dir=<directory>]'
     );
     GRAY(String.raw`
         Create a new Angie project with the specified name in the
         current directory.
     `);
 
+    console.log('angie run <component> <?name> [-n=<name>] [--name=<name>]');
+    GRAY(String.raw`
+        Runs an Angie component in the current or component directory with
+        the specified name. Currently, the possibilities include the following:
+            - migrations
+            - migration [-n=<name>] [--name=<name>]
+    `);
+
     console.log('angie test');
     GRAY('Runs the Angie test suite and prints the results in the console');
+    console.log('\r');
+
     process.exit(0);
 }
