@@ -20,9 +20,7 @@ import {
     $$cluster,
     $$server
 } from                              './Server';
-
-const ERR = c => `No valid ${c} command component specified, please see the ` +
-        "help commands for more options";
+import $$CommandLineError from      './services/exceptions/command-line-error'
 
 if (argv.help || argv.h) {
     help();
@@ -89,11 +87,15 @@ function runTests() {
 function handleCreationTask() {
     if (argv._.includes('project')) {
         $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
-    } else if (argv._.includes('model') || argv._.includes('migration')) {
+    } else if (
+        argv._.includes('model') ||
+        argv._.includes('migration') ||
+        argv._.includes('key')
+    ) {
         require('./Angie');
         require('angie-orm');
     } else {
-        $LogProvider.error(ERR('create'));
+        throw new $$CommandLineError(1);
     }
 }
 
@@ -102,7 +104,7 @@ function handleRunTask() {
         require('./Angie');
         require('angie-orm');
     } else {
-        $LogProvider.error(ERR('run'));
+        throw new $$CommandLineError(2);
     }
 }
 
@@ -143,11 +145,14 @@ function help() {
     `);
 
     console.log('angie create <component> <?name> [-n=<name>] [--name=<name>]');
+    console.log('angie c <component> <?name> [-n=<name>] [--name=<name>]');
     GRAY(String.raw`
         Create a new Angie component in the current or component directory with
         the specified name. Currently, the possibilities include the following:
             - project
             - model [-d=<database name>] [--database=<database name]
+            - key [-d=<database name>] [--database=<database name>]
+                [-m=<model name>] [--model=<model name>]
     `);
 
     console.log(
@@ -162,6 +167,7 @@ function help() {
     `);
 
     console.log('angie run <component> <?name> [-n=<name>] [--name=<name>]');
+    console.log('angie r <component> <?name> [-n=<name>] [--name=<name>]');
     GRAY(String.raw`
         Runs an Angie component in the current or component directory with
         the specified name. Currently, the possibilities include the following:

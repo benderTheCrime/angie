@@ -2,8 +2,7 @@ import { default as register } from     'babel-core/register';
 register({
     only: [
         '**/node_modules/angie*/**',
-        '**/src/**',
-        '**/test/**'
+        '**/{src,migrations,test}/**'
     ],
     stage: 0
 });
