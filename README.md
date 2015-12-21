@@ -57,9 +57,6 @@ Templates can be pre-rendered by Controllers with Angie! The template compiler u
 #### Flexible ORM
 Angie makes creating &amp; maintaining data models across many different databases easy. Add your configuration options to a configuration file, sync your database and perform CRUDdy operations with ease. Support for more databases is being added all the time. For more information on the ORM, please visit the [Angie ORM Repository](https://github.com/angie-framework/angie-orm "angie-orm")
 
-<!-- #### "6-way" databinding -->
-<!-- #### Desktop Application Manager -->
-
 ### Documentation
 Angie documentation can be found [here](https://doc.esdoc.org/github.com/angie-framework/angie/ "documentation").
 
