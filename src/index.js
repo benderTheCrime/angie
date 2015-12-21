@@ -66,7 +66,7 @@ if (argv.help || argv.h) {
             runTests();
             break;
         case 'shell':
-            watch();
+            $$watch(args);
             break;
         default:
             help();
