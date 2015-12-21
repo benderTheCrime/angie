@@ -13,6 +13,8 @@ A Module-Based NodeJS Web Application Framework in ES6
 [![NPM](https://nodei.co/npm/angie.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/angie/)
 
 ### Usage
+
+[![Join the chat at https://gitter.im/benderTheCrime/angie](https://badges.gitter.im/benderTheCrime/angie.svg)](https://gitter.im/benderTheCrime/angie?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ```bash
 npm i -g angie
 angie help
