@@ -58,3 +58,5 @@ class RedirectResponse extends BaseResponse {
         this.response.end();
     }
 }
+
+export default RedirectResponse;

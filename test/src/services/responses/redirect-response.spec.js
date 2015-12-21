@@ -8,7 +8,8 @@ import $Injector from                   'angie-injector';
 // Angie Modules
 import { config } from                  '../../../../src/Config';
 import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import RedirectResponse from               '../../../../src/services/responses/redirect-response';
+import BaseResponse from                '../../../../src/services/responses/base-response';
+import RedirectResponse from            '../../../../src/services/responses/redirect-response';
 
 describe('RedirectResponse', function() {
     const noop = () => false;

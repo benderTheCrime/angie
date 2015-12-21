@@ -4,6 +4,9 @@
  * @date 11/6/2015
  */
 
+// System Modules
+import $Injector from                   'angie-injector';
+
 // Angie Modules
 import BaseResponse from    './base-response';
 

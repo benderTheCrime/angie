@@ -8,7 +8,8 @@ import $Injector from                   'angie-injector';
 // Angie Modules
 import { config } from                  '../../../../src/Config';
 import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import ErrorResponse from             '../../../../src/services/responses/error-response';
+import BaseResponse from                '../../../../src/services/responses/base-response';
+import ErrorResponse from               '../../../../src/services/responses/error-response';
 
 describe('ErrorResponse', function() {
     const noop = () => false;

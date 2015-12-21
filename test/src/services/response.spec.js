@@ -8,7 +8,7 @@ import $Injector from                   'angie-injector';
 // Angie Modules
 import { config } from                  '../../../src/Config';
 import * as $TemplateCache from         '../../../src/factories/template-cache';
-import $Response from                   '../../../src/services/$Response';
+import $Response from                   '../../../src/services/response';
 
 describe('$Response', function() {
     it('constructor', function() {

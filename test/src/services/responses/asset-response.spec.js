@@ -9,6 +9,7 @@ import $Injector from                   'angie-injector';
 import { config } from                  '../../../../src/Config';
 import * as $TemplateCache from         '../../../../src/factories/template-cache';
 import { $FileUtil } from               '../../../../src/util/util';
+import BaseResponse from                '../../../../src/services/responses/base-response';
 import AssetResponse from               '../../../../src/services/responses/asset-response';
 
 describe('AssetResponse', function() {

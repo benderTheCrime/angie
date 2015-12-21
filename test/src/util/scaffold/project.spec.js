@@ -13,7 +13,7 @@ import $LogProvider from                'angie-log';
 // Angie Modules
 const TEST_ENV =                        global.TEST_ENV || 'src',
     project =                           require(`../../../../${TEST_ENV}/util/scaffold/project`),
-    $$ProjectCreationError =            require(`../../../../${TEST_ENV}/services/exceptions`).$$ProjectCreationError,
+    $$ProjectCreationError =            require(`../../../../${TEST_ENV}/services/exceptions/project-creation-error`),
     p = process;
 
 describe('$$createProject', function() {
@@ -58,14 +58,50 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -78,7 +114,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -95,14 +131,50 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -115,7 +187,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -132,14 +204,50 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -152,7 +260,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -174,18 +282,53 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
-        assert(promptly.prompt.called);
         expect(util.format.calls[0].args.slice(0, 4)).to.deep.eq([
             fs.readFileSync(
                 '../../../../src/templates/json/AngieFile.template.json'
@@ -195,7 +338,7 @@ describe('$$createProject', function() {
             false
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(false);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -210,14 +353,50 @@ describe('$$createProject', function() {
         });
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('src');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('src/directives');
-        expect(fs.mkdirSync.calls[7].args[0]).to.eq('test');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('static');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[7].args[0]).to.eq('src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test');
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -231,7 +410,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -248,14 +427,50 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -268,7 +483,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -285,14 +500,50 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[0].args[0]).to.eq('test');
         expect(fs.mkdirSync.calls[1].args[0]).to.eq('test/src');
         expect(fs.mkdirSync.calls[2].args[0]).to.eq('test/src/constants');
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq('test/src/configs');
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq('test/src/services');
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq('test/src/factories');
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq('test/src/controllers');
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq('test/src/directives');
-        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/test');
-        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/static');
-        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq('test/src/models');
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq('test/proto');
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq('test/test');
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq('test/test/src');
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq('test/static');
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq('test/templates');
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -305,7 +556,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             'test/AngieFile.json', 'test', 'utf8'
         ]);
         expect(
@@ -324,30 +575,60 @@ describe('$$createProject', function() {
         expect(fs.mkdirSync.calls[2].args[0]).to.eq(
             `${CWD}/test/src/constants`
         );
+        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+            `${CWD}/test/src/constants/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[3].args[0]).to.eq(
             `${CWD}/test/src/configs`
         );
+        expect(fs.writeFileSync.calls[1].args).to.deep.eq([
+            `${CWD}/test/src/configs/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[4].args[0]).to.eq(
             `${CWD}/test/src/services`
         );
+        expect(fs.writeFileSync.calls[2].args).to.deep.eq([
+            `${CWD}/test/src/services/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[5].args[0]).to.eq(
             `${CWD}/test/src/factories`
         );
+        expect(fs.writeFileSync.calls[3].args).to.deep.eq([
+            `${CWD}/test/src/factories/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[6].args[0]).to.eq(
             `${CWD}/test/src/controllers`
         );
+        expect(fs.writeFileSync.calls[4].args).to.deep.eq([
+            `${CWD}/test/src/controllers/.keep`, 'Keep this directory'
+        ]);
         expect(fs.mkdirSync.calls[7].args[0]).to.eq(
             `${CWD}/test/src/directives`
         );
-        expect(
-            fs.mkdirSync.calls[8].args[0]
-        ).to.eq(`${CWD}/test/test`);
-        expect(
-            fs.mkdirSync.calls[9].args[0]
-        ).to.eq(`${CWD}/test/static`);
-        expect(
-            fs.mkdirSync.calls[10].args[0]
-        ).to.eq(`${CWD}/test/templates`);
+        expect(fs.writeFileSync.calls[5].args).to.deep.eq([
+            `${CWD}/test/src/directives/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[8].args[0]).to.eq(`${CWD}/test/src/models`);
+        expect(fs.writeFileSync.calls[6].args).to.deep.eq([
+            `${CWD}/test/src/models/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[9].args[0]).to.eq(`${CWD}/test/proto`);
+        expect(fs.writeFileSync.calls[7].args).to.deep.eq([
+            `${CWD}/test/proto/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[10].args[0]).to.eq(`${CWD}/test/test`);
+        expect(fs.mkdirSync.calls[11].args[0]).to.eq(`${CWD}/test/test/src`);
+        expect(fs.writeFileSync.calls[8].args).to.deep.eq([
+            `${CWD}/test/test/src/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[12].args[0]).to.eq(`${CWD}/test/static`);
+        expect(fs.writeFileSync.calls[9].args).to.deep.eq([
+            `${CWD}/test/static/.keep`, 'Keep this directory'
+        ]);
+        expect(fs.mkdirSync.calls[13].args[0]).to.eq(`${CWD}/test/templates`);
+        expect(fs.writeFileSync.calls[10].args).to.deep.eq([
+            `${CWD}/test/templates/.keep`, 'Keep this directory'
+        ]);
         expect(promptly.confirm.calls[0].args[0]).to.eq(
             `${bold(green('Do you want Angie to cache static assets?'))} :`
         );
@@ -361,7 +642,7 @@ describe('$$createProject', function() {
             true
         ]);
         expect(util.format.calls[0].args[4].val).to.eq(true);
-        expect(fs.writeFileSync.calls[0].args).to.deep.eq([
+        expect(fs.writeFileSync.calls[11].args).to.deep.eq([
             `${CWD}/test/AngieFile.json`, 'test', 'utf8'
         ]);
         expect(

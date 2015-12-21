@@ -15,8 +15,8 @@ import $LogProvider from            'angie-log';
 import app from                     '../../src/Angie';
 import * as Server from             '../../src/Server';
 import { config } from              '../../src/Config';
-import $Request from                '../../src/services/$Request';
-import * as $Responses from         '../../src/services/$Response';
+import $Request from                '../../src/services/request';
+import * as $Responses from         '../../src/services/response';
 
 describe('Server', function() {
     const noop = () => false;

@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.0] - 2015-12-21
+### Added/Changed/Fixed
+- Created request/response scoping and encapsulation so that request and response data may not be hijacked by any other session
+- Aliased "directive" as "component"
+- Simplified the way in which directives and Controllers return after being passed a Promise
+- Refactored `$Exceptions` and `$Util`
+- Improved and simplified CLI options
+
 ### [0.4.7] - 2015-12-20
 #### Fixed
 - Fixed an issue with the `angie shell` command preventing proper use of that CLI option

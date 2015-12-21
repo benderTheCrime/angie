@@ -11,19 +11,14 @@ import { argv } from                    'yargs';
 import { default as promptly } from     'promptly';
 import fs from                          'fs';
 import util from                        'util';
-import chalk, {
-    bold,
-    green,
-    blue,
-    magenta
-} from                                  'chalk';
+import chalk from                       'chalk';
 import $LogProvider from                'angie-log';
 
 // Angie Modules
 import { $StringUtil } from             '../util';
+import { $$ProjectCreationError } from  '../../services/exceptions/project-creation-error';
 
-const p = process,
-      breen = v => bold(green(v));
+const breen = v => chalk.bold(chalk.green(v));
 
 /**
  * @desc $$createProject is the function called when the CLI attempts to create
@@ -72,7 +67,7 @@ function $$createProject({ name, dir }) {
     }
 
     // Make sure that we're creating the project in the right spot
-    let mkDir = dir ? (dir === '.' ? '' : dir) : `${p.cwd()}/${name}`,
+    let mkDir = dir ? (dir === '.' ? '' : dir) : `${process.cwd()}/${name}`,
         mkDirFiles = mkDir ? `${mkDir}/` : '',
         mkSub = `${mkDirFiles}src`.replace(/\/{2}/g, '/');
     try {
@@ -94,25 +89,30 @@ function $$createProject({ name, dir }) {
             'models'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkSub}/${v}`);
-            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, 'Keep this directory');
+            fs.writeFileSync(`${mkSub}/${v}/.keep`, 'Keep this directory');
         });
 
         // Create static folders
         [
             'proto',
             'test',
+            'test/src',
             'static',
             'templates'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkDirFiles}${v}`);
-            fs.writeFileSync(`${mkDirFiles}${v}/.keep`, '');
+            if (v !== 'test') {
+                fs.writeFileSync(
+                    `${mkDirFiles}${v}/.keep`, 'Keep this directory'
+                );
+            }
         });
     } catch(e) {
         throw new $$ProjectCreationError(e);
     } finally {
 
-        // This is where we create our AngieFile, we can pick certain values with
-        // which we can populate our config:
+        // This is where we create our AngieFile, we can pick certain values
+        // with which we can populate our config:
         // cacheStaticAssets
         let staticCache = false,
 
@@ -140,7 +140,7 @@ function $$createProject({ name, dir }) {
                     `${breen(
                         'What would you like to call the "default" ' +
                         'loaded script file ' +
-                        `(${bold(chalk.white('default is'))} ` +
+                        `(${chalk.bold(chalk.white('default is'))} ` +
                         `${chalk.cyan('application.js')})?`
                      )} :`,
                      {
@@ -148,7 +148,7 @@ function $$createProject({ name, dir }) {
                          validator: function(v) {
                              if (v && v.indexOf('.js') === -1) {
                                  throw new Error(
-                                     bold(chalk.red(
+                                     chalk.bold(chalk.red(
                                          'Input must be a valid ".js" file.'
                                      ))
                                  );
@@ -188,28 +188,21 @@ function $$createProject({ name, dir }) {
             );
 
             $LogProvider.info('Project successfully created');
-            console.log(bold(`
+            console.log(chalk.bold(`
                 You're well on your way to creating a robust full stack
                 application! At this point, I recommend that you do the
                 following:\n
-                ${green('1.')}  Following the instructions to install
+                ${chalk.green('1.')}  Following the instructions to install
                 the ORM (and Protocol Buffers).\n
-                ${green('2.')}  Visit the quickstart documentation in
+                ${chalk.green('2.')}  Visit the quickstart documentation in
                 the "md" folder of this application.\n
-                ${green('3.')}  Look at some of the extensions you can
+                ${chalk.green('3.')}  Look at some of the extensions you can
                 use in tandem with your Angie application.\n
-                ${green('4.')}  Use the ${cyan('AngieFile.json')}
+                ${chalk.green('4.')}  Use the ${chalk.cyan('AngieFile.json')}
                 documentation to customize your application settings.
             `));
-            p.exit(0);
+            process.exit(0);
         });
-    }
-}
-
-class $$ProjectCreationError {
-    constructor(e) {
-        $LogProvider.error(e);
-        throw new Error(e);
     }
 }
 
