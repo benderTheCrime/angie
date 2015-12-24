@@ -115,13 +115,14 @@ gulp.task('watch:babel', [ 'babel' ], function() {
 gulp.task('default', [ 'mocha:src', 'babel', 'esdoc' ]);
 
 function istanbulHandler(src, cb) {
-    gulp.src(src).pipe(istanbul({
-        instrumenter: Instrumenter,
-        includeUntested: true,
-        babel: {
-            stage: 0
-        }
-    })).pipe(istanbul.hookRequire()).on('finish', cb);
+    // gulp.src(src).pipe(istanbul({
+    //     instrumenter: Instrumenter,
+    //     includeUntested: true,
+    //     babel: {
+    //         stage: 0
+    //     }
+    // })).pipe(istanbul.hookRequire()).on('finish', cb);
+    cb();
 }
 
 function mochaHandler(src, coverage = '/tmp') {

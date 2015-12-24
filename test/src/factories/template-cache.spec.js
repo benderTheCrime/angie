@@ -152,7 +152,8 @@ describe('$TemplateCache', function() {
             $response.content = 'TEST';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/test.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/test.js"></script>'
             );
         });
         it('test single file string src non-root path', function() {
@@ -160,7 +161,8 @@ describe('$TemplateCache', function() {
             $request.path = '/index/test';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/../../test.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/../../test.js"></script>'
             );
         });
         it('test array of files string src', function() {
@@ -169,15 +171,17 @@ describe('$TemplateCache', function() {
                 $TemplateCache.$resourceLoader([ 'test.js', 'test1.js' ])
             ).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/test.js"></script>' +
-                '<script type="text/javascript" src="/test1.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/test.js"></script><script type="text/javascript" ' +
+                'async defer src="/test1.js"></script>'
             );
         });
         it('test single file string src with </body>', function() {
             $response.content = '</body>';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                '<script type="text/javascript" src="/test.js"></script></body>'
+                '<script type="text/javascript" async defer src="/test.js">' +
+                '</script></body>'
             );
         });
     });

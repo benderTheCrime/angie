@@ -150,9 +150,6 @@ function $$ngieRepeatFactory($compile, $Log) {
                 // Update the parent HTML
                 let $parentHTML = $parent.html().replace($el, html);
                 $parent.html($parentHTML);
-
-                // Resolve the directive
-                done();
             });
         }
     };

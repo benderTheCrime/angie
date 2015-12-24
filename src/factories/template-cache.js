@@ -94,6 +94,7 @@ function $$templateLoader(url, type = 'template', encoding) {
  * components)
  * @todo Auto load Angular, jQuery, Underscore, etc. from their names alone
  * via Bower installs. Must create bower.json & bump bower version.
+ * @todo Use `util.format` and put the script tempate strings into templates
  * @param {string|Array} [param=10] filename Valid JS filename in Angie static
  * directories
  * @param {string} [param='src'] loadStyle How is this resource attached to the
@@ -123,9 +124,10 @@ function $resourceLoader(files = [], scoping, loadStyle = 'src') {
     }
 
     for (let resource of files) {
+        if (!/\.(js|es)/.test(resource)) {
+            continue;
+        }
 
-        // TODO put this into a template?
-        // TODO you can use $Util.format
         let asset = '<script type="text/javascript" async defer';
         if (loadStyle === 'src') {
             asset += ` src="${[
@@ -164,7 +166,6 @@ function $resourceLoader(files = [], scoping, loadStyle = 'src') {
         } else {
             $response.content = $response.content + asset;
         }
-    // });
     }
 
     // For testing purposes

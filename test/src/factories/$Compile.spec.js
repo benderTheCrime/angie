@@ -124,9 +124,8 @@ describe('$compile', function() {
             app.directive('testDir', {
                 restrict: 'C',
                 Controller: 'test',
-                link: function(scope, el, attrs, done) {
+                link: function(scope, el, attrs) {
                     attrs.test = 'test';
-                    done();
                 }
             });
         });

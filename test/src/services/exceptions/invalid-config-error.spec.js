@@ -8,17 +8,17 @@ import $LogProvider from        'angie-log';
 
 // Angie Modules
 const TEST_ENV =                global.TEST_ENV || 'src',
-    $Exceptions =               require(`../../../../${TEST_ENV}/services/exceptions`);
+    $$InvalidConfigError =      require(`../../../../${TEST_ENV}/services/exceptions/invalid-config-error`);
 
 describe('$$InvalidConfigError', function() {
     beforeEach(function() {
         mock($LogProvider, 'error', () => false);
     });
+    afterEach(simple.restore);
     it('constructor', function() {
-        const msg = 'Invalid application configuration. Check your ' +
-            chalk.cyan('AngieFile'),
-            e = new $Exceptions.$$InvalidConfigError();
-        expect($LogProvider.error.calls[0].args[0]).to.eq(msg);
-        expect(e).to.deep.eq(new Error(msg));
+        const MSG = 'Invalid application configuration. Check your ' +
+            chalk.cyan('AngieFile');
+        expect(() => new $$InvalidConfigError()).to.throw(Error);
+        expect($LogProvider.error.calls[0].args[0]).to.eq(MSG);
     });
 });

@@ -8,7 +8,8 @@
 import $Injector from                   'angie-injector';
 
 // Angie Modules
-import BaseResponse from    './base-response';
+import { config } from                  '../../Config';
+import BaseResponse from                './base-response';
 
 /**
  * @desc ErrorResponse defines a generic error response from Angie. It is called
@@ -39,7 +40,7 @@ class ErrorResponse extends BaseResponse {
         } else {
 
             // Call the response header constants to write the html
-            html += `${RESPONSE_HEADER_MESSAGES[ '500' ]}</h1>`;
+            html += `${RESPONSE_HEADER_MESSAGES[ 500 ]}</h1>`;
         }
 
         this.html = html;

@@ -5,13 +5,12 @@
  */
 
 /**
- * @desc Util is a silent utility class which is not available via any provider
+ * @desc StringUtil is a silent utility class which is not available via any provider
  * on the app object. The only way to access the methods on this class is to
  * import the module. It holds methods quintessential to string manipulation.
  * @since 0.3.1
  */
 class StringUtil {
-
     static capitalize(str) {
         return this.isString(str) && (str[ 0 ] ? str[ 0 ].toUpperCase() : '') +
             (str.length > 1 ? str.slice(1) : '');
@@ -47,7 +46,8 @@ class StringUtil {
      * @example 'test' === $StringUtil.removeTrailingLeadingSlashes('/test/'); // true
      */
     static removeTrailingLeadingSlashes(str = '') {
-        return this.isString(str) && str.replace(/(^(\/)|(\/)$)/g, '');
+        return this.isString(str) &&
+            this.removeLeadingSlashes(this.removeTrailingSlashes(str));
     }
 
     /**

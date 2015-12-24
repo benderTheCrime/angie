@@ -15,14 +15,15 @@ describe('BaseResponse', function() {
     const noop = () => false;
     let $request,
         $response,
+        scoping,
         $injectorMock,
-        writeHeadSpy,
-        writeSpy,
+        header,
+        write,
         response;
 
     beforeEach(function() {
-        writeHeadSpy = spy();
-        writeSpy = spy();
+        header = spy();
+        write = spy();
         $request = {
             headers: {
                 accept: 'text/html,'
@@ -32,18 +33,18 @@ describe('BaseResponse', function() {
         $response = {
             test: 'test',
             $responseContent: '',
-            writeHead: writeHeadSpy,
-            write: writeSpy
+            header,
+            write
         };
+        scoping = { $request, $response, $scope: {} };
     });
     beforeEach(function() {
-        $injectorMock =
-            mock($Injector, 'get', () => [ $request, $response ]);
+        $injectorMock = mock($Injector, 'get', () => [ $request, $response ]);
     });
     afterEach(simple.restore);
     describe('constructor', function() {
         it('test content type from request.headers.accept', function() {
-            response = new BaseResponse();
+            response = new BaseResponse(scoping);
             expect(
                 response.response.$headers[ 'Content-Type' ]
             ).to.eq('text/html');
@@ -60,7 +61,7 @@ describe('BaseResponse', function() {
                 },
                 $response
             ]);
-            response = new BaseResponse();
+            response = new BaseResponse(scoping);
             expect(response.path).to.eq('test.html');
             expect(response.route).to.eq('test');
             expect(response.otherwise).to.eq('test');
@@ -76,7 +77,7 @@ describe('BaseResponse', function() {
                 },
                 $response
             ]);
-            response = new BaseResponse();
+            response = new BaseResponse(scoping);
             expect(
                 response.response.$headers[ 'Content-Type' ]
             ).to.eq('text/html');
@@ -88,21 +89,21 @@ describe('BaseResponse', function() {
                 },
                 $response
             ]);
-            response = new BaseResponse();
+            response = new BaseResponse(scoping);
             expect(
                 response.response.$headers[ 'Content-Type' ]
             ).to.eq('text/html');
         });
     });
     describe('methods', function() {
-        let setHeaderSpy,
-            writeSpy;
+        let header,
+            write;
 
         beforeEach(function() {
-            response = new BaseResponse();
+            response = new BaseResponse(scoping);
             response.response = {
-                setHeader: setHeaderSpy = spy(),
-                write: writeSpy = spy(),
+                header: header = spy(),
+                write: write = spy(),
                 $headers: {
                     test: 'test'
                 }
@@ -111,10 +112,8 @@ describe('BaseResponse', function() {
         it('head', function() {
             expect(response.head()).to.eq(response);
             expect(response.response.statusCode).to.eq(200);
-            expect(setHeaderSpy.callCount === 1);
-            expect(setHeaderSpy.calls[0].args).to.deep.eq(
-                [ 'test', 'test' ]
-            );
+            expect(header.callCount === 1);
+            expect(header.calls[0].args).to.deep.eq([ 'test', 'test' ]);
         });
         describe('write', function() {
             beforeEach(function() {
@@ -139,7 +138,7 @@ describe('BaseResponse', function() {
                     expect(
                         $TemplateCache.$$templateLoader.calls[0].args[0]
                     ).to.eq('html/index.html');
-                    expect(writeSpy.calls[0].args[0]).to.eq('test');
+                    expect(write.calls[0].args[0]).to.eq('test');
                 }
             );
         });

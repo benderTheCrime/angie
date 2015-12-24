@@ -427,7 +427,7 @@ class Angie {
                         }
                     }
                 }).catch(function(e) {
-                    if (e.code !== 'ENOENT') {
+                    if (e && e.code && e.code !== 'ENOENT') {
                         $LogProvider.error(e);
                     }
                 });
@@ -528,7 +528,7 @@ if (!app) {
         'ANGIE_STATIC_DIRS', config.staticDirs
     ).constant(
         'RESPONSE_HEADER_MESSAGES', {
-            200: 'Ok',
+            200: 'OK',
             404: 'File Not Found',
             500: 'Internal Server Error',
             504: 'Gateway Timeout'

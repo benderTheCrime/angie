@@ -11,12 +11,17 @@ const TEST_ENV =                global.TEST_ENV || 'src',
     $Exceptions =               require(`../../../../${TEST_ENV}/services/exceptions`);
 
 describe('$$InvalidFactoryConfigError', function() {
-    const msgFn = (t, n) => `Invalid configuration for ${t} ${cyan(n)}`;
+    const MSG_FN = (t, n) => `Invalid configuration for ${t} ${cyan(n)}`;
 
+    beforeEach(function() {
+        mock($LogProvider, 'error', () => false);
+    });
+    afterEach(simple.restore);
     it('constructor', function() {
-        const msg = msgFn('factory', 'test'),
-            e = new $Exceptions.$$InvalidFactoryConfigError('test');
-        expect($LogProvider.error.calls[0].args[0]).to.eq(msg);
-        expect(e).to.deep.eq(new SyntaxError(msg));
+        const MSG = MSG_FN('factory', 'test');
+        expect(
+            () => new $Exceptions.$$InvalidFactoryConfigError('test')
+        ).to.throw(SyntaxError);
+        expect($LogProvider.error.calls[0].args[0]).to.eq(MSG);
     });
 });

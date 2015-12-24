@@ -142,7 +142,6 @@ class $Request {
             request = this.$$request,
             proms = [],
             prom;
-        delete this.$$request;
         request.body = '';
         request.formData = {};
 
@@ -171,11 +170,7 @@ class $Request {
             } catch(e) {
                 resolve([]);
             }
-        })
-
-        proms.push(prom);
-
-        prom.then(function() {
+        }).then(function() {
             let rawData = arguments[0][0] || {},
                 files = arguments[0][1] || {},
                 formData = {};
@@ -186,6 +181,8 @@ class $Request {
             me.formData = request.formData = formData;
             me.files = request.files = files;
         });
+
+        proms.push(prom);
 
         return Promise.all(proms);
     }

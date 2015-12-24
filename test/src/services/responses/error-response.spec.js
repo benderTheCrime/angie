@@ -42,8 +42,12 @@ describe('ErrorResponse', function() {
     });
     afterEach(simple.restore);
     describe('constructor', function() {
+        beforeEach(function() {
+            mock($Injector, 'get', () => ({ 500: 'Internal Server Error' }));
+        });
         afterEach(function() {
             delete config.development;
+            simple.restore();
         });
         it('test no error', function() {
             let response = new ErrorResponse();
@@ -59,10 +63,14 @@ describe('ErrorResponse', function() {
         });
         it('test error without stack', function() {
             config.development = true;
-            let e = new Error('test'),
-                response = new ErrorResponse('test');
+            let e = new Error('test')
+                response;
+
+            delete e.stack;
+            response = new ErrorResponse(e);
+
             assert(BaseResponseMock.called);
-            expect(response.html).to.eq('<h1>test</h1><p>No Traceback</p>');
+            expect(response.html).to.eq(`<h1>${e}</h1><p>No Traceback</p>`);
         });
     });
     describe('methods', function() {

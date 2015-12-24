@@ -109,101 +109,100 @@ function $$createProject({ name, dir }) {
         });
     } catch(e) {
         throw new $$ProjectCreationError(e);
-    } finally {
+    }
 
-        // This is where we create our AngieFile, we can pick certain values
-        // with which we can populate our config:
-        // cacheStaticAssets
-        let staticCache = false,
+    // This is where we create our AngieFile, we can pick certain values
+    // with which we can populate our config:
+    // cacheStaticAssets
+    let staticCache = false,
 
-            // Default JS to be loaded with all HTML files
-            defaultAppJavaScriptFilename;
+        // Default JS to be loaded with all HTML files
+        defaultAppJavaScriptFilename;
 
-        // Wrap the prompts in a Promise
-        new Promise(function(resolve, reject) {
-            promptly.confirm(
-                `${breen('Do you want Angie to cache static assets?')} :`,
+    // Wrap the prompts in a Promise
+    return new Promise(function(resolve, reject) {
+        promptly.confirm(
+            `${breen('Do you want Angie to cache static assets?')} :`,
+            function(e, v) {
+                if (e) {
+                    reject(e);
+                }
+                resolve(v);
+            }
+        );
+    }).then(function(v) {
+        staticCache = !!v;
+    }).then(function() {
+
+        // Ask what the default JS filename should be
+        return new Promise(function(resolve) {
+            return promptly.prompt(
+                `${breen(
+                    'What would you like to call the "default" ' +
+                    'loaded script file ' +
+                    `(${chalk.bold(chalk.white('default is'))} ` +
+                    `${chalk.cyan('application.js')})?`
+                 )} :`,
+                 {
+                     default: 'application.js',
+                     validator: function(v) {
+                         if (v && v.indexOf('.js') === -1) {
+                             throw new Error(
+                                 chalk.bold(chalk.red(
+                                     'Input must be a valid ".js" file.'
+                                 ))
+                             );
+                         }
+                         return v.replace(/\/|\\/g, '');
+                     }
+                 },
                 function(e, v) {
-                    if (e) {
-                        reject(e);
-                    }
                     resolve(v);
                 }
             );
-        }).then(function(v) {
-            staticCache = !!v;
-        }).then(function() {
-
-            // Ask what the default JS filename should be
-            return new Promise(function(resolve) {
-                return promptly.prompt(
-                    `${breen(
-                        'What would you like to call the "default" ' +
-                        'loaded script file ' +
-                        `(${chalk.bold(chalk.white('default is'))} ` +
-                        `${chalk.cyan('application.js')})?`
-                     )} :`,
-                     {
-                         default: 'application.js',
-                         validator: function(v) {
-                             if (v && v.indexOf('.js') === -1) {
-                                 throw new Error(
-                                     chalk.bold(chalk.red(
-                                         'Input must be a valid ".js" file.'
-                                     ))
-                                 );
-                             }
-                             return v.replace(/\/|\\/g, '');
-                         }
-                     },
-                    function(e, v) {
-                        resolve(v);
-                    }
-                );
-            });
-        }).then(function(v) {
-            defaultAppJavaScriptFilename = v;
-        }).then(function() {
-
-            // Read our AngieFile template and reproduce in the target directory
-            let template = fs.readFileSync(
-                `${__dirname}/../../templates/json/AngieFile.template.json`,
-                'utf8'
-            );
-            template = util.format(
-                template,
-                name,
-                name,
-                staticCache,
-                defaultAppJavaScriptFilename
-            );
-            fs.writeFileSync(
-                `${mkDirFiles}AngieFile.json`,
-                template,
-                'utf8'
-            );
-            fs.writeFileSync(
-                `${mkDirFiles}static/${defaultAppJavaScriptFilename}`,
-                ''
-            );
-
-            $LogProvider.info('Project successfully created');
-            console.log(chalk.bold(`
-                You're well on your way to creating a robust full stack
-                application! At this point, I recommend that you do the
-                following:\n
-                ${chalk.green('1.')}  Following the instructions to install
-                the ORM (and Protocol Buffers).\n
-                ${chalk.green('2.')}  Visit the quickstart documentation in
-                the "md" folder of this application.\n
-                ${chalk.green('3.')}  Look at some of the extensions you can
-                use in tandem with your Angie application.\n
-                ${chalk.green('4.')}  Use the ${chalk.cyan('AngieFile.json')}
-                documentation to customize your application settings.
-            `));
-            process.exit(0);
         });
-    }
+    }).then(function(v) {
+        defaultAppJavaScriptFilename = v;
+    }).then(function() {
+
+        // Read our AngieFile template and reproduce in the target directory
+        let template = fs.readFileSync(
+            `${__dirname}/../../templates/json/AngieFile.template.json`,
+            'utf8'
+        );
+        template = util.format(
+            template,
+            name,
+            name,
+            staticCache,
+            defaultAppJavaScriptFilename
+        );
+        fs.writeFileSync(
+            `${mkDirFiles}AngieFile.json`,
+            template,
+            'utf8'
+        );
+        fs.writeFileSync(
+            `${mkDirFiles}static/${defaultAppJavaScriptFilename}`,
+            ''
+        );
+
+        $LogProvider.info('Project successfully created');
+        console.log(chalk.bold(`
+            You're well on your way to creating a robust full stack
+            application! At this point, I recommend that you do the
+            following:\n
+            ${chalk.green('1.')}  Following the instructions to install
+            the ORM (and Protocol Buffers).\n
+            ${chalk.green('2.')}  Visit the quickstart documentation in
+            the "md" folder of this application.\n
+            ${chalk.green('3.')}  Look at some of the extensions you can
+            use in tandem with your Angie application.\n
+            ${chalk.green('4.')}  Use the ${chalk.cyan('AngieFile.json')}
+            documentation to customize your application settings.
+        `));
+        process.exit(0);
+    });
 }
 
 export default $$createProject;

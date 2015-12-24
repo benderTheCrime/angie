@@ -56,8 +56,8 @@ describe('Config', function() {
         assert(readMock.called);
         assert(!requireMock.called);
         expect(config).to.be.an.object;
-        expect(config.staticDirs).to.deep.eq([ 'static/' ]);
-        expect(config.templateDirs).to.deep.eq([ 'templates/' ]);
+        expect(config.staticDirs).to.deep.eq(new Set('static/'));
+        expect(config.templateDirs).to.deep.eq(new Set('templates/'));
     });
     xit('test successful config load, js', function() {
         findMock.returnWith('test.js');

@@ -7,7 +7,6 @@
 // System Modules
 import $LogProvider from    'angie-log';
 
-
  /**
   * @desc Thrown when there is a problem scaffolding a new Angie application
   * @throws {Error}
@@ -23,6 +22,11 @@ class $$ProjectCreationError {
      */
     constructor(e) {
         $LogProvider.error(e);
+
+        if (e instanceof Error) {
+            throw e;
+        }
+
         throw new Error(e);
     }
 }

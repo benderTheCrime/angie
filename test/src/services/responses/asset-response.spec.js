@@ -11,6 +11,7 @@ import * as $TemplateCache from         '../../../../src/factories/template-cach
 import { $FileUtil } from               '../../../../src/util/util';
 import BaseResponse from                '../../../../src/services/responses/base-response';
 import AssetResponse from               '../../../../src/services/responses/asset-response';
+import UnknownResponse from             '../../../../src/services/responses/unknown-response';
 
 describe('AssetResponse', function() {
     const noop = () => false;

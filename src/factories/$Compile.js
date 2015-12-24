@@ -54,8 +54,8 @@ function $compile(t) {
             directive.$names = [
                 $directive,
                 $directive.toLowerCase(),
-                $StringUtil.toUnderscore($directive),
-                $StringUtil.toDash($directive)
+                $Util.string.toUnderscore($directive),
+                $Util.string.toDash($directive)
             ];
         }
 
@@ -174,7 +174,7 @@ function $$processDirective(el, scope, directive, type) {
     if (Object.keys(attr).length) {
         for (let key in attr) {
             if (attr[ key ]) {
-                parsedAttrs[ $StringUtil.toCamel(key) ] = attr[ key ];
+                parsedAttrs[ $Util.string.toCamel(key) ] = attr[ key ];
             }
         }
     }
@@ -198,7 +198,7 @@ function $$processDirective(el, scope, directive, type) {
 
                     // Replace all of the element attrs with parsedAttrs
                     if (directive.$names.indexOf(key) === -1) {
-                        el.attr($StringUtil.toDash(key), parsedAttrs[ key ]);
+                        el.attr($Util.string.toDash(key), parsedAttrs[ key ]);
                     }
                 }
             }
@@ -211,25 +211,27 @@ function $$processDirective(el, scope, directive, type) {
 function $$matchBrackets(html, scope) {
 
     // Parse simple listeners/expressions
-    return html.replace(/(\{{2,3}('\{{2,3})?[^\}\{]+(\}{2,3}')?\}{2,3})/g, function(m) {
+    return html.replace(/(\{{2,3}('\{{2,3})?[^\}\{]+(\}{2,3}')?\}{2,3})/g,
+        function(m) {
 
-        // Remove the bracket mustaches
-        const parsedListener = m.replace(/^(\{{2,3})|(\}{2,3})$|;/g, '').trim();
-        let val = '';
+            // Remove the bracket mustaches
+            const PARSED_LISTENER = m.replace(/^(\{{2,3})|(\}{2,3})$|;/g, '')
+                .trim();
+            let val = '';
 
-        // Evaluate the expression
-        try {
-            val = $$safeEvalFn.call(scope, parsedListener);
-        } catch(e) {
+            // Evaluate the expression
+            try {
+                val = $$safeEvalFn.call(scope, PARSED_LISTENER);
+            } catch(e) {
 
-            // There is no reason to throw an error on unfound $scope variables
-            if (!(e instanceof ReferenceError)) {
-                $LogProvider.warn(`Template ${cyan('$compile')} Error: ${e}`);
+                // There is no reason to throw an error on unfound $scope variables
+                if (!(e instanceof ReferenceError)) {
+                    $LogProvider.warn(`Template ${cyan('$compile')} Error: ${e}`);
+                }
             }
-        }
 
-        return val;
-    });
+            return val;
+        });
 }
 
 // A private function to evaluate the parsed template string in the context of

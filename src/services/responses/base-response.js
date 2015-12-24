@@ -5,10 +5,11 @@
  */
 
 // System modules
-import $Injector from   'angie-injector';
+import $Injector from                       'angie-injector';
 
 // Angie Modules
-import $MimeType from   '../mime-type';
+import { $$templateLoader } from            '../../factories/template-cache';
+import $MimeType from                       '../mime-type';
 
 /**
  * @desc BaseResponse defines the default Angie response. It is responsible for

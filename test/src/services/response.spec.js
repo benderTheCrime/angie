@@ -12,9 +12,12 @@ import $Response from                   '../../../src/services/response';
 
 describe('$Response', function() {
     it('constructor', function() {
-        expect(new $Response({})).to.deep.eq({
-            response: { content: '' }
-        });
+        const $response = new $Response({});
+        expect($response.hasOwnProperty('$$iid')).to.be.true;
+        expect($response.hasOwnProperty('$scope')).to.be.true;
+        expect($response.$scope.hasOwnProperty('$$bindings')).to.be.true;
+        expect($response.$scope.$$bindings).to.deep.eq({});
+        expect($response.$scope.hasOwnProperty('$$iid')).to.be.true;
     });
     describe('header', function() {
         let $response;

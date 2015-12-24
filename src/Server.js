@@ -227,7 +227,7 @@ function $$cluster() {
 function $$server(args = []) {
 
     // Load necessary app components
-    app.$$load().then(function() {
+    return app.$$load().then(function() {
         const PORT = $$port(args),
             $Cache = $Injector.get('$Cache');
 
