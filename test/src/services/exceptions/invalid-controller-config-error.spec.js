@@ -7,9 +7,11 @@ import { cyan } from                    'chalk';
 import $LogProvider from                'angie-log';
 
 // Angie Modules
-const TEST_ENV =                        global.TEST_ENV || 'src',
-    $$InvalidControllerConfigError =
-        require(`../../../../${TEST_ENV}/services/exceptions/invalid-controller-config-error`);
+/* eslint-disable max-len */
+const TEST_ENV = global.TEST_ENV || 'src';
+const $$InvalidControllerConfigError = require(
+    `../../../../${TEST_ENV}/services/exceptions/invalid-controller-config-error`
+);
 
 describe('$$InvalidControllerConfigError', function() {
     const MSG_FN = (t, n) => `Invalid configuration for ${t} ${cyan(n)}`;
@@ -23,6 +25,8 @@ describe('$$InvalidControllerConfigError', function() {
         expect(
             () => new $$InvalidControllerConfigError('test')
         ).to.throw(SyntaxError);
-        expect($LogProvider.error.calls[0].args[0]).to.eq(MSG);
+        expect($LogProvider.error.calls[ 0 ].args[ 0 ]).to.eq(MSG);
     });
 });
+
+/* eslint-enable max-len */

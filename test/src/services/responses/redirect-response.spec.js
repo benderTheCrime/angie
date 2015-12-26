@@ -1,22 +1,15 @@
 // Test Modules
-import { assert, expect } from          'chai';
-import simple, { mock, spy } from       'simple-mock';
+import { assert, expect } from      'chai';
+import simple, { mock, spy } from   'simple-mock';
 
-// System Modules
-import $Injector from                   'angie-injector';
-
-// Angie Modules
-import { config } from                  '../../../../src/Config';
-import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import BaseResponse from                '../../../../src/services/responses/base-response';
-import RedirectResponse from            '../../../../src/services/responses/redirect-response';
+import BaseResponse from
+    '../../../../src/services/responses/base-response';
+import RedirectResponse from
+    '../../../../src/services/responses/redirect-response';
 
 describe('RedirectResponse', function() {
-    const noop = () => false;
     let BaseResponseMock,
-        $request,
         $response,
-        $injectorMock,
         writeHeadSpy,
         writeSpy,
         response;
@@ -71,7 +64,7 @@ describe('RedirectResponse', function() {
             expect(response.head()).to.eq(response);
             expect(response.response.statusCode).to.eq(302);
             expect(
-                $response.setHeader.calls[0].args
+                $response.setHeader.calls[ 0 ].args
             ).to.deep.eq([ 'Location', 'test' ]);
         });
         it('write', function() {

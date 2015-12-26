@@ -3,8 +3,8 @@
 import { mock } from                'simple-mock';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    decorators =                    require(`../../../${TEST_ENV}/util/decorators`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const decorators = require(`../../../${TEST_ENV}/util/decorators`);
 
 describe('decorators', function() {
     beforeEach(function() {
@@ -19,13 +19,6 @@ describe('decorators', function() {
             }
             mock(decorators, 'Controller', () => false);
         });
-        xit('test Controller declaration', function() {
-
-            // TODO gulp, babel, and mocha
-            // @decorators.Controller
-            // class Test {}
-            // expect(decorators.Controller.calls[0].args[0]).to.deep.eq(Test);
-        });
     });
     describe('directive', function() {
         beforeEach(function() {
@@ -33,13 +26,6 @@ describe('decorators', function() {
                 global.app.directives = {};
             }
             mock(decorators, 'directive', () => false);
-        });
-        xit('test Controller declaration', function() {
-
-            // TODO gulp, babel, and mocha
-            // @decorators.directive
-            // class Test {}
-            // expect(decorators.directive.calls[0].args[0]).to.deep.eq(Test);
         });
     });
 });

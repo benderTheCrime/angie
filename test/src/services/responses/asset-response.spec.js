@@ -1,24 +1,27 @@
 // Test Modules
-import { assert, expect } from          'chai';
-import simple, { mock, spy } from       'simple-mock';
+import { assert, expect } from      'chai';
+import simple, { mock, spy } from   'simple-mock';
 
 // System Modules
-import $Injector from                   'angie-injector';
+import $Injector from               'angie-injector';
 
 // Angie Modules
-import { config } from                  '../../../../src/Config';
-import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import { $FileUtil } from               '../../../../src/util/util';
-import BaseResponse from                '../../../../src/services/responses/base-response';
-import AssetResponse from               '../../../../src/services/responses/asset-response';
-import UnknownResponse from             '../../../../src/services/responses/unknown-response';
+import { config } from              '../../../../src/Config';
+import * as $TemplateCache from     '../../../../src/factories/template-cache';
+import { $FileUtil } from           '../../../../src/util/util';
+import BaseResponse from
+    '../../../../src/services/responses/base-response';
+import AssetResponse from
+    '../../../../src/services/responses/asset-response';
+import UnknownResponse from
+    '../../../../src/services/responses/unknown-response';
 
+/* eslint-disable no-unused-expressions */
 describe('AssetResponse', function() {
     const noop = () => false;
     let BaseResponseMock,
         $request,
         $response,
-        $injectorMock,
         writeHeadSpy,
         writeSpy,
         response;
@@ -117,16 +120,22 @@ describe('AssetResponse', function() {
             expect(
                 AssetResponse.$isRoutedAssetResourceResponse('test')
             ).to.be.true;
-            expect(fileMock.calls[0].args).to.deep.eq([ 'test', 'test' ]);
-            expect(injectorMock.calls[0].args[0]).to.eq('ANGIE_STATIC_DIRS');
+            expect(fileMock.calls[ 0 ].args).to.deep.eq([ 'test', 'test' ]);
+            expect(
+                injectorMock.calls[ 0 ].args[ 0 ]
+            ).to.eq('ANGIE_STATIC_DIRS');
         });
         it('test did not find asset', function() {
             fileMock.returnWith(false);
             expect(
                 AssetResponse.$isRoutedAssetResourceResponse('test')
             ).to.be.false;
-            expect(fileMock.calls[0].args).to.deep.eq([ 'test', 'test' ]);
-            expect(injectorMock.calls[0].args[0]).to.eq('ANGIE_STATIC_DIRS');
+            expect(fileMock.calls[ 0 ].args).to.deep.eq([ 'test', 'test' ]);
+            expect(
+                injectorMock.calls[ 0 ].args[ 0 ]
+            ).to.eq('ANGIE_STATIC_DIRS');
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

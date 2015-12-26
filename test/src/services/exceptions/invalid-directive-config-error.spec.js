@@ -7,9 +7,10 @@ import { cyan } from                'chalk';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $$InvalidDirectiveConfigError =
-        require(`../../../../${TEST_ENV}/services/exceptions/invalid-directive-config-error`);
+const TEST_ENV =                    global.TEST_ENV || 'src';
+const $$InvalidDirectiveConfigError = require(
+    `../../../../${TEST_ENV}/services/exceptions/invalid-directive-config-error`
+);
 
 describe('$$InvalidDirectiveConfigError', function() {
     const MSG_FN = (t, n) => `Invalid configuration for ${t} ${cyan(n)}`;
@@ -23,6 +24,6 @@ describe('$$InvalidDirectiveConfigError', function() {
         expect(
             () => new $$InvalidDirectiveConfigError('test')
         ).to.throw(SyntaxError);
-        expect($LogProvider.error.calls[0].args[0]).to.eq(MSG);
+        expect($LogProvider.error.calls[ 0 ].args[ 0 ]).to.eq(MSG);
     });
 });

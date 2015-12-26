@@ -3,33 +3,25 @@ import { assert, expect } from          'chai';
 import simple, { mock, spy } from       'simple-mock';
 
 // System Modules
-import $Injector from                   'angie-injector';
+import $Injector from               'angie-injector';
 
 // Angie Modules
-import { config } from                  '../../../../src/Config';
-import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import BaseResponse from                '../../../../src/services/responses/base-response';
-import ErrorResponse from               '../../../../src/services/responses/error-response';
+import { config } from              '../../../../src/Config';
+import BaseResponse from
+    '../../../../src/services/responses/base-response';
+import ErrorResponse from
+    '../../../../src/services/responses/error-response';
 
 describe('ErrorResponse', function() {
     const noop = () => false;
     let BaseResponseMock,
-        $request,
         $response,
-        $injectorMock,
         writeHeadSpy,
-        writeSpy,
-        response;
+        writeSpy;
 
     beforeEach(function() {
         writeHeadSpy = spy();
         writeSpy = spy();
-        $request = {
-            headers: {
-                accept: 'text/html,'
-            },
-            path: 'test.html'
-        };
         $response = {
             test: 'test',
             $responseContent: '',
@@ -63,8 +55,7 @@ describe('ErrorResponse', function() {
         });
         it('test error without stack', function() {
             config.development = true;
-            let e = new Error('test')
-                response;
+            let e = new Error('test');
 
             delete e.stack;
             response = new ErrorResponse(e);
@@ -82,15 +73,15 @@ describe('ErrorResponse', function() {
             mock(BaseResponse.prototype, 'head', () => response);
             response.response.$headers = {};
             expect(response.head()).to.eq(response);
-            expect(BaseResponse.prototype.head.calls[0].args[0]).to.eq(500);
+            expect(BaseResponse.prototype.head.calls[ 0 ].args[ 0 ]).to.eq(500);
         });
         it('write', function() {
             response.write();
-            expect(writeSpy.calls[0].args[0]).to.eq(response.html);
+            expect(writeSpy.calls[ 0 ].args[ 0 ]).to.eq(response.html);
         });
         it('writeSync', function() {
             response.writeSync();
-            expect(writeSpy.calls[0].args[0]).to.eq(response.html);
+            expect(writeSpy.calls[ 0 ].args[ 0 ]).to.eq(response.html);
         });
     });
 });

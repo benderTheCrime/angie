@@ -3,9 +3,10 @@ import { expect } from              'chai';
 import simple, { mock } from        'simple-mock';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    StringUtil =                    require(`../../../../${TEST_ENV}/util/util/string-util`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const StringUtil = require(`../../../../${TEST_ENV}/util/util/string-util`);
 
+/* eslint-disable no-unused-expressions */
 describe('StringUtil', function() {
     describe('removeLeadingSlashes', function() {
         it('test called without any arguments', function() {
@@ -32,7 +33,9 @@ describe('StringUtil', function() {
             expect(StringUtil.removeTrailingSlashes('test//')).to.eq('test/');
         });
         it('test intra-string slashes', function() {
-            expect(StringUtil.removeTrailingSlashes('t/e/s/t')).to.eq('t/e/s/t');
+            expect(
+                StringUtil.removeTrailingSlashes('t/e/s/t')
+            ).to.eq('t/e/s/t');
         });
     });
     describe('removeTrailingLeadingSlashes', function() {
@@ -111,3 +114,4 @@ describe('StringUtil', function() {
         );
     });
 });
+/* eslint-enable no-unused-expressions */

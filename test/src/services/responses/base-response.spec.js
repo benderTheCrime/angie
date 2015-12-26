@@ -1,18 +1,17 @@
 // Test Modules
-import { assert, expect } from          'chai';
-import simple, { mock, spy } from       'simple-mock';
+import { assert, expect } from      'chai';
+import simple, { mock, spy } from   'simple-mock';
 
 // System Modules
-import $Injector from                   'angie-injector';
+import $Injector from               'angie-injector';
 
 // Angie Modules
-import { config } from                  '../../../../src/Config';
-import * as $TemplateCache from         '../../../../src/factories/template-cache';
-import BaseResponse from                '../../../../src/services/responses/base-response';
-import AssetResponse from               '../../../../src/services/responses/asset-response';
+import * as $TemplateCache from     '../../../../src/factories/template-cache';
+import BaseResponse from
+    '../../../../src/services/responses/base-response';
 
+/* eslint-disable max-nested-callbacks */
 describe('BaseResponse', function() {
-    const noop = () => false;
     let $request,
         $response,
         scoping,
@@ -113,7 +112,7 @@ describe('BaseResponse', function() {
             expect(response.head()).to.eq(response);
             expect(response.response.statusCode).to.eq(200);
             expect(header.callCount === 1);
-            expect(header.calls[0].args).to.deep.eq([ 'test', 'test' ]);
+            expect(header.calls[ 0 ].args).to.deep.eq([ 'test', 'test' ]);
         });
         describe('write', function() {
             beforeEach(function() {
@@ -136,11 +135,13 @@ describe('BaseResponse', function() {
                 function() {
                     response.writeSync();
                     expect(
-                        $TemplateCache.$$templateLoader.calls[0].args[0]
+                        $TemplateCache.$$templateLoader.calls[ 0 ].args[ 0 ]
                     ).to.eq('html/index.html');
-                    expect(write.calls[0].args[0]).to.eq('test');
+                    expect(write.calls[ 0 ].args[ 0 ]).to.eq('test');
                 }
             );
         });
     });
 });
+
+/* eslint-enable max-nested-callbacks */

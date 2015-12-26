@@ -20,9 +20,7 @@ describe('Config', function() {
         requireMock;
 
     beforeEach(function() {
-        const obj = {
-            test: 'test'
-        };
+        const obj = { test: 'test' };
 
         mock($LogProvider, 'error', noop);
         findMock = mock($FileUtil, 'find', () => 'test.json');

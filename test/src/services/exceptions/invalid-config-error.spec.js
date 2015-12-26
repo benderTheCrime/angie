@@ -7,8 +7,10 @@ import chalk from               'chalk';
 import $LogProvider from        'angie-log';
 
 // Angie Modules
-const TEST_ENV =                global.TEST_ENV || 'src',
-    $$InvalidConfigError =      require(`../../../../${TEST_ENV}/services/exceptions/invalid-config-error`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $$InvalidConfigError = require(
+    `../../../../${TEST_ENV}/services/exceptions/invalid-config-error`
+);
 
 describe('$$InvalidConfigError', function() {
     beforeEach(function() {
@@ -19,6 +21,6 @@ describe('$$InvalidConfigError', function() {
         const MSG = 'Invalid application configuration. Check your ' +
             chalk.cyan('AngieFile');
         expect(() => new $$InvalidConfigError()).to.throw(Error);
-        expect($LogProvider.error.calls[0].args[0]).to.eq(MSG);
+        expect($LogProvider.error.calls[ 0 ].args[ 0 ]).to.eq(MSG);
     });
 });

@@ -2,9 +2,9 @@
   "name": "angie",
   "version": "0.5.0",
   "author": {
-    "name" : "Joe Groseclose",
-    "email" : "joe.groseclose@gmail.com",
-    "url" : "http://joegroseclose.com"
+    "name": "Joe Groseclose",
+    "email": "joe.groseclose@gmail.com",
+    "url": "http://joegroseclose.com"
   },
   "description": "Angie: A Module-Based NodeJS Web Application Framework in ES6",
   "license": "MIT",
@@ -41,18 +41,19 @@
     "API"
   ],
   "devDependencies": {
-    "babel-eslint": "3.1.17",
+    "babel-eslint": "^5.0.0-beta6",
     "chai": "2.3.0",
     "coveralls": "^2.11.4",
     "esdoc": "^0.2.4",
+    "eslint": "^1.10.3",
+    "eslint-config-google": "^0.3.0",
     "gulp": "3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-cli": "0.2.0",
     "gulp-copy": "0.0.2",
     "gulp-esdoc": "0.0.3",
-    "gulp-eslint": "0.12.0",
+    "gulp-eslint": "^1.1.1",
     "gulp-istanbul": "^0.10.2",
-    "gulp-jscs": "1.6.0",
     "gulp-mocha": "^2.0.1",
     "isparta": "^3.1.0",
     "simple-mock": "0.3.0"

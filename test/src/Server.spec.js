@@ -150,7 +150,7 @@ describe('Server', function() {
         afterEach(simple.restore);
         it('test call with http', function() {
             Server.$$server([ 'server', 1234 ]);
-            expect(response.setHeader.callCount).to.eq(3);
+            expect(response.setHeader.callCount).to.eq(2);
             assert(http.createServer.called);
             expect(https.createServer).to.not.have.been.called;
             assert(global.setTimeout.called);
@@ -169,7 +169,7 @@ describe('Server', function() {
         it('test call with http, X-Frame-Options config set', function(cb) {
             config.setXFrameOptions = 'SAMEORIGIN';
             Server.$$server([ 'server', 1234 ]).then(function() {
-                expect(response.setHeader.callCount).to.eq(4);
+                expect(response.setHeader.callCount).to.eq(3);
                 assert(http.createServer.called);
                 expect(https.createServer).to.not.have.been.called;
                 assert(global.setTimeout.called);
@@ -191,7 +191,7 @@ describe('Server', function() {
         it('test call with http and argument -p', function() {
             yargs([ '-p', '9999' ]);
             Server.$$server([ 'server', 1234 ]);
-            expect(response.setHeader.callCount).to.eq(3);
+            expect(response.setHeader.callCount).to.eq(2);
             assert(http.createServer.called);
             expect(https.createServer).to.not.have.been.called;
             assert(global.setTimeout.called);
@@ -211,7 +211,7 @@ describe('Server', function() {
         it('test call with http and argument --port', function() {
             yargs([ '--port', '9999' ]);
             Server.$$server([ 'server', 1234 ]);
-            expect(response.setHeader.callCount).to.eq(3);
+            expect(response.setHeader.callCount).to.eq(2);
             assert(http.createServer.called);
             expect(https.createServer).to.not.have.been.called;
             assert(global.setTimeout.called);
@@ -230,7 +230,7 @@ describe('Server', function() {
         });
         it('test call with https and port 443', function() {
             Server.$$server([ 'server', 443 ]);
-            expect(response.setHeader.callCount).to.eq(3);
+            expect(response.setHeader.callCount).to.eq(2);
             expect(http.createServer).to.not.have.been.called;
             assert(https.createServer.called);
             assert(global.setTimeout.called);
@@ -253,7 +253,7 @@ describe('Server', function() {
         it('test call with https and --usessl', function(cb) {
             yargs([ '--usessl' ]);
             Server.$$server([ 'server', 1234 ]).then(function() {
-                expect(response.setHeader.callCount).to.eq(3);
+                expect(response.setHeader.callCount).to.eq(2);
                 expect(http.createServer).to.not.have.been.called;
                 assert(https.createServer.called);
                 assert(global.setTimeout.called);

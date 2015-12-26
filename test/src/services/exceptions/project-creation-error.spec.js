@@ -6,8 +6,10 @@ import simple, { mock } from    'simple-mock';
 import $LogProvider from        'angie-log';
 
 // Angie Modules
-const TEST_ENV =                global.TEST_ENV || 'src',
-    $$ProjectCreationError =    require(`../../../../${TEST_ENV}/services/exceptions/project-creation-error`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $$ProjectCreationError = require(
+    `../../../../${TEST_ENV}/services/exceptions/project-creation-error`
+);
 
 describe('$$ProjectCreationError', function() {
     beforeEach(function() {
@@ -17,6 +19,6 @@ describe('$$ProjectCreationError', function() {
     it('constructor', function() {
         const ERR = new Error('test');
         expect(() => new $$ProjectCreationError(ERR)).to.throw(ERR);
-        expect($LogProvider.error.calls[0].args[0]).to.eq(ERR);
+        expect($LogProvider.error.calls[ 0 ].args[ 0 ]).to.eq(ERR);
     });
 });

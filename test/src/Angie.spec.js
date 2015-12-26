@@ -230,20 +230,25 @@ describe('Angie', function() {
             mock($LogProvider, 'error', noop);
             mock(app, '$$bootstrap', () => new Promise());
         });
-        afterEach(() => simple.restore());
+        afterEach(simple.restore);
         it('test called with no dependencies', function() {
-            expect(app.$$loadDependencies().val).to.deep.eq([]);
+            app.$$loadDependencies().then(function() {
+                expect(app.dependencies).to.deep.eq([]);
+            });
         });
         it('test called with dependencies', function() {
-            expect(app.$$loadDependencies([ 'test' ]).val.length).to.eq(1);
-            assert(fs.readFileSync.called);
-            expect(app.$$bootstrap).to.have.been.called;
+            app.$$loadDependencies([ 'test' ]).then(function() {
+                expect(app.dependencies.length).to.eq(1);
+                assert(fs.readFileSync.called);
+                expect(app.$$bootstrap).to.have.been.called;
+            });
         });
         it('test invalid JSON in AngieFile', function() {
             fs.readFileSync = () => '{,}';
-            app.$$loadDependencies([ 'test' ]);
-            expect($LogProvider.error).to.have.been.called;
-            expect(app.$$bootstrap).to.not.have.been.called;
+            app.$$loadDependencies([ 'test' ]).then(function() {
+                expect($LogProvider.error).to.have.been.called;
+                expect(app.$$bootstrap).to.not.have.been.called;
+            });
         });
     });
     describe('$$bootstrap', function() {
