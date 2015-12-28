@@ -7,7 +7,6 @@
 // System Modules
 import cheerio from                 'cheerio';
 import { cyan } from                'chalk';
-import $Injector from               'angie-injector';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
@@ -81,7 +80,7 @@ function $compile(t) {
      * $window/$document?
      * @returns {string} The compiled template
      */
-    return function $templateCompile (scope = {}, assignDOMServices = true) {
+    return function $templateCompile(scope = {}) {
 
         // Temporary template object, lets us hang on to our template
         let tmpLet = template,
@@ -137,12 +136,13 @@ function $compile(t) {
     };
 }
 
-// Private function responsible for parsing directives
 // TODO observance on attributes
 // TODO consider removing all attributes from the element and keying off which
 // are preserved in the link function, or finding the diff
-function $$processDirective(el, scope, directive, type) {
-    let template,
+function $$processDirective(el, scope, directive) {
+    let attr = el[ 0 ].attribs || {},
+        parsedAttrs = {},
+        template,
         prom;
 
     // Template parsing
@@ -160,17 +160,15 @@ function $$processDirective(el, scope, directive, type) {
         // Setup the template HTML observing the prepend/append properties
         prom = $compile(template)(scope, false).then(function(t) {
             el.html(
-                `${directive.prepend === true ? '' : el.html()}${t}` +
-                `${directive.prepend !== true ? '' : el.html()}`
+                `${directive.prepend === true ?
+                    `${t}${el.html()}` : `${el.html()}${t}`
+                }`
             );
         });
     } else {
-        prom = new Promise((r) => r());
+        prom = new Promise(r => r());
     }
 
-    // Setup Attrs
-    let attr = el[0].attribs || {},
-        parsedAttrs = {};
     if (Object.keys(attr).length) {
         for (let key in attr) {
             if (attr[ key ]) {
@@ -222,11 +220,13 @@ function $$matchBrackets(html, scope) {
             // Evaluate the expression
             try {
                 val = $$safeEvalFn.call(scope, PARSED_LISTENER);
-            } catch(e) {
+            } catch (e) {
 
                 // There is no reason to throw an error on unfound $scope variables
                 if (!(e instanceof ReferenceError)) {
-                    $LogProvider.warn(`Template ${cyan('$compile')} Error: ${e}`);
+                    $LogProvider.warn(
+                        `Template ${cyan('$compile')} Error: ${e}`
+                    );
                 }
             }
 

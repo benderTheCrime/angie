@@ -5,19 +5,25 @@
  */
 
 // Angie Modules
-import $$COmmandLineError from              './exceptions/command-line-error';
+import $$CommandLineError from              './exceptions/command-line-error';
 import $$InvalidConfigError from            './exceptions/invalid-config-error';
-import $$InvalidServiceConfigError from     './exceptions/invalid-service-config-error';
-import $$InvalidFactoryConfigError from     './exceptions/invalid-factory-config-error';
-import $$InvalidControllerConfigError from  './exceptions/invalid-controller-config-error';
-import $$InvalidDirectiveConfigError from   './exceptions/invalid-directive-config-error';
-import $$ControllerNotFoundError from       './exceptions/controller-not-found-error';
+import $$InvalidServiceConfigError from
+    './exceptions/invalid-service-config-error';
+import $$InvalidFactoryConfigError from
+    './exceptions/invalid-factory-config-error';
+import $$InvalidControllerConfigError from
+    './exceptions/invalid-controller-config-error';
+import $$InvalidDirectiveConfigError from
+    './exceptions/invalid-directive-config-error';
+import $$ControllerNotFoundError from
+    './exceptions/controller-not-found-error';
 
 export {
-    $$COmmandLineError,
+    $$CommandLineError,
     $$InvalidConfigError,
     $$InvalidServiceConfigError,
     $$InvalidFactoryConfigError,
     $$InvalidControllerConfigError,
-    $$InvalidDirectiveConfigError
+    $$InvalidDirectiveConfigError,
+    $$ControllerNotFoundError
 };

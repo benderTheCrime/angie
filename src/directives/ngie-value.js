@@ -18,8 +18,8 @@ function $$ngieValueFactory($Log) {
             // Value listeners are set up on the front end, for now, we just
             // implement an $$iid and REST the property
             // We deliberately do not drop the attribute
-            const $Bind = $Injector.get('$Bind'),
-                UUID = attrs.ngieIid = attrs.ngieIid || uuid.v4();
+            const $Bind = $Injector.get('$Bind');
+            const UUID = attrs.ngieIid = attrs.ngieIid || uuid.v4();
             let id,
                 filters,
                 model,
@@ -37,7 +37,7 @@ function $$ngieValueFactory($Log) {
                 try {
                     filters = JSON.parse(attrs.ngieModelFilters);
                     delete attrs.ngieModelFilters;
-                } catch(e) {
+                } catch (e) {
                     $Log.warn(
                         `Invalid filter object passed to ${cyan('ngieValue')}`
                     );
@@ -50,7 +50,6 @@ function $$ngieValueFactory($Log) {
                 delete attrs.ngieModelName;
             }
 
-            // TODO many fields
             if (typeof attrs.ngieFieldName === 'string') {
                 field = attrs.ngieFieldName;
                 delete attrs.ngieFieldName;
@@ -61,14 +60,14 @@ function $$ngieValueFactory($Log) {
                 delete attrs.ngieModelId;
             }
 
-            if (!model) {
+            if (model) {
+                attrs.ngieIid = $Bind(UUID, { id, filters, model, field });
+            } else {
                 $Log.warn(`
                     Model Name missing from ${cyan('ngieValue')},
                     falling back to default functionality
                 `);
                 attrs.value = attrs.ngieValue || '';
-            } else {
-                attrs.ngieIid = $Bind(UUID, { id, filters, model, field });
             }
 
             el.removeAttr('ngie-value')

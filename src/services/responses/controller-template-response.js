@@ -7,7 +7,6 @@
 // Angie Modules
 import ControllerResponse from  './controller-response';
 
-
 /**
  * @desc ControllerTemplateResponse defines any Angie response that has a path
  * which is associated with a template. It is responsible for calling the

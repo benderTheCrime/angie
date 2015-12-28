@@ -50,7 +50,7 @@ class BaseResponse {
         // Parse out the response content type
         contentType = request.headers ? request.headers.accept : null;
         if (contentType && contentType.indexOf(',') > -1) {
-            contentType = contentType.split(',')[0];
+            contentType = contentType.split(',')[ 0 ];
         } else {
             contentType = $MimeType.fromPath(request.path);
         }

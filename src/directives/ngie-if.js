@@ -29,15 +29,15 @@ function $$ngieIfFactory() {
 
             // Evaluate expression
             try {
-                if (!$$safeEvalFn.call($scope, iif)) {
-                    el.remove();
-                } else {
+                if ($$safeEvalFn.call($scope, iif)) {
 
                     // Remove the if clause from the element
                     el.removeAttr('ngie-if');
                     delete attrs.ngieIf;
+                } else {
+                    el.remove();
                 }
-            } catch(e) {
+            } catch (e) {
                 el.remove();
             }
         }

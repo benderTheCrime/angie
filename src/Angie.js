@@ -28,18 +28,23 @@ import $$ngieIfFactory from                     './directives/ngie-if';
 import $$ngieValueFactory from                  './directives/ngie-value';
 import * as $Util from                         './util/util';
 
-const CWD = process.cwd(),
-    $$require = v => {
+const CWD = process.cwd();
+const MODULE_MAP = new Map();
+const $$require = v => {
 
-        // If we dont first clear this out of the module cache, then we don't
-        // actually do anything with the require call that isn't assigned
-        delete require.cache[ v ];
+    /**
+     * If we dont first clear this out of the module cache, then we don't
+     * actually do anything with the require call that isn't assigned
+     */
+    delete require.cache[ v ];
+    require(v);
+};
 
-        // Furthermore because it is unassigned, we do not have to force anything
-        // to return from this arrow function
-        require(v);
-    },
-    parse = v => JSON.parse(fs.readFileSync(v, 'utf8'));
+MODULE_MAP.set('function', 'factory');
+MODULE_MAP.set('object', 'service');
+
+const parse = v => JSON.parse(fs.readFileSync(v, 'utf8'));
+let app = global.app;
 
 /**
  * @desc This is the default Angie class. It is instantiated and given
@@ -157,7 +162,7 @@ class Angie {
      * @example Angie.Controller('foo', () => {});
      */
     controller(name, obj) {
-        return this.Controller.call(this, name, obj);
+        return this.Controller(name, obj);
     }
 
     /**
@@ -190,8 +195,8 @@ class Angie {
      * });
      */
     directive(name, obj) {
-        const dir = typeof obj !== 'function' ?
-            obj : new $injectionBinder(obj, { type: 'directive' })();
+        const dir = typeof obj === 'function' ?
+            new $injectionBinder(obj, { type: 'directive' })() : obj;
 
         if (dir.hasOwnProperty('Controller')) {
             if (typeof dir.Controller !== 'string') {
@@ -218,10 +223,10 @@ class Angie {
      * });
      */
     view(name, obj) {
-        return this.directive.call(this, name, obj);
+        return this.directive(name, obj);
     }
     component(name, obj) {
-        return this.directive.call(this, name, obj);
+        return this.directive(name, obj);
     }
     config(fn) {
         if (typeof fn === 'function') {
@@ -262,8 +267,8 @@ class Angie {
     $$tearDown(names = []) {
 
         // Avoid using Array.from for polyfill reasons
-        names = arguments[0] instanceof Array && arguments[0].length ?
-            arguments[0] : Array.prototype.slice.call(arguments);
+        names = arguments[ 0 ] instanceof Array && arguments[ 0 ].length ?
+            arguments[ 0 ] : Array.prototype.slice.call(arguments);
 
         for (let name of names) {
 
@@ -331,7 +336,7 @@ class Angie {
                             // Load the angie and the package config
                             $config = parse(`${dependencyDir}/AngieFile.json`);
                             $package = parse(`${dependencyDir}/package.json`);
-                        } catch(e) {
+                        } catch (e) {
                             continue;
                         }
 
@@ -346,8 +351,11 @@ class Angie {
                             // Grab the dependency name
                             const name = $config.projectName;
 
-                            // Find any sub dependencies for recursive module
-                            // loading
+                            /**
+                             * Find any sub dependencies for recursive module
+                             * loading
+                             */
+                            /* eslint-disable no-loop-func */
                             return me.$$loadDependencies(
                                 $config.dependencies
                             ).then(function() {
@@ -409,21 +417,25 @@ class Angie {
                                     // Instantiate the dependency as a provider
                                     // determined by its type
                                     me[
-                                        typeof service === 'function' ? 'factory' :
-                                            typeof service === 'object' ? 'service' :
-                                                'constant'
+                                        MODULE_MAP.get(typeof service) ||
+                                            'constant'
                                     ](
-                                        name || $Util.string.toCamel(dependency),
+                                        name ||
+                                            $Util.string.toCamel(dependency),
                                         service
                                     );
                                 }
 
                                 $LogProvider.info(
-                                    `Successfully loaded dependency ${magenta(v)}`
+                                    `Successfully loaded dependency ${
+                                        magenta(v)
+                                    }`
                                 );
 
                                 resolve();
                             });
+
+                            /* eslint-enable no-loop-func */
                         }
                     }
                 }).catch(function(e) {
@@ -452,7 +464,7 @@ class Angie {
 
         return new Promise(function(resolve) {
             resolve(
-                fs.readdirSync(`${dir}/${src}`).map((v) => `${dir}/src/${v}`)
+                fs.readdirSync(`${dir}/${src}`).map(v => `${dir}/src/${v}`)
             );
         }).then(function(files) {
             let proms = [],
@@ -467,23 +479,25 @@ class Angie {
 
                             // If any part of our url contains these return
                             return;
-                        } else if (
-                            [ 'js', 'es6' ].indexOf(v.split('.').pop() || '') > -1
-                        ) {
+                        } else if ([ 'js', 'es6' ].indexOf(
+                            v.split('.').pop() || ''
+                        ) > -1) {
                             try {
                                 $$require(v);
                                 $LogProvider.info(
                                     `Successfully loaded file ${blue(v)}`
                                 );
-                            } catch(e) {
+                            } catch (e) {
                                 $LogProvider.error(e);
                             }
                         } else {
                             try {
-                                fn(fs.readdirSync(v).map(($v) => `${v}/${$v}`));
-                            } catch(e) {
+                                fn(fs.readdirSync(v).map($v => `${v}/${$v}`));
+                            } catch (e) {
                                 $LogProvider.warn(
-                                    `Treating ${blue(v)} as a directory, but it is a file`
+                                    `Treating ${
+                                        blue(v)
+                                    } as a directory, but it is a file`
                                 );
                             }
                         }
@@ -516,7 +530,6 @@ class Angie {
     }
 }
 
-let app = global.app;
 if (!app) {
     app = global.app = new Angie();
 
@@ -534,15 +547,15 @@ if (!app) {
             504: 'Gateway Timeout'
         }
     ).constant(
-        'PRAGMA_HEADER','no-cache'
+        'PRAGMA_HEADER', 'no-cache'
     ).constant(
         'NO_CACHE_HEADER', 'private, no-cache, no-store, must-revalidate'
     );
 
     // Configs
     app.config(function() {
-        const templates = `${__dirname}/../templates/html/`,
-            encoding = 'utf8';
+        const templates = `${__dirname}/../templates/html/`;
+        const encoding = 'utf8';
 
         $templateCache.put(
             'index.html',

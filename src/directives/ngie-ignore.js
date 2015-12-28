@@ -27,7 +27,9 @@ function $$ngieIgnoreFactory() {
         link($s, el, attrs) {
 
             // Replace all templated strings with their equivalents after compile
-            el.html(el.html().replace(/(\{{2,3}[^\}]+\}{2,3})/g, '{{{\'$1\'}}}'));
+            el.html(
+                el.html().replace(/(\{{2,3}[^\}]+\}{2,3})/g, '{{{\'$1\'}}}')
+            );
 
             // Remove the ignore clause from the element
             el.removeAttr('ngie-ignore');

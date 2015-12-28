@@ -6,12 +6,12 @@
 
 // System Modules
 import util from                        'util';
-import $Injector from                   'angie-injector';
 
 // Angie Modules
 import { config } from                  '../../Config';
 import BaseResponse from                './base-response';
-import $$ControllerNotFoundError from   '../exceptions/controller-not-found-error';
+import $$ControllerNotFoundError from
+    '../exceptions/controller-not-found-error';
 import $MimeType from                   '../mime-type';
 import { $resourceLoader } from         '../../factories/template-cache';
 import $compile from                    '../../factories/$Compile';
@@ -47,7 +47,8 @@ class ControllerResponse extends BaseResponse {
         let me = this;
 
         return new Promise(function(resolve) {
-            let controller = me.route.Controller || me.route.controller;
+            let controller = me.route.Controller || me.route.controller,
+                controllerResponse;
 
             // Get controller and compile scope
             if (typeof controller === 'string') {
@@ -61,7 +62,7 @@ class ControllerResponse extends BaseResponse {
             }
 
             // Call the bound controller function
-            let controllerResponse = new $injectionBinder(
+            controllerResponse = new $injectionBinder(
                 controller,
                 util._extend({ type: 'controller' }, this.scoping)
             ).call(me.$scope, resolve);
@@ -73,32 +74,37 @@ class ControllerResponse extends BaseResponse {
     // Performs the templating inside of Controller Classes
     controllerTemplateRouteResponse() {
         if (this.template) {
-            let match = this.template.toString().match(/!doctype ([a-z]+)/i),
+            let me = this,
+                match = this.template.toString().match(/!doctype ([a-z]+)/i),
+                scope = this.scoping.$scope.val,
                 mime;
 
-            // In the context where MIME type is not set, but we have a
-            // DOCTYPE tag, we can force set the MIME
-            // We want this here instead of the explicit template definition
-            // in case the MIME failed earlier
-            if (match && !this.response.$headers.hasOwnProperty('Content-Type')) {
+            /**
+             * In the context where MIME type is not set, but we have a
+             * DOCTYPE tag, we can force set the MIME
+             * We want this here instead of the explicit template definition
+             * in case the MIME failed earlier
+             */
+            if (
+                match &&
+                !this.response.$headers.hasOwnProperty('Content-Type')
+            ) {
                 mime = this.response.$headers[ 'Content-Type' ] =
                     $MimeType.$$(match[ 1 ].toLowerCase());
             } else {
                 mime = this.response.$headers[ 'Content-Type' ];
             }
 
-            // Check to see if this is an HTML template and has a DOCTYPE
-            // and that the proper configuration options are set
+            /**
+             * Check to see if this is an HTML template and has a DOCTYPE
+             * and that the proper configuration options are set
+             */
             if (mime === 'text/html' && config.loadDefaultScriptFile) {
                 $resourceLoader(config.loadDefaultScriptFile, this.scoping);
             }
 
             // Pull the response back in from wherever it was before
             this.content = this.response.content;
-
-            // Render the template into the resoponse
-            let me = this,
-                scope = me.scoping.$scope.val;
 
             // $Compile to parse template strings and app.directives
             return $compile(me.template)(

@@ -35,7 +35,7 @@ class FileUtil {
         const fileDirectoryExists = function fileDirectoryExists(n, t) {
             try {
                 return fs.lstatSync(n)[ `is${t}` ]();
-            } catch(e) {
+            } catch (e) {
                 return false;
             }
         };
@@ -51,7 +51,7 @@ class FileUtil {
             const fn = function deepFindFile(root, target) {
                 let files = fs.readdirSync(root);
                 for (let i = 0; i < files.length; ++i) {
-                    let file = files[i],
+                    let file = files[ i ],
                         isDir = fileDirectoryExists(file, 'Directory');
                     if (isDir) {
 

@@ -5,58 +5,58 @@
  */
 
 const MIME_TYPE = {
-        atom: 'application/atom+xml',
-        css: 'text/css',
-        emcascript: 'application/emcascript',
-        es6: 'application/emcascript',
-        html: 'text/html',
-        javascript: 'application/javascript',
-        jpg: 'image/jpeg',
-        js: 'application/javascript',
-        json: 'application/json',
-        png: 'image/png',
-        rss: 'application/rss+xml',
-        svg: 'image/svg+xml',
-        ttf: 'application/octet-stream',
-        xml: 'application/xml'
-    },
-    DEFAULT_TYPE = 'text/plain',
+    atom: 'application/atom+xml',
+    css: 'text/css',
+    emcascript: 'application/emcascript',
+    es6: 'application/emcascript',
+    html: 'text/html',
+    javascript: 'application/javascript',
+    jpg: 'image/jpeg',
+    js: 'application/javascript',
+    json: 'application/json',
+    png: 'image/png',
+    rss: 'application/rss+xml',
+    svg: 'image/svg+xml',
+    ttf: 'application/octet-stream',
+    xml: 'application/xml'
+};
+const DEFAULT_TYPE = 'text/plain';
+
+/**
+ * @desc $MimeTypeProvider is predominately used internally to specify a properties
+ * mime type on response objects. It can also be used in special cases for
+ * routing views.
+ * @since 0.2.6
+ * @access public
+ * @example $MimeTypeProvider._('test.json'); // = 'application/json'
+ */
+const $MimeType = {
 
     /**
-     * @desc $MimeTypeProvider is predominately used internally to specify a properties
-     * mime type on response objects. It can also be used in special cases for
-     * routing views.
+     * @desc Find a mime type based on ext
+     * @since 0.2.6
+     * @access private
+     * @param {string} ext [param='html'] Content-Type to check against
+     * @returns {string} An approximated Content-Type
+     * @example $MimeTypeProvider._('json'); // = 'application/json'
+     */
+    $$(ext = '') {
+        return MIME_TYPE[ ext.toLowerCase() ] || DEFAULT_TYPE;
+    },
+
+    /**
+     * @desc Find a mime type based on a pathname
      * @since 0.2.6
      * @access public
-     * @example $MimeTypeProvider._('test.json'); // = 'application/json'
+     * @param {string} path File path to check against
+     * @returns {string} An approximated Content-Type
+     * @example $MimeTypeProvider._fromPath('test.json'); // = 'application/json'
      */
-    $MimeType = {
-
-        /**
-         * @desc Find a mime type based on ext
-         * @since 0.2.6
-         * @access private
-         * @param {string} ext [param='html'] Content-Type to check against
-         * @returns {string} An approximated Content-Type
-         * @example $MimeTypeProvider._('json'); // = 'application/json'
-         */
-        $$(ext = '') {
-            return MIME_TYPE[ ext.toLowerCase() ] || DEFAULT_TYPE;
-        },
-
-        /**
-         * @desc Find a mime type based on a pathname
-         * @since 0.2.6
-         * @access public
-         * @param {string} path File path to check against
-         * @returns {string} An approximated Content-Type
-         * @example $MimeTypeProvider._fromPath('test.json'); // = 'application/json'
-         */
-        fromPath(path) {
-            return this.$$(
-                path.indexOf('.') > -1 ? path.split('.').pop() : undefined
-            );
-        }
-    };
+    fromPath(path) {
+        return this.$$(
+            path.indexOf('.') > -1 ? path.split('.').pop() : undefined
+        );
+    }
+};
 
 export default $MimeType;

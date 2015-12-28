@@ -1,18 +1,19 @@
 // Test Modules
-import {expect} from                'chai';
-import simple, {mock} from          'simple-mock';
+import { expect } from                  'chai';
+import simple, { mock } from            'simple-mock';
 
 // System Modules
-import $LogProvider from            'angie-log';
+import $LogProvider from                'angie-log';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $Routes =                       require(`../../../${TEST_ENV}/factories/routes`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $Routes = require(`../../../${TEST_ENV}/factories/routes`);
 
+/* eslint-disable quote-props,no-unused-expressions */
 describe('$Routes', function() {
     describe('when', function() {
-        before(() => $Routes.$$clear());
-        afterEach(() => $Routes.$$clear());
+        before($Routes.$$clear);
+        afterEach($Routes.$$clear);
         describe('string paths', function() {
             it('test string-based url path', function() {
                 $Routes.when('/test', {
@@ -241,15 +242,21 @@ describe('$Routes', function() {
         it('test convert strings to RegExp', function() {
             expect(regExp('test')).to.deep.eq(/test/);
             expect(regExp('test', 'test')).to.deep.eq(/test\/test/);
-            expect(regExp('test', 'test', 'test')).to.deep.eq(/test\/test\/test/);
+            expect(
+                regExp('test', 'test', 'test')
+            ).to.deep.eq(/test\/test\/test/);
         });
         it('test convert RegExp to RegExp', function() {
             expect(regExp(/test/)).to.deep.eq(/test/);
             expect(regExp(/test/, /test/)).to.deep.eq(/test\/test/);
-            expect(regExp(/test/, /test/, /test/)).to.deep.eq(/test\/test\/test/);
+            expect(
+                regExp(/test/, /test/, /test/)
+            ).to.deep.eq(/test\/test\/test/);
         });
         it('test convert strings/RegExp to RegExp', function() {
-            expect(regExp('test', /test/, 'test')).to.deep.eq(/test\/test\/test/);
+            expect(
+                regExp('test', /test/, 'test')
+            ).to.deep.eq(/test\/test\/test/);
         });
     });
     describe('$$parseUrlParams', function() {
@@ -262,7 +269,9 @@ describe('$Routes', function() {
             expect(parse(/test/, '/test.json')).to.deep.eq({});
         });
         it('test single param', function() {
-            expect(parse(/(test).json/, '/test.json')).to.deep.eq({ 0: 'test' });
+            expect(
+                parse(/(test).json/, '/test.json')
+            ).to.deep.eq({ 0: 'test' });
         });
         it('test numeric param', function() {
             expect(parse(/([0-9]).json/, '/5.json')).to.deep.eq({ 0: '5' });
@@ -320,3 +329,5 @@ describe('$Routes', function() {
         });
     });
 });
+
+/* eslint-enable quote-props,no-unused-expressions */

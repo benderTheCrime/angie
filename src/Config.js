@@ -6,6 +6,7 @@
 
 // System Modules
 import fs from                              'fs';
+import { argv } from                        'yargs';
 
 // Angie Modules
 import { $$InvalidConfigError } from        './services/exceptions';
@@ -41,8 +42,7 @@ class Config {
             ],
             acceptedFileNames = [],
             file,
-            ext,
-            content;
+            ext;
         fileNames.forEach(function(name) {
 
             // Add .es6 just in case we have lingering .es6 file users
@@ -63,13 +63,21 @@ class Config {
             }
         }
 
+        if (!file && argv._[ 0 ].indexOf('create') > -1) {
+            config = {
+                templateDirs: new Set(),
+                staticDirs: new Set()
+            };
+            return this;
+        }
+
         try {
             if (ext === 'json') {
                 config = JSON.parse(fs.readFileSync(file, 'utf8'));
             } else {
                 config = require(file);
             }
-        } catch(e) {
+        } catch (e) {
             throw new $$InvalidConfigError();
         } finally {
             if (Object.keys(config).length) {
@@ -112,10 +120,10 @@ class Config {
 }
 
 // Instantiate application configs based on AngieFile
+/* eslint-disable no-new */
 new Config();
+
+/* eslint-enable no-new */
 
 export default Config;
 export { config };
-
-// TODO add top level angie static/templates
-// TODO fix routing of subs

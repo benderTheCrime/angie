@@ -5,7 +5,6 @@
  */
 
 // System Modules
-import { cyan } from        'chalk';
 import $LogProvider from    'angie-log';
 
 /**

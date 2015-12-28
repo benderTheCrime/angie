@@ -12,6 +12,7 @@ import $CacheFactory from           '../../../src/factories/$CacheFactory';
 import * as $TemplateCache from     '../../../src/factories/template-cache';
 import { $FileUtil } from           '../../../src/util/util';
 
+/* eslint-disable no-unused-expressions */
 describe('$TemplateCache', function() {
     const noop = () => false;
 
@@ -38,8 +39,6 @@ describe('$TemplateCache', function() {
         const test = () => 'test';
         let injectorMock,
             fileMock;
-
-
         beforeEach(function() {
             injectorMock = mock($Injector, 'get', () => [ test() ]);
             fileMock = mock($FileUtil, 'find', test);
@@ -73,22 +72,25 @@ describe('$TemplateCache', function() {
             expect($TemplateCache.$$templateLoader('test')).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(!$CacheFactory.prototype.put.called);
         });
-        it('test file found, template returned, called with encoding', function() {
-            injectorMock.returnWith([ 'test' ]);
-            fileMock.returnWith('test');
-            expect(
-                $TemplateCache.$$templateLoader('test', 'templates', 'utf8')
-            ).to.eq('test');
-            assert(fileMock.called);
-            expect(
-                fs.readFileSync.calls[0].args
-            ).to.deep.eq([ 'test', 'utf8' ]);
-            expect(!$CacheFactory.prototype.put.called);
-        });
+        it(
+            'test file found, template returned, called with encoding',
+            function() {
+                injectorMock.returnWith([ 'test' ]);
+                fileMock.returnWith('test');
+                expect(
+                    $TemplateCache.$$templateLoader('test', 'templates', 'utf8')
+                ).to.eq('test');
+                assert(fileMock.called);
+                expect(
+                    fs.readFileSync.calls[ 0 ].args
+                ).to.deep.eq([ 'test', 'utf8' ]);
+                expect(!$CacheFactory.prototype.put.called);
+            }
+        );
         it('test file found, static asset, no config cache', function() {
             injectorMock.returnWith([ 'test' ]);
             fileMock.returnWith('test');
@@ -97,7 +99,7 @@ describe('$TemplateCache', function() {
             ).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(!$CacheFactory.prototype.put.called);
         });
@@ -108,10 +110,10 @@ describe('$TemplateCache', function() {
             expect($TemplateCache.$$templateLoader('test')).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(
-                $CacheFactory.prototype.put.calls[0].args
+                $CacheFactory.prototype.put.calls[ 0 ].args
             ).to.deep.eq([ 'test', 'test' ]);
         });
     });
@@ -123,7 +125,9 @@ describe('$TemplateCache', function() {
         beforeEach(function() {
             $request = { path: '/' };
             $response = {};
-            $injectorMock = mock($Injector, 'get', () => [ $request, $response ]);
+            $injectorMock = mock(
+                $Injector, 'get', () => [ $request, $response ]
+            );
         });
         afterEach(function() {
             simple.restore();
@@ -186,3 +190,5 @@ describe('$TemplateCache', function() {
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

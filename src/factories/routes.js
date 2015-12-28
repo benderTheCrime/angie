@@ -195,13 +195,13 @@ class $Routes {
      */
     static $$stringsToRegExp() {
         const args = Array.prototype.slice.call(arguments).map(
-                v => string.removeTrailingLeadingSlashes(v.toString())
-            ),
-            flags = args.slice(-1)[ 0 ],
+            v => string.removeTrailingLeadingSlashes(v.toString())
+        );
+        const flags = args.slice(-1)[ 0 ];
 
-            // We need to unitize the last matching string pair here
-            flagArr = flags.split(/(\/)/),
-            flagStr = flagArr.slice(-1)[ 0 ].match(/([giym]{0,4})/)[ 1 ];
+        // We need to unitize the last matching string pair here
+        const flagArr = flags.split(/(\/)/);
+        const flagStr = flagArr.slice(-1)[ 0 ].match(/([giym]{0,4})/)[ 1 ];
 
         // Replace the clause in the last part of the passed array
         args[ args.length - 1 ] = flagArr[ 0 ];

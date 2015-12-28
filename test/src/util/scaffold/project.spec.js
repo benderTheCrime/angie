@@ -7,16 +7,14 @@ import yargs from                       'yargs';
 import { default as promptly } from     'promptly';
 import fs from                          'fs';
 import util from                        'util';
-import { bold, green } from             'chalk';
 import $LogProvider from                'angie-log';
 
 // Angie Modules
 const TEST_ENV = global.TEST_ENV || 'src';
 const project = require(`../../../../${TEST_ENV}/util/scaffold/project`);
-const p = process;
 
 describe('$$createProject', function() {
-    let noop = () => null;
+    const noop = () => null;
 
     beforeEach(function() {
         yargs([]);
@@ -25,15 +23,11 @@ describe('$$createProject', function() {
         mock(util, 'format', () => 'test');
         mock(fs, 'writeFileSync', noop);
         mock($LogProvider, 'info', noop);
-        mock(p, 'exit', noop);
-        mock(promptly, 'confirm', function(_, fn) {
-            fn(null, true);
-        });
-        mock(promptly, 'prompt', function(_, obj = {}, fn) {
-            fn(null, true);
-        });
+        mock(process, 'exit', noop);
+        mock(promptly, 'confirm', (_, fn) => fn(null, true));
+        mock(promptly, 'prompt', (_, obj = {}, fn) => fn(null, true));
     });
-    afterEach(() => simple.restore());
+    afterEach(simple.restore);
     it('test $$createProject called without a name', function() {
         expect(project).to.throw(Error);
     });
@@ -116,7 +110,7 @@ describe('$$createProject', function() {
                 `test/templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                 fs.readFileSync(
@@ -132,7 +126,7 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with -n argument', function(cb) {
@@ -199,7 +193,7 @@ describe('$$createProject', function() {
                 `test/templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                 fs.readFileSync(
@@ -215,7 +209,7 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with --name argument', function(cb) {
@@ -282,7 +276,7 @@ describe('$$createProject', function() {
                 `test/templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                 fs.readFileSync(
@@ -298,7 +292,7 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with directory false confirm',
@@ -379,9 +373,7 @@ describe('$$createProject', function() {
                     `test/templates/.keep`, 'Keep this directory'
                 ]);
                 expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                    `${bold(green(
-                        'Do you want Angie to cache static assets?'
-                    ))} :`
+                    'Do you want Angie to cache static assets? :'
                 );
                 expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                     fs.readFileSync(
@@ -397,7 +389,7 @@ describe('$$createProject', function() {
                 expect(
                     $LogProvider.info.calls[ 0 ].args[ 0 ]
                 ).to.eq('Project successfully created');
-                expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+                expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
             }).then(cb);
         }
     );
@@ -453,7 +445,7 @@ describe('$$createProject', function() {
                 `templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             assert(promptly.prompt.called);
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
@@ -470,7 +462,7 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with -d', function(cb) {
@@ -537,7 +529,7 @@ describe('$$createProject', function() {
                 `test/templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                 fs.readFileSync(
@@ -553,7 +545,7 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with --dir', function(cb) {
@@ -620,7 +612,7 @@ describe('$$createProject', function() {
                 `test/templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
                 fs.readFileSync(
@@ -636,88 +628,61 @@ describe('$$createProject', function() {
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
     it('test successful project creation with no directory', function(cb) {
-        const CWD = p.cwd();
-
         project({
             name: 'test'
         }).then(function() {
-            expect(fs.mkdirSync.calls[ 0 ].args[ 0 ]).to.eq(`${CWD}/test`);
-            expect(fs.mkdirSync.calls[ 1 ].args[ 0 ]).to.eq(`${CWD}/test/src`);
-            expect(fs.mkdirSync.calls[ 2 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/constants`
-            );
+            expect(fs.mkdirSync.calls[ 0 ].args[ 0 ]).to.eq('src');
+            expect(fs.mkdirSync.calls[ 1 ].args[ 0 ]).to.eq('src/constants');
             expect(fs.writeFileSync.calls[ 0 ].args).to.deep.eq([
-                `${CWD}/test/src/constants/.keep`, 'Keep this directory'
+                `src/constants/.keep`, 'Keep this directory'
             ]);
-            expect(fs.mkdirSync.calls[ 3 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/configs`
-            );
+            expect(fs.mkdirSync.calls[ 2 ].args[ 0 ]).to.eq('src/configs');
             expect(fs.writeFileSync.calls[ 1 ].args).to.deep.eq([
-                `${CWD}/test/src/configs/.keep`, 'Keep this directory'
+                `src/configs/.keep`, 'Keep this directory'
             ]);
-            expect(fs.mkdirSync.calls[ 4 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/services`
-            );
+            expect(fs.mkdirSync.calls[ 3 ].args[ 0 ]).to.eq('src/services');
             expect(fs.writeFileSync.calls[ 2 ].args).to.deep.eq([
-                `${CWD}/test/src/services/.keep`, 'Keep this directory'
+                `src/services/.keep`, 'Keep this directory'
             ]);
-            expect(fs.mkdirSync.calls[ 5 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/factories`
-            );
+            expect(fs.mkdirSync.calls[ 4 ].args[ 0 ]).to.eq('src/factories');
             expect(fs.writeFileSync.calls[ 3 ].args).to.deep.eq([
-                `${CWD}/test/src/factories/.keep`, 'Keep this directory'
+                `src/factories/.keep`, 'Keep this directory'
             ]);
-            expect(fs.mkdirSync.calls[ 6 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/controllers`
-            );
+            expect(fs.mkdirSync.calls[ 5 ].args[ 0 ]).to.eq('src/controllers');
             expect(fs.writeFileSync.calls[ 4 ].args).to.deep.eq([
-                `${CWD}/test/src/controllers/.keep`, 'Keep this directory'
+                `src/controllers/.keep`, 'Keep this directory'
             ]);
-            expect(fs.mkdirSync.calls[ 7 ].args[ 0 ]).to.eq(
-                `${CWD}/test/src/directives`
-            );
+            expect(fs.mkdirSync.calls[ 6 ].args[ 0 ]).to.eq('src/directives');
             expect(fs.writeFileSync.calls[ 5 ].args).to.deep.eq([
-                `${CWD}/test/src/directives/.keep`, 'Keep this directory'
+                `src/directives/.keep`, 'Keep this directory'
             ]);
-            expect(
-                fs.mkdirSync.calls[ 8 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/src/models`);
+            expect(fs.mkdirSync.calls[ 7 ].args[ 0 ]).to.eq('src/models');
             expect(fs.writeFileSync.calls[ 6 ].args).to.deep.eq([
-                `${CWD}/test/src/models/.keep`, 'Keep this directory'
+                `src/models/.keep`, 'Keep this directory'
             ]);
-            expect(
-                fs.mkdirSync.calls[ 9 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/proto`);
+            expect(fs.mkdirSync.calls[ 8 ].args[ 0 ]).to.eq('proto');
             expect(fs.writeFileSync.calls[ 7 ].args).to.deep.eq([
-                `${CWD}/test/proto/.keep`, 'Keep this directory'
+                `proto/.keep`, 'Keep this directory'
             ]);
-            expect(
-                fs.mkdirSync.calls[ 10 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/test`);
-            expect(
-                fs.mkdirSync.calls[ 11 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/test/src`);
+            expect(fs.mkdirSync.calls[ 9 ].args[ 0 ]).to.eq('test');
+            expect(fs.mkdirSync.calls[ 10 ].args[ 0 ]).to.eq('test/src');
             expect(fs.writeFileSync.calls[ 8 ].args).to.deep.eq([
-                `${CWD}/test/test/src/.keep`, 'Keep this directory'
+                `test/src/.keep`, 'Keep this directory'
             ]);
-            expect(
-                fs.mkdirSync.calls[ 12 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/static`);
+            expect(fs.mkdirSync.calls[ 11 ].args[ 0 ]).to.eq('static');
             expect(fs.writeFileSync.calls[ 9 ].args).to.deep.eq([
-                `${CWD}/test/static/.keep`, 'Keep this directory'
+                `static/.keep`, 'Keep this directory'
             ]);
-            expect(
-                fs.mkdirSync.calls[ 13 ].args[ 0 ]
-            ).to.eq(`${CWD}/test/templates`);
+            expect(fs.mkdirSync.calls[ 12 ].args[ 0 ]).to.eq('templates');
             expect(fs.writeFileSync.calls[ 10 ].args).to.deep.eq([
-                `${CWD}/test/templates/.keep`, 'Keep this directory'
+                `templates/.keep`, 'Keep this directory'
             ]);
             expect(promptly.confirm.calls[ 0 ].args[ 0 ]).to.eq(
-                `${bold(green('Do you want Angie to cache static assets?'))} :`
+                'Do you want Angie to cache static assets? :'
             );
             assert(promptly.prompt.called);
             expect(util.format.calls[ 0 ].args.slice(0, 4)).to.deep.eq([
@@ -729,12 +694,12 @@ describe('$$createProject', function() {
                 true
             ]);
             expect(fs.writeFileSync.calls[ 11 ].args).to.deep.eq([
-                `${CWD}/test/AngieFile.json`, 'test', 'utf8'
+                'AngieFile.json', 'test', 'utf8'
             ]);
             expect(
                 $LogProvider.info.calls[ 0 ].args[ 0 ]
             ).to.eq('Project successfully created');
-            expect(p.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
+            expect(process.exit.calls[ 0 ].args[ 0 ]).to.eq(0);
         }).then(cb);
     });
 });

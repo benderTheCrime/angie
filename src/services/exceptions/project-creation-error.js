@@ -12,7 +12,6 @@ import $LogProvider from    'angie-log';
   * @throws {Error}
   * @since 0.5.0
   * @access private
-  * @example throw new $Exceptions.$$ProjectCreationError();
   */
 class $$ProjectCreationError {
 

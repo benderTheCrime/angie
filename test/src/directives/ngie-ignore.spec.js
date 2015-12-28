@@ -1,13 +1,14 @@
 // Test Modules
 import { expect } from              'chai';
-import simple, { mock } from        'simple-mock';
 
 // Angie Modules
 import $compile from                '../../../src/factories/$Compile';
 
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $$ngieIgnoreFactory =               require(`../../../${TEST_ENV}/directives/ngie-ignore`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $$ngieIgnoreFactory =
+    require(`../../../${TEST_ENV}/directives/ngie-ignore`);
 
+/* eslint-disable no-unused-expressions */
 describe('$$ngieIgnoreFactory', function() {
     it('test $$ngieIgnoreFactory returns', function() {
         let obj = $$ngieIgnoreFactory();
@@ -18,7 +19,8 @@ describe('$$ngieIgnoreFactory', function() {
     describe('link', function() {
         it('test template strings ignored inside of ngie-ignore', function() {
             $compile(
-                '<div><div class="test" ngie-ignore>{{test}}</div>{{test}}</div>'
+                '<div><div class="test" ngie-ignore>{{test}}</div>{{test}}' +
+                '</div>'
             )({
                 test: 'test'
             }).then(function(t) {
@@ -29,3 +31,5 @@ describe('$$ngieIgnoreFactory', function() {
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

@@ -18,14 +18,16 @@ import { config } from              '../../src/Config';
 import $Request from                '../../src/services/request';
 import * as $Responses from         '../../src/services/response';
 
+/* eslint-disable no-unused-expressions */
 describe('Server', function() {
-    const noop = () => false,
-        then = fn => { fn(); return { then, catch: then }; },
-        PROM_MOCK = () => ({ then, catch: then });
+    const noop = () => false;
+    const then = fn => {
+        fn();
+        return { then, catch: then };
+    };
+    const PROM_MOCK = () => ({ then, catch: then });
 
     describe('$$cluster', function() {
-        let coreCount = os.cpus().length;
-
         afterEach(simple.restore);
         describe('test cluster master', function() {
             beforeEach(function() {
@@ -43,33 +45,33 @@ describe('Server', function() {
             });
             it('no development config', function() {
                 Server.$$cluster();
-                expect($LogProvider.info.calls[0].args[0]).to.eq(
+                expect($LogProvider.info.calls[ 0 ].args[ 0 ]).to.eq(
                     `Starting ${cyan('cluster')} on 1 core(s)`
                 );
                 assert(!$LogProvider.warn.called);
                 expect(cluster.fork.callCount).to.eq(1);
                 expect(
-                    cluster.on.calls[0].args
+                    cluster.on.calls[ 0 ].args
                 ).to.deep.eq([ 'exit', cluster.fork ]);
                 expect(cluster.on.callCount).to.eq(1);
             });
             it('development config', function() {
                 config.development = true;
                 Server.$$cluster();
-                expect($LogProvider.info.calls[0].args[0]).to.eq(
+                expect($LogProvider.info.calls[ 0 ].args[ 0 ]).to.eq(
                     `Starting ${cyan('cluster')} on 1 core(s)`
                 );
                 assert($LogProvider.warn.called);
                 expect(cluster.fork.callCount).to.eq(1);
                 expect(
-                    cluster.on.calls[0].args
+                    cluster.on.calls[ 0 ].args
                 ).to.deep.eq([ 'exit', cluster.fork ]);
                 expect(cluster.on.callCount).to.eq(1);
             });
             it('no development config, no refork', function() {
                 yargs([ 'cluster', '--norefork' ]);
                 Server.$$cluster();
-                expect($LogProvider.info.calls[0].args[0]).to.eq(
+                expect($LogProvider.info.calls[ 0 ].args[ 0 ]).to.eq(
                     `Starting ${cyan('cluster')} on 1 core(s)`
                 );
                 assert(!$LogProvider.warn.called);
@@ -105,7 +107,9 @@ describe('Server', function() {
             e = new Error();
             listen = spy(function() {
                 return {
-                    catch(fn) { fn(e); }
+                    catch(fn) {
+                        fn(e);
+                    }
                 };
             });
             end = spy();
@@ -158,13 +162,15 @@ describe('Server', function() {
             assert(dataMock.called);
             assert(routeMock.called);
             expect(
-                $LogProvider.error.calls[0].args
+                $LogProvider.error.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
             assert(head.called);
             assert(writeSync.called);
-            expect(listen.calls[0].args[0]).to.eq(1234);
+            expect(listen.calls[ 0 ].args[ 0 ]).to.eq(1234);
             expect(end.callCount).to.eq(2);
-            expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 1234');
+            expect(
+                $LogProvider.info.calls[ 0 ].args[ 0 ]
+            ).to.eq('Serving on port 1234');
         });
         it('test call with http, X-Frame-Options config set', function(cb) {
             config.setXFrameOptions = 'SAMEORIGIN';
@@ -177,14 +183,16 @@ describe('Server', function() {
                 assert(dataMock.called);
                 assert(routeMock.called);
                 expect(
-                    $LogProvider.error.calls[0].args
+                    $LogProvider.error.calls[ 0 ].args
                 ).to.deep.eq([ 'GET', 'test', 'test' ]);
                 assert(head.called);
                 assert(writeSync.called);
-                expect(listen.calls[0].args[0]).to.eq(1234);
+                expect(listen.calls[ 0 ].args[ 0 ]).to.eq(1234);
                 expect(end.callCount).to.eq(2);
-                expect(app.service.calls[0].args[0]).to.eq('$server');
-                expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 1234');
+                expect(app.service.calls[ 0 ].args[ 0 ]).to.eq('$server');
+                expect(
+                    $LogProvider.info.calls[ 0 ].args[ 0 ]
+                ).to.eq('Serving on port 1234');
                 delete config.setXFrameOptions;
             }).then(cb);
         });
@@ -199,14 +207,16 @@ describe('Server', function() {
             assert(dataMock.called);
             assert(routeMock.called);
             expect(
-                $LogProvider.error.calls[0].args
+                $LogProvider.error.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
             assert(head.called);
             assert(writeSync.called);
-            expect(listen.calls[0].args[0]).to.eq(9999);
+            expect(listen.calls[ 0 ].args[ 0 ]).to.eq(9999);
             expect(end.callCount).to.eq(2);
-            expect(app.service.calls[0].args[0]).to.eq('$server');
-            expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 9999');
+            expect(app.service.calls[ 0 ].args[ 0 ]).to.eq('$server');
+            expect(
+                $LogProvider.info.calls[ 0 ].args[ 0 ]
+            ).to.eq('Serving on port 9999');
         });
         it('test call with http and argument --port', function() {
             yargs([ '--port', '9999' ]);
@@ -219,14 +229,16 @@ describe('Server', function() {
             assert(dataMock.called);
             assert(routeMock.called);
             expect(
-                $LogProvider.error.calls[0].args
+                $LogProvider.error.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
             assert(head.called);
             assert(writeSync.called);
-            expect(listen.calls[0].args[0]).to.eq(9999);
+            expect(listen.calls[ 0 ].args[ 0 ]).to.eq(9999);
             expect(end.callCount).to.eq(2);
-            expect(app.service.calls[0].args[0]).to.eq('$server');
-            expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 9999');
+            expect(app.service.calls[ 0 ].args[ 0 ]).to.eq('$server');
+            expect(
+                $LogProvider.info.calls[ 0 ].args[ 0 ]
+            ).to.eq('Serving on port 9999');
         });
         it('test call with https and port 443', function() {
             Server.$$server([ 'server', 443 ]);
@@ -238,17 +250,19 @@ describe('Server', function() {
             assert(dataMock.called);
             assert(routeMock.called);
             expect(
-                $LogProvider.error.calls[0].args
+                $LogProvider.error.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
             assert(head.called);
             assert(writeSync.called);
             expect(
-                $LogProvider.error.calls[1].args
+                $LogProvider.error.calls[ 1 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
-            expect(listen.calls[0].args[0]).to.eq(443);
+            expect(listen.calls[ 0 ].args[ 0 ]).to.eq(443);
             expect(end.callCount).to.eq(2);
-            expect(app.service.calls[0].args[0]).to.eq('$server');
-            expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 443');
+            expect(app.service.calls[ 0 ].args[ 0 ]).to.eq('$server');
+            expect(
+                $LogProvider.info.calls[ 0 ].args[ 0 ]
+            ).to.eq('Serving on port 443');
         });
         it('test call with https and --usessl', function(cb) {
             yargs([ '--usessl' ]);
@@ -261,42 +275,44 @@ describe('Server', function() {
                 assert(dataMock.called);
                 assert(routeMock.called);
                 expect(
-                    $LogProvider.error.calls[0].args
+                    $LogProvider.error.calls[ 0 ].args
                 ).to.deep.eq([ 'GET', 'test', 'test' ]);
                 assert(head.called);
                 assert(writeSync.called);
                 expect(
-                    $LogProvider.error.calls[1].args
+                    $LogProvider.error.calls[ 1 ].args
                 ).to.deep.eq([ 'GET', 'test', 'test' ]);
-                expect(listen.calls[0].args[0]).to.eq(443);
+                expect(listen.calls[ 0 ].args[ 0 ]).to.eq(443);
                 expect(end.callCount).to.eq(2);
-                expect(app.service.calls[0].args[0]).to.eq('$server');
-                expect($LogProvider.info.calls[0].args[0]).to.eq('Serving on port 443');
+                expect(app.service.calls[ 0 ].args[ 0 ]).to.eq('$server');
+                expect(
+                    $LogProvider.info.calls[ 0 ].args[ 0 ]
+                ).to.eq('Serving on port 443');
             }).then(cb);
         });
         it('test < 400 level response', function() {
             response.statusCode = 399;
             Server.$$server([ 'server', 1234 ]);
             expect(
-                $LogProvider.info.calls[0].args
+                $LogProvider.info.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
         });
         it('test < 500 level response', function() {
             response.statusCode = 499;
             Server.$$server([ 'server', 1234 ]);
             expect(
-                $LogProvider.warn.calls[0].args
+                $LogProvider.warn.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
         });
         it('test >= 500 or unknown level response', function() {
             response.statusCode = 500;
             Server.$$server([ 'server', 1234 ]);
             expect(
-                $LogProvider.error.calls[0].args
+                $LogProvider.error.calls[ 0 ].args
             ).to.deep.eq([ 'GET', 'test', 'test' ]);
         });
         it('test timeout response', function() {
-            timeoutMock.callFn((fn) => fn());
+            timeoutMock.callFn(fn => fn());
             routeMock.returnWith({
                 then() {
                     return {
@@ -306,12 +322,18 @@ describe('Server', function() {
             });
             Server.$$server([ 'server', 1234 ]);
             assert($Responses.$CustomResponse.called);
-            expect(head.calls[0].args).to.deep.eq([ 504, null, {
+            expect(head.calls[ 0 ].args).to.deep.eq([ 504, null, {
                 'Content-Type': 'text/html'
             } ]);
-            expect(writeSync.calls[0].args[0]).to.eq('<h1>Gateway Timeout</h1>');
-            expect($LogProvider.error.calls[0].args).to.deep.eq([ 'test', 'test' ]);
+            expect(
+                writeSync.calls[ 0 ].args[ 0 ]
+            ).to.eq('<h1>Gateway Timeout</h1>');
+            expect(
+                $LogProvider.error.calls[ 0 ].args
+            ).to.deep.eq([ 'test', 'test' ]);
             assert(end.called);
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

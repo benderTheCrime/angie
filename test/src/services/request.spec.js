@@ -6,16 +6,17 @@ import simple, { mock, spy } from   'simple-mock';
 import { Form } from                'multiparty';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $Routes =                       require(`../../../${TEST_ENV}/factories/routes`),
-    $Responses =                    require(`../../../${TEST_ENV}/services/response`),
-    $Request =                      require(`../../../${TEST_ENV}/services/request`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $Routes = require(`../../../${TEST_ENV}/factories/routes`);
+const $Responses = require(`../../../${TEST_ENV}/services/response`);
+const $Request = require(`../../../${TEST_ENV}/services/request`);
 
+/* eslint-disable quote-props,no-unused-expressions */
 describe('$Request', function() {
     const noop = () => false;
     let req = {
-            url: 'http://localhost:3000/test.html?id=1'
-        };
+        url: 'http://localhost:3000/test.html?id=1'
+    };
 
     describe('constructor', function() {
         let request;
@@ -57,7 +58,7 @@ describe('$Request', function() {
         afterEach(simple.restore);
         it('test $redirect', function() {
             new $Request(req).$redirect('test');
-            expect(RedirectResponseMock.calls[0].args[0]).to.eq('test');
+            expect(RedirectResponseMock.calls[ 0 ].args[ 0 ]).to.eq('test');
             assert(head.called);
             assert(writeSync.called);
         });
@@ -143,7 +144,7 @@ describe('$Request', function() {
             xit('test no found route, asset', function() {
                 request.$$route();
                 expect(
-                    $isRoutedAssetResourceResponseMock.calls[0].args[0]
+                    $isRoutedAssetResourceResponseMock.calls[ 0 ].args[ 0 ]
                 ).to.eq('/test.html');
                 assert($Responses.AssetResponse.called);
                 assert(head.called);
@@ -336,3 +337,5 @@ describe('$Request', function() {
         });
     });
 });
+
+/* eslint-enable quote-props,no-unused-expressions */

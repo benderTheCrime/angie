@@ -15,25 +15,18 @@ import ErrorResponse from
 describe('ErrorResponse', function() {
     const noop = () => false;
     let BaseResponseMock,
-        $response,
-        writeHeadSpy,
         writeSpy;
 
     beforeEach(function() {
-        writeHeadSpy = spy();
         writeSpy = spy();
-        $response = {
-            test: 'test',
-            $responseContent: '',
-            writeHead: writeHeadSpy,
-            write: writeSpy
-        };
     });
     beforeEach(function() {
         BaseResponseMock = mock(BaseResponse.prototype, 'constructor', noop);
     });
     afterEach(simple.restore);
     describe('constructor', function() {
+        let response;
+
         beforeEach(function() {
             mock($Injector, 'get', () => ({ 500: 'Internal Server Error' }));
         });
@@ -65,9 +58,13 @@ describe('ErrorResponse', function() {
         });
     });
     describe('methods', function() {
+        let response;
+
         beforeEach(function() {
             response = new ErrorResponse();
-            response.response = $response;
+            response.response = {
+                write: writeSpy
+            };
         });
         it('head', function() {
             mock(BaseResponse.prototype, 'head', () => response);
@@ -75,9 +72,10 @@ describe('ErrorResponse', function() {
             expect(response.head()).to.eq(response);
             expect(BaseResponse.prototype.head.calls[ 0 ].args[ 0 ]).to.eq(500);
         });
-        it('write', function() {
-            response.write();
-            expect(writeSpy.calls[ 0 ].args[ 0 ]).to.eq(response.html);
+        it('write', function(cb) {
+            response.write().then(function() {
+                expect(writeSpy.calls[ 0 ].args[ 0 ]).to.eq(response.html);
+            }).then(cb);
         });
         it('writeSync', function() {
             response.writeSync();

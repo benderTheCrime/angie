@@ -9,11 +9,9 @@ import url from                     'url';
 import util from                    'util';
 import { Form } from                'multiparty';
 import uuid from                    'node-uuid';
-import $Injector from               'angie-injector';
 
 // Angie Modules
 import $Routes from                 '../factories/routes';
-import $CacheFactory from           '../factories/$CacheFactory';
 import * as $Responses from         './response';
 import $CookieFactory from          './cookie';
 import { string } from              '../util/util';
@@ -130,7 +128,7 @@ class $Request {
             return new $Responses[
                 `${ResponseType}Response`
             ](scoping).head().write();
-        } catch(e) {
+        } catch (e) {
 
             // Throw an error response if no other response type was specified
             return new $Responses.ErrorResponse(e).head().write();
@@ -167,17 +165,19 @@ class $Request {
                 new Form().parse(request, function(e, ...data) {
                     resolve(data);
                 });
-            } catch(e) {
+            } catch (e) {
                 resolve([]);
             }
         }).then(function() {
-            let rawData = arguments[0][0] || {},
-                files = arguments[0][1] || {},
+            let rawData = arguments[ 0 ][ 0 ] || {},
+                files = arguments[ 0 ][ 1 ] || {},
                 formData = {};
+
             for (let field in rawData) {
                 formData[ field ] = typeof rawData[ field ] === 'object' ?
-                    rawData[ field ][0] : rawData[ field ];
+                    rawData[ field ][ 0 ] : rawData[ field ];
             }
+
             me.formData = request.formData = formData;
             me.files = request.files = files;
         });

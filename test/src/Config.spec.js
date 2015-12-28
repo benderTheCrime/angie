@@ -7,11 +7,11 @@ import fs from                  'fs';
 import $LogProvider from        'angie-log';
 
 // Angie Modules
-const TEST_ENV =                global.TEST_ENV || 'src',
-    $FileUtil =                 require(`../../${TEST_ENV}/util/util`).$FileUtil,
-    $Config =                   require(`../../${TEST_ENV}/Config`),
-    Config =                    $Config.default,
-    config =                    $Config.config;
+const TEST_ENV = global.TEST_ENV || 'src';
+const $FileUtil = require(`../../${TEST_ENV}/util/util`).$FileUtil;
+const $Config = require(`../../${TEST_ENV}/Config`);
+const Config = $Config.default;
+const config = $Config.config;
 
 describe('Config', function() {
     const noop = () => false;
@@ -48,6 +48,8 @@ describe('Config', function() {
         assert(readMock.called);
         assert(!requireMock.called);
     });
+
+    /* eslint-disable no-new,no-unused-expressions */
     it('test successful config load, json', function() {
         new Config();
         assert(findMock.called);
@@ -57,6 +59,8 @@ describe('Config', function() {
         expect(config.staticDirs).to.deep.eq(new Set('static/'));
         expect(config.templateDirs).to.deep.eq(new Set('templates/'));
     });
+
+    /* eslint-disable no-new,no-unused-expressions */
     xit('test successful config load, js', function() {
         findMock.returnWith('test.js');
         expect(() => new Config()).to.throw();

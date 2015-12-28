@@ -75,7 +75,7 @@ class AssetResponse extends BaseResponse {
         let foundAssetPath = false;
 
         for (let dir of $Injector.get('ANGIE_STATIC_DIRS')) {
-            if (!!$FileUtil.find(dir, path)) {
+            if ($FileUtil.find(dir, path)) {
                 foundAssetPath = true;
                 break;
             }

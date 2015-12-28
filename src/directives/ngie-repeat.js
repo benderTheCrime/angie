@@ -4,6 +4,7 @@
  * @date 10/01/2015
  */
 
+/* eslint-disable no-loop-func */
 /**
  * @desc Returns a directive, which can be exposed to any element in a routed
  * template as an attribute.
@@ -40,17 +41,13 @@ function $$ngieRepeatFactory($compile, $Log) {
     return {
         priority: 1,
         restrict: 'A',
-        link($scope, el, attrs, done) {
+        link($scope, el, attrs) {
 
             // We need to extract the repetition from the element
-            let repeat = attrs.ngieRepeat;
+            let repeat = attrs.ngieRepeat,
 
-            // Remove the repeat clause from the clone
-            el.removeAttr('ngie-repeat');
-            delete attrs.ngieRepeat;
-
-            // Find the element's parent
-            let $parent = el.parent(),
+                // Find the element's parent
+                $parent = el.parent(),
 
                 // Clone the raw element
                 $el = buildRepeaterElement(el[ 0 ] || el, el.html()),
@@ -75,28 +72,32 @@ function $$ngieRepeatFactory($compile, $Log) {
                 key,
                 value;
 
+            // Remove the repeat clause from the clone
+            el.removeAttr('ngie-repeat');
+            delete attrs.ngieRepeat;
+
             // Remove any $filter type phrasing for now, split between words
             repeat.replace(/(\|.*)$/, '').split(' ').forEach(function(v) {
                 v = v.trim();
                 if (v) {
                     switch (v) {
-                        case 'for':
-                            hasFor = true;
-                            break;
-                        case 'in':
-                            objLoop = true;
-                            break;
-                        case 'of':
-                            arrLoop = true;
-                            break;
-                        default:
-                            if ($scope.hasOwnProperty(v)) {
-                                $scopeRef = $scope[ v ];
-                            } else {
-                                v = v.split(',');
-                                key = v[ 0 ];
-                                value = v[ 1 ];
-                            }
+                    case 'for':
+                        hasFor = true;
+                        break;
+                    case 'in':
+                        objLoop = true;
+                        break;
+                    case 'of':
+                        arrLoop = true;
+                        break;
+                    default:
+                        if ($scope.hasOwnProperty(v)) {
+                            $scopeRef = $scope[ v ];
+                        } else {
+                            v = v.split(',');
+                            key = v[ 0 ];
+                            value = v[ 1 ];
+                        }
                     }
                 }
             });
@@ -109,10 +110,11 @@ function $$ngieRepeatFactory($compile, $Log) {
             } else if (!$scopeRef) {
                 warn = 'No $scope found for ngieRepeat iterable';
             } else if (!key) {
-                warn = 'No key or value declarations for ngieRepeat to iterate ' +
-                    'over';
+                warn = 'No key or value declarations for ngieRepeat to ' +
+                    'iterate over';
             } else if (!objLoop && !arrLoop) {
-                warn = 'Use the keyword "in" or "of" in ngieRepeat declarations';
+                warn = 'Use the keyword "in" or "of" in ngieRepeat ' +
+                    'declarations';
             } else if (objLoop) {
                 for (let k in $scopeRef) {
                     let v = $scopeRef[ k ],
@@ -154,6 +156,8 @@ function $$ngieRepeatFactory($compile, $Log) {
         }
     };
 }
+
+/* eslint-enable no-loop-func */
 
 function buildRepeaterElement(el, content) {
     const tag = el.name;

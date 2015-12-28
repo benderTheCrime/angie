@@ -7,13 +7,14 @@ import $Injector from               'angie-injector';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    config =                        require(`../../../${TEST_ENV}/Config`).config,
-    app =                           require(`../../../${TEST_ENV}/Angie`).default,
-    $compile =                      require(`../../../${TEST_ENV}/factories/$Compile`).default,
-    $TemplateCache =                require(`../../../${TEST_ENV}/factories/template-cache`),
-    $Util =                         require(`../../../${TEST_ENV}/util/util`).default;
+const TEST_ENV = global.TEST_ENV || 'src';
+const config = require(`../../../${TEST_ENV}/Config`).config;
+const app = require(`../../../${TEST_ENV}/Angie`).default;
+const $compile = require(`../../../${TEST_ENV}/factories/$Compile`).default;
+const $TemplateCache = require(`../../../${TEST_ENV}/factories/template-cache`);
+const $Util = require(`../../../${TEST_ENV}/util/util`).default;
 
+/* eslint-disable no-unused-expressions */
 describe('$compile', function() {
     beforeEach(function() {
         mock($LogProvider, 'error', () => false);
@@ -58,16 +59,23 @@ describe('$compile', function() {
                 expect($LogProvider.warn).not.to.have.been.called;
             });
         });
-        it('test $templateCompile evaluates a single matched listener', function() {
-            $compile('{{{test}}}')(scope).then(function(t) {
-                expect(t).to.eq('test');
-            });
-        });
-        it('test $templateCompile evaluates multiple matched listeners', function() {
-            $compile('{{{test}}} {{{test1}}} {{{test2}}}')(scope).then(function(t) {
-                expect(t).to.eq('test test1 test2');
-            });
-        });
+        it('test $templateCompile evaluates a single matched listener',
+            function() {
+                $compile('{{{test}}}')(scope).then(function(t) {
+                    expect(t).to.eq('test');
+                });
+            }
+        );
+        it(
+            'test $templateCompile evaluates multiple matched listeners',
+            function() {
+                $compile(
+                    '{{{test}}} {{{test1}}} {{{test2}}}'
+                )(scope).then(function(t) {
+                    expect(t).to.eq('test test1 test2');
+                });
+            }
+        );
         it('test $templateCompile evaluates deep listeners', function() {
             $compile('{{{test4.test}}}')(scope).then(function(t) {
                 expect(t).to.eq('test4');
@@ -83,21 +91,26 @@ describe('$compile', function() {
                 }
             );
         });
-        it('test $templateCompile evaluates functional expressions', function() {
-            $compile('{{{test4.test.indexOf(\'test1\') > -1}}}')(scope).then(
-                function(t) {
-                    expect(t).to.eq('false');
-                }
-            );
-            $compile('{{{[ test, test1 ].join(\' & \')}}}')(scope).then(
-                function(t) {
-                    expect(t).to.eq('test & test1');
-                }
-            );
-            $compile('{{{test.toUpperCase()}}}')(scope).then(function(t) {
-                expect(t).to.eq('TEST');
-            });
-        });
+        it(
+            'test $templateCompile evaluates functional expressions',
+            function() {
+                $compile(
+                    '{{{test4.test.indexOf(\'test1\') > -1}}}'
+                )(scope).then(
+                    function(t) {
+                        expect(t).to.eq('false');
+                    }
+                );
+                $compile('{{{[ test, test1 ].join(\' & \')}}}')(scope).then(
+                    function(t) {
+                        expect(t).to.eq('test & test1');
+                    }
+                );
+                $compile('{{{test.toUpperCase()}}}')(scope).then(function(t) {
+                    expect(t).to.eq('TEST');
+                });
+            }
+        );
         it('test $templateCompile evaluates binary expressions', function() {
             $compile('{{{test5}}}')(scope).then(function(t) {
                 expect(t).to.eq('20');
@@ -156,8 +169,8 @@ describe('$compile', function() {
         });
         it('test entire matched document', function() {
             $compile(
-                '<!DOCTYPE html><html><head></head><body><div class="testDir"></div>' +
-                '</body></html>'
+                '<!DOCTYPE html><html><head></head><body><div ' +
+                'class="testDir"></div></body></html>'
             )({}).then(function(t) {
                 expect(t).to.eq(
                     '<!DOCTYPE html><html><head></head><body>' +
@@ -183,7 +196,9 @@ describe('$compile', function() {
             });
             it('test directive template with prepend', function() {
                 app.directives.testDir.prepend = true;
-                $compile('<div class="testDir">test</div>')({}).then(function(t) {
+                $compile(
+                    '<div class="testDir">test</div>'
+                )({}).then(function(t) {
                     expect(t).to.eq('<div class="testDir">blahtest</div>');
                 });
             });
@@ -210,8 +225,6 @@ describe('$compile', function() {
                     expect(t).to.eq('<div class="testDir"></div>');
                 });
             });
-
-            // TODO this should be tested using a mocked service
             it('test directive templatePath ".html"', function() {
                 app.directives.testDir.templatePath =
                     'html/testDirectiveTemplatePath.html';
@@ -219,10 +232,12 @@ describe('$compile', function() {
                 $compile('<div class="testDir"></div>')({}).then(function(t) {
                     expect(t).to.eq('<div class="testDir">test</div>');
                     expect(
-                        $TemplateCache.$$templateLoader.calls[0].args[0]
+                        $TemplateCache.$$templateLoader.calls[ 0 ].args[ 0 ]
                     ).to.eq(app.directives.testDir.templatePath);
                 });
             });
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

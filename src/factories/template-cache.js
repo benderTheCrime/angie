@@ -73,7 +73,6 @@ function $$templateLoader(url, type = 'template', encoding) {
             template = fs.readFileSync(path, encoding);
         }
 
-        // TODO write a test for this
         if (template || template === '') {
             break;
         }
@@ -107,7 +106,10 @@ function $$templateLoader(url, type = 'template', encoding) {
  * @example $resourceLoader('test.js');
  */
 function $resourceLoader(files = [], scoping, loadStyle = 'src') {
-    let [ $request, $response ] = $Injector.get('$request', '$response', scoping);
+    let [
+        $request,
+        $response
+    ] = $Injector.get('$request', '$response', scoping);
     if (
         !$request || typeof $request !== 'object' ||
         !$response || typeof $response !== 'object'
@@ -156,15 +158,15 @@ function $resourceLoader(files = [], scoping, loadStyle = 'src') {
 
         asset += '</script>';
 
-        const BODY = '</body>',
-            STR = $response.content;
+        const BODY = '</body>';
+        const STR = $response.content;
 
         if (STR.indexOf(BODY) > -1) {
             let body = STR.lastIndexOf(BODY);
             $response.content =
                 `${STR.substr(0, body)}${asset}${STR.substr(body)}`;
         } else {
-            $response.content = $response.content + asset;
+            $response.content += asset;
         }
     }
 

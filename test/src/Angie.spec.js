@@ -7,10 +7,10 @@ import fs from                      'fs';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    Angie =                         require(`../../${TEST_ENV}/Angie`).Angie,
-    CWD = process.cwd();
+const TEST_ENV = global.TEST_ENV || 'src';
+const Angie = require(`../../${TEST_ENV}/Angie`).Angie;
 
+/* eslint-disable no-unused-expressions */
 describe('Angie', function() {
     let noop = () => undefined,
         app;
@@ -65,7 +65,7 @@ describe('Angie', function() {
             app.directive('test', function() {
                 return obj;
             });
-            expect(app.$$register.calls[0].args).to.deep.eq(
+            expect(app.$$register.calls[ 0 ].args).to.deep.eq(
                 [ 'directives', 'test', obj ]
             );
         });
@@ -94,7 +94,7 @@ describe('Angie', function() {
         });
         it('test constant makes a call to $$register', function() {
             app.constant('test', 'test');
-            expect(app.$$register.calls[0].args).to.deep.eq([
+            expect(app.$$register.calls[ 0 ].args).to.deep.eq([
                 'constants',
                 'test',
                 'test'
@@ -103,7 +103,7 @@ describe('Angie', function() {
         describe('test service makes a call to $$register', function() {
             it('test object', function() {
                 app.service('test', { test: 'test' });
-                expect(app.$$register.calls[0].args).to.deep.eq([
+                expect(app.$$register.calls[ 0 ].args).to.deep.eq([
                     'services',
                     'test',
                     { test: 'test' }
@@ -129,7 +129,7 @@ describe('Angie', function() {
             it('test function', function() {
                 let test = function() {};
                 app.factory('test', test);
-                expect(app.$$register.calls[0].args).to.deep.eq([
+                expect(app.$$register.calls[ 0 ].args).to.deep.eq([
                     'factories',
                     'test',
                     test
@@ -149,7 +149,7 @@ describe('Angie', function() {
         );
         it('test Controller makes a call to $$register', function() {
             app.Controller('test', noop);
-            expect(app.$$register.calls[0].args).to.deep.eq([
+            expect(app.$$register.calls[ 0 ].args).to.deep.eq([
                 'Controllers',
                 'test',
                 noop
@@ -157,7 +157,7 @@ describe('Angie', function() {
         });
         it('test controller makes a call to $$register', function() {
             app.controller('test', noop);
-            expect(app.$$register.calls[0].args).to.deep.eq([
+            expect(app.$$register.calls[ 0 ].args).to.deep.eq([
                 'Controllers',
                 'test',
                 noop
@@ -178,7 +178,7 @@ describe('Angie', function() {
         });
         it('test config added when called with function', function() {
             app.config(noop);
-            expect(app.configs[0]).to.deep.eq({
+            expect(app.configs[ 0 ]).to.deep.eq({
                 fn: noop
             });
             expect($LogProvider.warn).to.not.have.been.called;
@@ -259,22 +259,20 @@ describe('Angie', function() {
             simple.mock(Promise, 'all');
             spy = simple.spy();
             app.configs = [
-                {
-                    fn: spy
-                }
+                { fn: spy }
             ];
         });
         afterEach(() => simple.restore());
         xit('test $$bootstrap with node_modules', function() {
             fs.readdirSync.returnWith([ 'node_modules' ]);
             app.$$bootstrap();
-            expect(Promise.all.calls[0].args[0]).to.deep.eq([]);
+            expect(Promise.all.calls[ 0 ].args[ 0 ]).to.deep.eq([]);
             expect(spy).to.have.been.called;
             expect(app.configs).to.deep.eq([]);
         });
         xit('test $$bootstrap with non-js files', function() {
             app.$$bootstrap();
-            expect(Promise.all.calls[0].args[0]).to.deep.eq([]);
+            expect(Promise.all.calls[ 0 ].args[ 0 ]).to.deep.eq([]);
             expect(spy).to.have.been.called;
         });
         xit('test $$bootstrap', function() {
@@ -285,3 +283,5 @@ describe('Angie', function() {
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

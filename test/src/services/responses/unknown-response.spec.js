@@ -20,12 +20,6 @@ describe('UnknownResponse', function() {
     beforeEach(function() {
         writeHeadSpy = spy();
         writeSpy = spy();
-        $request = {
-            headers: {
-                accept: 'text/html,'
-            },
-            path: 'test.html'
-        };
         $response = {
             test: 'test',
             $responseContent: '',
@@ -54,6 +48,8 @@ describe('UnknownResponse', function() {
 
     /* eslint-enable no-new */
     describe('methods', function() {
+        let response;
+
         beforeEach(function() {
             response = new UnknownResponse();
             response.response = $response;

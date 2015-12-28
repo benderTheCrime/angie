@@ -27,12 +27,11 @@ const SRC = `${SRC_DIR}/**/*.js`;
 const TRANSPILED_SRC_DIR = './dist';
 const TRANSPILED_SRC = `${TRANSPILED_SRC_DIR}/**/*.js`;
 const TEST_SRC = './test/src/**/*.spec.js';
-const TRANSPILED_TEST_SRC = './test/dist/**/*.spec.js';
 const DOC_SRC = './doc';
 const COVERAGE_SRC = './coverage';
 
 // Build Tasks
-gulp.task('eslint', function () {
+gulp.task('eslint', function() {
     return gulp.src([ SRC, TEST_SRC ]).pipe(eslint({
         useEslintrc: true
     })).pipe(eslint.format()).pipe(eslint.failAfterError());
@@ -48,11 +47,7 @@ gulp.task(
     [ 'istanbul:src' ],
     mochaHandler.bind(null, 'src', COVERAGE_SRC)
 );
-gulp.task(
-    'mocha:dist',
-    [ 'istanbul:dist' ],
-    mochaHandler.bind(null, 'dist', undefined)
-);
+gulp.task('mocha:dist', [ 'istanbul:dist' ], mochaHandler.bind(null, 'dist'));
 gulp.task('esdoc', function() {
     return gulp.src(SRC_DIR).pipe(esdoc({ destination: DOC_SRC }));
 });
@@ -115,9 +110,9 @@ function istanbulHandler(src, cb) {
     })).pipe(istanbul.hookRequire()).on('finish', cb);
 }
 
-function mochaHandler(src, coverage = '/tmp') {
+function mochaHandler(src, coverage = '/tmp', cb) {
     global.TEST_ENV = src;
-    return gulp.src(TEST_SRC).pipe(mocha({
+    gulp.src(TEST_SRC).pipe(mocha({
         reporter: 'spec'
     })).pipe(istanbul.writeReports({
         dir: coverage,
@@ -125,5 +120,5 @@ function mochaHandler(src, coverage = '/tmp') {
             dir: coverage
         },
         reporters: [ 'text', 'text-summary', 'lcov' ]
-    }));
+    }).on('end', cb));
 }

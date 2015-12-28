@@ -19,12 +19,6 @@ describe('$CustomResponse', function() {
     beforeEach(function() {
         writeHeadSpy = spy();
         writeSpy = spy();
-        $request = {
-            headers: {
-                accept: 'text/html,'
-            },
-            path: 'test.html'
-        };
         $response = {
             test: 'test',
             $responseContent: '',

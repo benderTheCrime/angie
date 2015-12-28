@@ -5,30 +5,19 @@
  */
 
 // System Modules
-import uuid from                                'node-uuid';
-import { blue } from                            'chalk';
-import $Injector, { $injectionBinder } from     'angie-injector';
-import $LogProvider from                        'angie-log';
+import uuid from                    'node-uuid';
 
 // Angie Modules
-import { config } from                          '../Config';
-import app from                                 '../Angie';
-import $ScopeFactory from                       '../factories/scope';
-import $CacheFactory from                       '../factories/$CacheFactory';
-import {
-    $templateCache,
-    $$templateLoader,
-    $resourceLoader
-} from                                          '../factories/template-cache';
-import $compile from                            '../factories/$Compile';
-import $Cookie from                             './cookie';
-import AssetResponse from                       './responses/asset-response';
-import ControllerTemplateResponse from          './responses/controller-template-response';
-import ControllerTemplatePathResponse from      './responses/controller-template-path-response';
-import RedirectResponse from                    './responses/redirect-response';
-import UnknownResponse from                     './responses/unknown-response';
-import ErrorResponse from                       './responses/error-response';
-import $CustomResponse from                     './responses/custom-response';
+import $ScopeFactory from           '../factories/scope';
+import AssetResponse from           './responses/asset-response';
+import ControllerTemplateResponse from
+    './responses/controller-template-response';
+import ControllerTemplatePathResponse from
+    './responses/controller-template-path-response';
+import RedirectResponse from        './responses/redirect-response';
+import UnknownResponse from         './responses/unknown-response';
+import ErrorResponse from           './responses/error-response';
+import $CustomResponse from         './responses/custom-response';
 
 /**
  * @desc The $Response class controls all of the content contained in the

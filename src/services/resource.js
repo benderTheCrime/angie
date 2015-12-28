@@ -5,7 +5,7 @@
  */
 
 // System Modules
-import { fetchUrl } from           'fetch';
+import fetch from           'fetch';
 
 class $Resource {
     static get(url) {
@@ -28,8 +28,6 @@ class $Resource {
 
         return new Promise(function(resolve, reject) {
             fetch.fetchUrl(url, args, function(e, meta, data) {
-                let err;
-
                 if (e) {
                     reject(e);
                 } else if (meta.status >= 400) {
@@ -43,7 +41,7 @@ class $Resource {
                     if (data !== '') {
                         try {
                             data = JSON.parse(data.toString());
-                        } catch(e) {}
+                        } catch (e) {}
                     }
                 }
 

@@ -10,7 +10,6 @@ import cluster from                     'cluster';
 import repl from                        'repl';
 import http from                        'http';
 import https from                       'https';
-import uuid from                        'node-uuid';
 import { argv } from                    'yargs';
 import { Client } from                  'fb-watchman';
 import { cyan } from                    'chalk';
@@ -26,13 +25,13 @@ import $Response, {
     $CustomResponse
 } from                                  './services/response';
 
-const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES'),
-    CLIENT = new Client(),
-    SUB = {
-        expression: [
-            'anyof', [ 'match', '*.js' ], [ 'match', '*.es6' ] ],
-        fields: []
-    };
+const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
+const CLIENT = new Client();
+const SUB = {
+    expression: [
+        'anyof', [ 'match', '*.js' ], [ 'match', '*.es6' ] ],
+    fields: []
+};
 let webserver,
     shell;
 
@@ -55,9 +54,9 @@ let webserver,
  * @access private
  */
 function $$watch(args = []) {
-    const PORT = $$port(args),
-        ACTION = args[ 0 ] || 'watch',
-        WATCH_DIR = argv.devmode || argv.d ? __dirname : process.cwd();
+    const PORT = $$port(args);
+    const ACTION = args[ 0 ] || 'watch';
+    const WATCH_DIR = argv.devmode || argv.d ? __dirname : process.cwd();
 
     // Check to see whether or not the config specifies the app as `development`
     // and we are creating a web server. If so, pose the user with a warning:
@@ -71,7 +70,7 @@ function $$watch(args = []) {
     return new Promise(function(resolve) {
 
         // Verify that the user actually has Facebook Watchman installed
-        CLIENT.capabilityCheck({}, function (e, r) {
+        CLIENT.capabilityCheck({}, function(e, r) {
             if (e) {
                 throw new Error(e);
             }
@@ -79,7 +78,7 @@ function $$watch(args = []) {
         });
     }).then(function() {
         return new Promise(function(resolve) {
-            CLIENT.command([ `watch-project`, WATCH_DIR ], function (e, r) {
+            CLIENT.command([ `watch-project`, WATCH_DIR ], function(e, r) {
                 if (e) {
                     throw new Error(e);
                 }
@@ -97,14 +96,14 @@ function $$watch(args = []) {
                     r.watch,
                     `ANGIE_WATCH`,
                     SUB
-                ], function (e, r) {
+                ], function(e, r) {
                     if (e) {
                         throw new Error(e);
                     }
                     resolve(r);
                 });
             }).then(function() {
-                CLIENT.on('subscription', function (r) {
+                CLIENT.on('subscription', function(r) {
                     if (r.subscription === 'ANGIE_WATCH') {
 
                         // Stop any existing webserver
@@ -114,9 +113,10 @@ function $$watch(args = []) {
 
                         // Call the passed command to restart the watched
                         // process
-                        (args[0] && args[0] === 'watch' ? $$server : $$shell)(
-                            [ PORT ]
-                        );
+                        (
+                            args[ 0 ] && args[ 0 ] === 'watch' ?
+                                $$server : $$shell
+                        )([ PORT ]);
                     }
                 });
             });
@@ -150,14 +150,14 @@ function $$shell() {
         process.stdin.setEncoding('utf8');
 
         // Start a REPL after loading project files
-        if (!shell) {
+        if (shell) {
+            process.stdout.write(SHELL_PROMPT);
+        } else {
             shell = repl.start({
                 prompt: SHELL_PROMPT,
                 input: process.stdin,
                 output: process.stdout
             });
-        } else {
-            process.stdout.write(SHELL_PROMPT);
         }
     });
 }
@@ -228,8 +228,7 @@ function $$server(args = []) {
 
     // Load necessary app components
     return app.$$load().then(function() {
-        const PORT = $$port(args),
-            $Cache = $Injector.get('$Cache');
+        const PORT = $$port(args);
 
         // Start a webserver, use http/https based on port
         webserver = (PORT === 443 ? https : http).createServer((req, res) => {
@@ -342,15 +341,18 @@ function $$server(args = []) {
 }
 
 function $$port(args) {
-    let port = +(argv.port || argv.p || args[ 1 ]);
-    return argv.usessl ? 443 : !isNaN(port) ? port : 3000;
+    let port = argv.port || argv.p || args[ 1 ] || 3000;
+
+    if (argv.usessl) {
+        port = 443;
+    }
+
+    return port;
 }
 
 export {
     $$watch,
     $$cluster,
     $$server,
-
-    // Exposed for testing purposes
     $$shell
 };

@@ -48,7 +48,7 @@ describe('AssetResponse', function() {
             'constructor',
             () => true
         );
-        $injectorMock = mock($Injector, 'get', () => $request);
+        mock($Injector, 'get', () => $request);
     });
     afterEach(simple.restore);
     describe('constructor', function() {

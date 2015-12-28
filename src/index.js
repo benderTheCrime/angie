@@ -20,7 +20,7 @@ import {
     $$cluster,
     $$server
 } from                              './Server';
-import $$CommandLineError from      './services/exceptions/command-line-error'
+import $$CommandLineError from      './services/exceptions/command-line-error';
 
 if (argv.help || argv.h) {
     help();
@@ -28,51 +28,48 @@ if (argv.help || argv.h) {
 
     // Route the CLI request to a specific command
     switch ((argv._[ 0 ] || '').toLowerCase()) {
-        case 'help':
-            help();
-            break;
-        case 'server':
-            $$server(argv._);
-            break;
-        case 's':
-            $$server(argv._);
-            break;
-        case 'watch':
-            $$watch(argv._);
-            break;
-        case 'cluster':
-            $$cluster();
-            break;
-        case 'create':
-            handleCreationTask();
-            break;
-        case 'createproject':
-            $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
-            break;
-        case 'c':
-            handleCreationTask();
-            break;
-        case 'run':
-            handleRunTask();
-            break;
-        case 'r':
-            handleRunTask();
-            break;
-        case 'test':
-            runTests();
-            break;
-        case 'shell':
-            $$watch(argv._);
-            break;
-        default:
-            help();
+    case 'help':
+        help();
+        break;
+    case 'server':
+        $$server(argv._);
+        break;
+    case 's':
+        $$server(argv._);
+        break;
+    case 'watch':
+        $$watch(argv._);
+        break;
+    case 'cluster':
+        $$cluster();
+        break;
+    case 'create':
+        handleCreationTask();
+        break;
+    case 'createproject':
+        $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
+        break;
+    case 'c':
+        handleCreationTask();
+        break;
+    case 'run':
+        handleRunTask();
+        break;
+    case 'r':
+        handleRunTask();
+        break;
+    case 'test':
+        runTests();
+        break;
+    case 'shell':
+        $$watch(argv._);
+        break;
+    default:
+        help();
     }
 }
 
 function runTests() {
-
-    // TODO is there any way to carry the stream output from gulp instead
-    // of capturing stdout?
     exec(`cd ${__dirname} && gulp`, function(e, std, err) {
         $LogProvider.info(std);
         if (err) {
@@ -85,8 +82,10 @@ function runTests() {
 }
 
 function handleCreationTask() {
-    if (argv._.includes('project')) {
+    if (argv._.includes('createProject')) {
         $$createProject({ name: argv._[ 1 ], dir: argv._[ 2 ] });
+    } else if (argv._.includes('project')) {
+        $$createProject({ name: argv._[ 2 ], dir: argv._[ 3 ] });
     } else if (
         argv._.includes('model') ||
         argv._.includes('migration') ||
@@ -109,8 +108,8 @@ function handleRunTask() {
 }
 
 function help() {
-    const GRAY = (...args) => console.log(gray.apply(null, args)),
-        BOLD = (...args) => console.log(bold.apply(null, args));
+    const GRAY = (...args) => console.log(gray.apply(null, args));
+    const BOLD = (...args) => console.log(bold.apply(null, args));
 
     console.log('\r');
     BOLD('Angie');
