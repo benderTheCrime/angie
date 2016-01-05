@@ -11,17 +11,18 @@ import { argv } from                    'yargs';
 import { default as promptly } from     'promptly';
 import fs from                          'fs';
 import util from                        'util';
-import chalk, {
+import {
     bold,
-    green
+    green,
+    red,
+    cyan
 } from                                  'chalk';
 import $LogProvider from                'angie-log';
 
 // Angie Modules
 import { $StringUtil } from             '../util';
-
-const p = process,
-      breen = (v) => bold(green(v));
+import $$ProjectCreationError from
+    '../../services/exceptions/project-creation-error';
 
 /**
  * @desc $$createProject is the function called when the CLI attempts to create
@@ -55,12 +56,18 @@ function $$createProject({ name, dir }) {
     name = argv.name || argv.n || name;
     dir = $StringUtil.removeTrailingLeadingSlashes(argv.dir || dir);
 
+    // if (!dir) {
+    //     dir = process.cwd();
+    // }
+
     // The process must exit if there is no passed name, or the name passed is
     // in an incorrect format
     if (!name) {
         throw new $$ProjectCreationError('No project name specified');
     } else if (
-        /[0-9$%\^&*\)\(\<\>\\\/\.\,\`\?\+\!\~#@=\}\{\|\]\[\'\"\:\;]+/i.test(name)
+        /[0-9$%\^&*\)\(\<\>\\\/\.\,\`\?\+\!\~#@=\}\{\|\]\[\'\"\:\;]+/i.test(
+            name
+        )
     ) {
 
         // Being super specific about which characters are OK and which are not
@@ -70,9 +77,15 @@ function $$createProject({ name, dir }) {
     }
 
     // Make sure that we're creating the project in the right spot
-    let mkDir = dir ? (dir === '.' ? '' : dir) : `${p.cwd()}/${name}`,
+    let mkDir = dir === '.' ? '' : dir,
         mkDirFiles = mkDir ? `${mkDir}/` : '',
-        mkSub = `${mkDirFiles}src`.replace(/\/{2}/g, '/');
+        mkSub = `${mkDirFiles}src`.replace(/\/{2}/g, '/'),
+
+        // cacheStaticAssets
+        staticCache = false,
+
+        // Default JS to be loaded with all HTML files
+        defaultAppJavaScriptFilename;
     try {
 
         // We cannot create a dir if the argument is empty
@@ -88,111 +101,110 @@ function $$createProject({ name, dir }) {
             'services',
             'factories',
             'controllers',
-            'directives'
+            'directives',
+            'models'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkSub}/${v}`);
+            fs.writeFileSync(`${mkSub}/${v}/.keep`, 'Keep this directory');
         });
 
         // Create static folders
         [
+            'proto',
             'test',
+            'test/src',
             'static',
             'templates'
         ].forEach(function(v) {
             fs.mkdirSync(`${mkDirFiles}${v}`);
+            if (v !== 'test') {
+                fs.writeFileSync(
+                    `${mkDirFiles}${v}/.keep`, 'Keep this directory'
+                );
+            }
         });
-    } catch(e) {
+    } catch (e) {
         throw new $$ProjectCreationError(e);
-    } finally {
+    }
 
-        // This is where we create our AngieFile, we can pick certain values with
-        // which we can populate our config:
+    // Wrap the prompts in a Promise
+    return new Promise(function(resolve, reject) {
+        promptly.confirm(
+            'Do you want Angie to cache static assets? :',
+            function(e, v) {
+                if (e) {
+                    reject(e);
+                }
+                resolve(v);
+            }
+        );
+    }).then(function(v) {
+        staticCache = !!v;
+    }).then(function() {
 
-        // cacheStaticAssets
-        let staticCache = false,
-
-            // Default JS to be loaded with all HTML files
-            defaultAppJavaScriptFilename;
-
-        // Wrap the prompts in a Promise
-        new Promise(function(resolve, reject) {
-            promptly.confirm(
-                `${breen('Do you want Angie to cache static assets?')} :`,
-                function(e, v) {
-                    if (e) {
-                        reject(e);
+        // Ask what the default JS filename should be
+        return new Promise(function(resolve) {
+            return promptly.prompt(
+                'What would you like to call the "default" ' +
+                'loaded script file (default is application.js)? :',
+                {
+                    default: 'application.js',
+                    validator: function(v) {
+                        if (v && v.indexOf('.js') === -1) {
+                            throw new Error(
+                                bold(red('Input must be a valid ".js" file.'))
+                            );
+                        }
+                        return v.replace(/\/|\\/g, '');
                     }
+                },
+                function(e, v) {
                     resolve(v);
                 }
             );
-        }).then(function(v) {
-            staticCache = !!v;
-        }).then(function() {
-
-            // Ask what the default JS filename should be
-            return new Promise(function(resolve) {
-                return promptly.prompt(
-                    `${breen(
-                        'What would you like to call the "default" ' +
-                        'loaded script file ' +
-                        `(${bold(chalk.white('default is'))} ` +
-                        `${chalk.cyan('application.js')})?`
-                     )} :`,
-                     {
-                         default: 'application.js',
-                         validator: function(v) {
-                             if (v && v.indexOf('.js') === -1) {
-                                 throw new Error(
-                                     bold(chalk.red(
-                                         'Input must be a valid ".js" file.'
-                                     ))
-                                 );
-                             }
-                             return v.replace(/\/|\\/g, '');
-                         }
-                     },
-                    function(e, v) {
-                        resolve(v);
-                    }
-                );
-            });
-        }).then(function(v) {
-            defaultAppJavaScriptFilename = v;
-        }).then(function() {
-
-            // Read our AngieFile template and reproduce in the target directory
-            let template = fs.readFileSync(
-                `${__dirname}/../../templates/json/AngieFile.template.json`,
-                'utf8'
-            );
-            template = util.format(
-                template,
-                name,
-                name,
-                staticCache,
-                defaultAppJavaScriptFilename
-            );
-            fs.writeFileSync(
-                `${mkDirFiles}AngieFile.json`,
-                template,
-                'utf8'
-            );
-            fs.writeFileSync(
-                `${mkDirFiles}static/${defaultAppJavaScriptFilename}`,
-                ''
-            );
-
-            $LogProvider.info('Project successfully created');
-            p.exit(0);
         });
-    }
-}
+    }).then(function(v) {
+        defaultAppJavaScriptFilename = v;
+    }).then(function() {
 
-class $$ProjectCreationError {
-    constructor(e) {
-        $LogProvider.error(e);
-        throw new Error(e);
-    }
+        // Read our AngieFile template and reproduce in the target directory
+        let template = fs.readFileSync(
+            `${__dirname}/../../templates/json/AngieFile.template.json`,
+            'utf8'
+        );
+        template = util.format(
+            template,
+            name,
+            name,
+            staticCache,
+            defaultAppJavaScriptFilename
+        );
+        fs.writeFileSync(
+            `${mkDirFiles}AngieFile.json`,
+            template,
+            'utf8'
+        );
+        fs.writeFileSync(
+            `${mkDirFiles}static/${defaultAppJavaScriptFilename}`,
+            ''
+        );
+
+        $LogProvider.info('Project successfully created');
+        console.log(bold(`
+            You're well on your way to creating a robust, fullstack
+            application! At this point, I recommend that you do the
+            following:\n
+            ${green('1.')}  Following the instructions to install the
+            ORM (and Protocol Buffers).\n
+            ${green('2.')}  Visit the quickstart documentation in the
+            "md" folder of this application.\n
+            ${green('3.')}  Look at some of the extensions you can use
+            in tandem with your Angie application.\n
+            ${green('4.')}  Use the ${cyan('AngieFile.json')}
+            documentation to customize your application settings.
+        `));
+        process.exit(0);
+    });
 }
 
 export default $$createProject;

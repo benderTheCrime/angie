@@ -9,10 +9,10 @@ let cache = {};
 class $CacheFactory {
     constructor(key) {
         this.key = key;
-        if (!cache[ key ]) {
-            this.cache = cache[ key ] = {};
-        } else {
+        if (cache[ key ]) {
             this.cache = cache[ key ];
+        } else {
+            this.cache = cache[ key ] = {};
         }
     }
     put(id, obj, replace) {

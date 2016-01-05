@@ -19,19 +19,19 @@ import $LogProvider from                'angie-log';
 // Angie Modules
 import { config } from                  './Config';
 import app from                         './Angie';
-import $Request from                    './services/$Request';
+import $Request from                    './services/request';
 import $Response, {
     ErrorResponse,
     $CustomResponse
-} from                                  './services/$Response';
+} from                                  './services/response';
 
-const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES'),
-    CLIENT = new Client(),
-    SUB = {
-        expression: [
-            'anyof', [ 'match', '*.js' ], [ 'match', '*.es6' ] ],
-        fields: []
-    };
+const RESPONSE_HEADER_MESSAGES = $Injector.get('RESPONSE_HEADER_MESSAGES');
+const CLIENT = new Client();
+const SUB = {
+    expression: [
+        'anyof', [ 'match', '*.js' ], [ 'match', '*.es6' ] ],
+    fields: []
+};
 let webserver,
     shell;
 
@@ -54,9 +54,9 @@ let webserver,
  * @access private
  */
 function $$watch(args = []) {
-    const PORT = $$port(args),
-        ACTION = args[0] || 'watch',
-        WATCH_DIR = argv.devmode || argv.d ? __dirname : process.cwd();
+    const PORT = $$port(args);
+    const ACTION = args[ 0 ] || 'watch';
+    const WATCH_DIR = argv.devmode || argv.d ? __dirname : process.cwd();
 
     // Check to see whether or not the config specifies the app as `development`
     // and we are creating a web server. If so, pose the user with a warning:
@@ -70,7 +70,7 @@ function $$watch(args = []) {
     return new Promise(function(resolve) {
 
         // Verify that the user actually has Facebook Watchman installed
-        CLIENT.capabilityCheck({}, function (e, r) {
+        CLIENT.capabilityCheck({}, function(e, r) {
             if (e) {
                 throw new Error(e);
             }
@@ -78,7 +78,7 @@ function $$watch(args = []) {
         });
     }).then(function() {
         return new Promise(function(resolve) {
-            CLIENT.command([ `watch-project`, WATCH_DIR ], function (e, r) {
+            CLIENT.command([ `watch-project`, WATCH_DIR ], function(e, r) {
                 if (e) {
                     throw new Error(e);
                 }
@@ -96,14 +96,14 @@ function $$watch(args = []) {
                     r.watch,
                     `ANGIE_WATCH`,
                     SUB
-                ], function (e, r) {
+                ], function(e, r) {
                     if (e) {
                         throw new Error(e);
                     }
                     resolve(r);
                 });
             }).then(function() {
-                CLIENT.on('subscription', function (r) {
+                CLIENT.on('subscription', function(r) {
                     if (r.subscription === 'ANGIE_WATCH') {
 
                         // Stop any existing webserver
@@ -113,9 +113,10 @@ function $$watch(args = []) {
 
                         // Call the passed command to restart the watched
                         // process
-                        (args[0] && args[0] === 'watch' ? $$server : $$shell)(
-                            [ PORT ]
-                        );
+                        (
+                            args[ 0 ] && args[ 0 ] === 'watch' ?
+                                $$server : $$shell
+                        )([ PORT ]);
                     }
                 });
             });
@@ -149,14 +150,14 @@ function $$shell() {
         process.stdin.setEncoding('utf8');
 
         // Start a REPL after loading project files
-        if (!shell) {
+        if (shell) {
+            process.stdout.write(SHELL_PROMPT);
+        } else {
             shell = repl.start({
                 prompt: SHELL_PROMPT,
                 input: process.stdin,
                 output: process.stdout
             });
-        } else {
-            process.stdout.write(SHELL_PROMPT);
         }
     });
 }
@@ -217,58 +218,63 @@ function $$cluster() {
  * It can also be called independently of the Facebook Watchman application by
  * issuing the `angie server` or `angie s` commands from the CLI.
  * @todo add intentionally misleading X-Powered-By header?
+ * @todo CSP
  * @since 0.3.2
  * @param {Array} [param=[]] args An array of CLI arguments piped into the
  * function
  * @access private
  */
 function $$server(args = []) {
-    const PORT = $$port(args);
 
     // Load necessary app components
-    app.$$load().then(function() {
+    return app.$$load().then(function() {
+        const PORT = $$port(args);
 
         // Start a webserver, use http/https based on port
-        webserver = (PORT === 443 ? https : http).createServer(function(req, res) {
+        webserver = (PORT === 443 ? https : http).createServer((req, res) => {
             let $request = new $Request(req),
-
-                // The service response instance
                 $response = new $Response(res),
-
-                // The base NodeJS response
-                response = $response.response,
-                requestTimeout;
+                requestTimeout,
+                $scoping = {
+                    $request: {
+                        $$iid: $request.$$iid,
+                        val: $request
+                    },
+                    $response: {
+                        $$iid: $response.$$iid,
+                        val: $response
+                    },
+                    $scope: {
+                        $$iid: $response.$scope.$$iid,
+                        val: $response.$scope
+                    }
+                };
 
             // Instantiate the request, get the data
             $request.$$data().then(function() {
 
                 // We can set provisional headers here
                 $response.header('X-Content-Type-Options', 'nosniff')
-                    .header('X-XSS-Protection', '1; mode=block')
-                    .header(
-                        'Content-Security-Policy',
-                        'default-src \'self\'; script-src \'self\';'
-                    );
+                    .header('X-XSS-Protection', '1; mode=block');
 
                 // Set X-Frame-Options response header based on AngieFile
                 if (typeof config.setXFrameOptions === 'string') {
-                    $response.header('X-Frame-Options', config.setXFrameOptions);
+                    $response.header(
+                        'X-Frame-Options', config.setXFrameOptions
+                    );
                 }
-
-                // Add Angie components for the request and response objects
-                app.service('$request', $request).service('$response', response);
 
                 // Set a request error timeout so that we ensure every request
                 // resolves to something
                 requestTimeout = setTimeout(
-                    forceEnd.bind(null, $request.path, response),
+                    forceEnd.bind(null, $request.path, $scoping, res),
                     config.hasOwnProperty('responseErrorTimeout') ?
                         config.responseErrorTimeout : 5000
                 );
 
             // Route the request
-            }).then(() => $request.$$route()).then(function() {
-                let code = response.statusCode,
+            }).then(() => $request.$$route($scoping)).then(function() {
+                let code = res.statusCode,
                     log = 'error';
 
                 // Clear the request error because now we are guaranteed some
@@ -285,27 +291,27 @@ function $$server(args = []) {
                 $LogProvider[ log ](
                     req.method,
                     $request.path,
-                    response._header || ''
+                    res._header || ''
                 );
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(response);
+                end(res);
             }).catch(function(e) {
                 new ErrorResponse(e).head().writeSync();
                 $LogProvider.error(
                     req.method,
                     $request.path,
-                    response._header || ''
+                    res._header || ''
                 );
 
                 // Call this inside route block to make sure that we only
                 // return once
-                end(response);
+                end(res);
             });
         }).listen(PORT);
 
-        // Expose the webserver so that we can use it in sockets, etc.
+        // Redefine this service now that we actually have a server
         app.service('$server', webserver);
 
         // Info
@@ -315,17 +321,13 @@ function $$server(args = []) {
 
             // End the response
             response.end();
-
-            // After we have finished with the response, we can tear down
-            // request/response specific components
-            app.$$tearDown('$request', '$response');
         }
 
         // Force an ended response with a timeout
-        function forceEnd(path, response) {
+        function forceEnd(path, $scoping, response) {
 
             // Send a custom response for gateway timeout
-            new $CustomResponse().head(504, null, {
+            new $CustomResponse($scoping).head(504, null, {
                 'Content-Type': 'text/html'
             }).writeSync(`<h1>${RESPONSE_HEADER_MESSAGES[ 504 ]}</h1>`);
 
@@ -339,15 +341,18 @@ function $$server(args = []) {
 }
 
 function $$port(args) {
-    let port = +(argv.port || argv.p || args[ 1 ]);
-    return argv.usessl ? 443 : !isNaN(port) ? port : 3000;
+    let port = argv.port || argv.p || args[ 1 ] || 3000;
+
+    if (argv.usessl) {
+        port = 443;
+    }
+
+    return port;
 }
 
 export {
     $$watch,
     $$cluster,
     $$server,
-
-    // Exposed for testing purposes
     $$shell
 };

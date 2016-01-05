@@ -12,6 +12,7 @@ import $CacheFactory from           '../../../src/factories/$CacheFactory';
 import * as $TemplateCache from     '../../../src/factories/template-cache';
 import { $FileUtil } from           '../../../src/util/util';
 
+/* eslint-disable no-unused-expressions */
 describe('$TemplateCache', function() {
     const noop = () => false;
 
@@ -38,8 +39,6 @@ describe('$TemplateCache', function() {
         const test = () => 'test';
         let injectorMock,
             fileMock;
-
-
         beforeEach(function() {
             injectorMock = mock($Injector, 'get', () => [ test() ]);
             fileMock = mock($FileUtil, 'find', test);
@@ -73,22 +72,25 @@ describe('$TemplateCache', function() {
             expect($TemplateCache.$$templateLoader('test')).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(!$CacheFactory.prototype.put.called);
         });
-        it('test file found, template returned, called with encoding', function() {
-            injectorMock.returnWith([ 'test' ]);
-            fileMock.returnWith('test');
-            expect(
-                $TemplateCache.$$templateLoader('test', 'templates', 'utf8')
-            ).to.eq('test');
-            assert(fileMock.called);
-            expect(
-                fs.readFileSync.calls[0].args
-            ).to.deep.eq([ 'test', 'utf8' ]);
-            expect(!$CacheFactory.prototype.put.called);
-        });
+        it(
+            'test file found, template returned, called with encoding',
+            function() {
+                injectorMock.returnWith([ 'test' ]);
+                fileMock.returnWith('test');
+                expect(
+                    $TemplateCache.$$templateLoader('test', 'templates', 'utf8')
+                ).to.eq('test');
+                assert(fileMock.called);
+                expect(
+                    fs.readFileSync.calls[ 0 ].args
+                ).to.deep.eq([ 'test', 'utf8' ]);
+                expect(!$CacheFactory.prototype.put.called);
+            }
+        );
         it('test file found, static asset, no config cache', function() {
             injectorMock.returnWith([ 'test' ]);
             fileMock.returnWith('test');
@@ -97,7 +99,7 @@ describe('$TemplateCache', function() {
             ).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(!$CacheFactory.prototype.put.called);
         });
@@ -108,10 +110,10 @@ describe('$TemplateCache', function() {
             expect($TemplateCache.$$templateLoader('test')).to.eq('test');
             assert(fileMock.called);
             expect(
-                fs.readFileSync.calls[0].args
+                fs.readFileSync.calls[ 0 ].args
             ).to.deep.eq([ 'test', undefined ]);
             expect(
-                $CacheFactory.prototype.put.calls[0].args
+                $CacheFactory.prototype.put.calls[ 0 ].args
             ).to.deep.eq([ 'test', 'test' ]);
         });
     });
@@ -123,7 +125,9 @@ describe('$TemplateCache', function() {
         beforeEach(function() {
             $request = { path: '/' };
             $response = {};
-            $injectorMock = mock($Injector, 'get', () => [ $request, $response ]);
+            $injectorMock = mock(
+                $Injector, 'get', () => [ $request, $response ]
+            );
         });
         afterEach(function() {
             simple.restore();
@@ -152,7 +156,8 @@ describe('$TemplateCache', function() {
             $response.content = 'TEST';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/test.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/test.js"></script>'
             );
         });
         it('test single file string src non-root path', function() {
@@ -160,7 +165,8 @@ describe('$TemplateCache', function() {
             $request.path = '/index/test';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/../../test.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/../../test.js"></script>'
             );
         });
         it('test array of files string src', function() {
@@ -169,16 +175,20 @@ describe('$TemplateCache', function() {
                 $TemplateCache.$resourceLoader([ 'test.js', 'test1.js' ])
             ).to.be.true;
             expect($response.content).to.eq(
-                'TEST<script type="text/javascript" src="/test.js"></script>' +
-                '<script type="text/javascript" src="/test1.js"></script>'
+                'TEST<script type="text/javascript" async defer ' +
+                'src="/test.js"></script><script type="text/javascript" ' +
+                'async defer src="/test1.js"></script>'
             );
         });
         it('test single file string src with </body>', function() {
             $response.content = '</body>';
             expect($TemplateCache.$resourceLoader('test.js')).to.be.true;
             expect($response.content).to.eq(
-                '<script type="text/javascript" src="/test.js"></script></body>'
+                '<script type="text/javascript" async defer src="/test.js">' +
+                '</script></body>'
             );
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

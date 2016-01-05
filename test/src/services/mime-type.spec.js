@@ -2,19 +2,21 @@
 import { expect } from              'chai';
 
 // Angie Modules
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $MimeType =                     require(`../../../${TEST_ENV}/services/mime-type`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $MimeType = require(`../../../${TEST_ENV}/services/mime-type`);
 
 describe('$MimeTypeProvider', function() {
     describe('$$', function() {
         it(
-            'test $$ called without any arguments returns the default Content-Type',
+            'test $$ called without any arguments returns the default ' +
+            'Content-Type',
             function() {
                 expect($MimeType.$$()).to.eq('text/plain');
             }
         );
         it(
-            'test $$ called with a type not in MIME$$TYPES returns default Content-Type',
+            'test $$ called with a type not in MIME$$TYPES returns default ' +
+            'Content-Type',
             function() {
                 expect($MimeType.$$('test')).to.eq('text/plain');
             }

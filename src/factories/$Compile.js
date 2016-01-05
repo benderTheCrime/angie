@@ -7,13 +7,12 @@
 // System Modules
 import cheerio from                 'cheerio';
 import { cyan } from                'chalk';
-import $Injector from               'angie-injector';
 import $LogProvider from            'angie-log';
 
 // Angie Modules
 import app from                     '../Angie';
 import { $$templateLoader } from    './template-cache';
-import $Util, { $StringUtil } from  '../util/util';
+import * as $Util from              '../util/util';
 
 /**
  * @desc $compile is provided to any service, Controller, directive, Model, or
@@ -54,8 +53,8 @@ function $compile(t) {
             directive.$names = [
                 $directive,
                 $directive.toLowerCase(),
-                $StringUtil.toUnderscore($directive),
-                $StringUtil.toDash($directive)
+                $Util.string.toUnderscore($directive),
+                $Util.string.toDash($directive)
             ];
         }
 
@@ -81,7 +80,7 @@ function $compile(t) {
      * $window/$document?
      * @returns {string} The compiled template
      */
-    return function $templateCompile (scope = {}, assignDOMServices = true) {
+    return function $templateCompile(scope = {}) {
 
         // Temporary template object, lets us hang on to our template
         let tmpLet = template,
@@ -137,10 +136,13 @@ function $compile(t) {
     };
 }
 
-// Private function responsible for parsing directives
 // TODO observance on attributes
-function $$processDirective(el, scope, directive, type) {
-    let template,
+// TODO consider removing all attributes from the element and keying off which
+// are preserved in the link function, or finding the diff
+function $$processDirective(el, scope, directive) {
+    let attr = el[ 0 ].attribs || {},
+        parsedAttrs = {},
+        template,
         prom;
 
     // Template parsing
@@ -158,21 +160,19 @@ function $$processDirective(el, scope, directive, type) {
         // Setup the template HTML observing the prepend/append properties
         prom = $compile(template)(scope, false).then(function(t) {
             el.html(
-                `${directive.prepend === true ? '' : el.html()}${t}` +
-                `${directive.prepend !== true ? '' : el.html()}`
+                `${directive.prepend === true ?
+                    `${t}${el.html()}` : `${el.html()}${t}`
+                }`
             );
         });
     } else {
-        prom = new Promise((r) => r());
+        prom = new Promise(r => r());
     }
 
-    // Setup Attrs
-    let attr = el[0].attribs || {},
-        parsedAttrs = {};
     if (Object.keys(attr).length) {
         for (let key in attr) {
             if (attr[ key ]) {
-                parsedAttrs[ $StringUtil.toCamel(key) ] = attr[ key ];
+                parsedAttrs[ $Util.string.toCamel(key) ] = attr[ key ];
             }
         }
     }
@@ -184,31 +184,11 @@ function $$processDirective(el, scope, directive, type) {
     ) {
         prom = prom.then(function() {
             return new Promise(function(resolve) {
-                let $response = {};
-
-                // Assign a function that can be called to resolve async
-                // behavior in directives
-                try {
-                    $response = $Injector.get('$response');
-                } catch(e) {} finally {
-                    $response.done = resolve;
-                }
-
                 const link = directive.link.call(
-                    scope,
-                    scope,
-                    type !== 'M' ? el : null,
-                    parsedAttrs,
-                    resolve
+                    scope, scope, el, parsedAttrs
                 );
 
-                if (
-                    !link ||
-                    !link.constructor ||
-                    link.constructor.name !== 'Promise'
-                ) {
-                    resolve(link);
-                }
+                resolve(link);
             });
         }).then(function() {
             if (el.attr) {
@@ -216,7 +196,7 @@ function $$processDirective(el, scope, directive, type) {
 
                     // Replace all of the element attrs with parsedAttrs
                     if (directive.$names.indexOf(key) === -1) {
-                        el.attr($StringUtil.toDash(key), parsedAttrs[ key ]);
+                        el.attr($Util.string.toDash(key), parsedAttrs[ key ]);
                     }
                 }
             }
@@ -229,25 +209,29 @@ function $$processDirective(el, scope, directive, type) {
 function $$matchBrackets(html, scope) {
 
     // Parse simple listeners/expressions
-    return html.replace(/(\{{2,3}('\{{2,3})?[^\}\{]+(\}{2,3}')?\}{2,3})/g, function(m) {
+    return html.replace(/(\{{2,3}('\{{2,3})?[^\}\{]+(\}{2,3}')?\}{2,3})/g,
+        function(m) {
 
-        // Remove the bracket mustaches
-        const parsedListener = m.replace(/^(\{{2,3})|(\}{2,3})$|;/g, '').trim();
-        let val = '';
+            // Remove the bracket mustaches
+            const PARSED_LISTENER = m.replace(/^(\{{2,3})|(\}{2,3})$|;/g, '')
+                .trim();
+            let val = '';
 
-        // Evaluate the expression
-        try {
-            val = $$safeEvalFn.call(scope, parsedListener);
-        } catch(e) {
+            // Evaluate the expression
+            try {
+                val = $$safeEvalFn.call(scope, PARSED_LISTENER);
+            } catch (e) {
 
-            // There is no reason to throw an error on unfound $scope variables
-            if (!(e instanceof ReferenceError)) {
-                $LogProvider.warn(`Template ${cyan('$compile')} Error: ${e}`);
+                // There is no reason to throw an error on unfound $scope variables
+                if (!(e instanceof ReferenceError)) {
+                    $LogProvider.warn(
+                        `Template ${cyan('$compile')} Error: ${e}`
+                    );
+                }
             }
-        }
 
-        return val;
-    });
+            return val;
+        });
 }
 
 // A private function to evaluate the parsed template string in the context of

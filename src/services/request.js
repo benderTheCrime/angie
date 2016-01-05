@@ -1,17 +1,20 @@
 /**
- * @module $Request.js
+ * @module request.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 8/16/2015
  */
 
 // System Modules
 import url from                     'url';
+import util from                    'util';
 import { Form } from                'multiparty';
+import uuid from                    'node-uuid';
 
 // Angie Modules
 import $Routes from                 '../factories/routes';
-import * as $Responses from         './$Response';
-import $Util, { $StringUtil } from  '../util/util';
+import * as $Responses from         './response';
+import $CookieFactory from          './cookie';
+import { string } from              '../util/util';
 
 /**
  * @desc The $Request class processes all of the incoming Angie requests. It
@@ -25,7 +28,9 @@ class $Request {
     constructor(request) {
         let $routes;
 
-        $Util._extend(this, request);
+        this.$$iid = uuid.v4();
+
+        util._extend(this, request);
         this.$$request = request;
 
         // Define URI
@@ -40,6 +45,9 @@ class $Request {
         // Declare the routes on the local request object
         this.routes = $routes.routes;
         this.otherwise = $routes.otherwise;
+
+        // Grab cookies
+        this.cookieJar = new $CookieFactory(request);
     }
 
     /**
@@ -59,16 +67,15 @@ class $Request {
      * @since 0.4.0
      * @access private
      */
-    $$route() {
+    $$route(scoping) {
 
         // Check against all of the RegExp routes in Reverse
         let regExpRoutes = Object.keys(this.routes.regExp || {}).reverse();
-
         for (let i = 0; i < regExpRoutes.length; ++i) {
 
             // Slice characters we do not need to instantiate a new RegExp
             let regExpRoute =
-                $StringUtil.removeTrailingLeadingSlashes(regExpRoutes[ i ]),
+                string.removeTrailingLeadingSlashes(regExpRoutes[ i ]),
 
                 // Cast the string key of the routes.regExp object as a
                 // RegExp object and add any matching flags
@@ -76,13 +83,12 @@ class $Request {
                     regExpRoute,
                     this.routes.regExp[ regExpRoutes[ i ] ].flags
                 );
-
             if (pattern.test(this.path)) {
                 this.route = this.routes.regExp[ regExpRoutes[ i ] ];
 
                 // Hooray, we've set our route, now we need to do some additional
                 // param parsing
-                $Util._extend(
+                util._extend(
                     this.query,
                     $Routes.$$parseURLParams(pattern, this.path)
                 );
@@ -98,8 +104,9 @@ class $Request {
 
         // Route the request based on whether the route exists and what the
         // route states its response should contain.
-        let ResponseType;
         try {
+            let ResponseType;
+
             if (this.route) {
                 ResponseType = 'ControllerTemplate';
                 if (this.route.templatePath) {
@@ -118,8 +125,10 @@ class $Request {
             }
 
             // Perform the specified response type
-            return new $Responses[ `${ResponseType}Response` ]().head().write();
-        } catch(e) {
+            return new $Responses[
+                `${ResponseType}Response`
+            ](scoping).head().write();
+        } catch (e) {
 
             // Throw an error response if no other response type was specified
             return new $Responses.ErrorResponse(e).head().write();
@@ -131,7 +140,6 @@ class $Request {
             request = this.$$request,
             proms = [],
             prom;
-        delete this.$$request;
         request.body = '';
         request.formData = {};
 
@@ -157,23 +165,24 @@ class $Request {
                 new Form().parse(request, function(e, ...data) {
                     resolve(data);
                 });
-            } catch(e) {
+            } catch (e) {
                 resolve([]);
             }
-        })
-
-        proms.push(prom);
-        prom.then(function() {
-            let rawData = arguments[0][0] || {},
-                files = arguments[0][1] || {},
+        }).then(function() {
+            let rawData = arguments[ 0 ][ 0 ] || {},
+                files = arguments[ 0 ][ 1 ] || {},
                 formData = {};
+
             for (let field in rawData) {
                 formData[ field ] = typeof rawData[ field ] === 'object' ?
-                    rawData[ field ][0] : rawData[ field ];
+                    rawData[ field ][ 0 ] : rawData[ field ];
             }
+
             me.formData = request.formData = formData;
             me.files = request.files = files;
         });
+
+        proms.push(prom);
 
         return Promise.all(proms);
     }

@@ -6,8 +6,6 @@ I've been curating the Angie project on my own since around April. It has made a
 ### Abridged TODO
 I'm looking for some contributors to the project to help me do the following:
 
-* Handle realtime 6-way data-binding support (plan included)
-* Handle f2b form support
 * Manage the ORM
 * Create a caching module (using any preferred methodology)
 * Manage the dependency injection module

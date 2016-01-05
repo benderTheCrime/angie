@@ -2,8 +2,7 @@ import { default as register } from     'babel-core/register';
 register({
     only: [
         '**/node_modules/angie*/**',
-        '**/src/**',
-        '**/test/**'
+        '**/{src,migrations,test}/**'
     ],
     stage: 0
 });
@@ -13,7 +12,6 @@ import fs from                          'fs';
 import gulp from                        'gulp';
 import { argv } from                    'yargs';
 import eslint from                      'gulp-eslint';
-import jscs from                        'gulp-jscs';
 import { Instrumenter } from            'isparta';
 import mocha from                       'gulp-mocha';
 import istanbul from                    'gulp-istanbul';
@@ -24,30 +22,21 @@ import { bold, red } from               'chalk';
 
 const bread = str => bold(red(str));
 
-const SRC_DIR = './src',
-    SRC = `${SRC_DIR}/**/*.js`,
-    TRANSPILED_SRC_DIR = './dist',
-    TRANSPILED_SRC = `${TRANSPILED_SRC_DIR}/**/*.js`,
-    TEST_SRC = './test/src/**/*.spec.js',
-    TRANSPILED_TEST_SRC = './test/dist/**/*.spec.js',
-    DOC_SRC = './doc',
-    COVERAGE_SRC = './coverage';
+const SRC_DIR = './src';
+const SRC = `${SRC_DIR}/**/*.js`;
+const TRANSPILED_SRC_DIR = './dist';
+const TRANSPILED_SRC = `${TRANSPILED_SRC_DIR}/**/*.js`;
+const TEST_SRC = './test/**/*.spec.js';
+const DOC_SRC = './doc';
+const COVERAGE_SRC = './coverage';
 
 // Build Tasks
-gulp.task('eslint', function () {
-    gulp.src([ SRC, TEST_SRC ]).pipe(eslint().on('error', function(e) {
-        throw e;
-    }));
+gulp.task('eslint', function() {
+    return gulp.src([ SRC, TEST_SRC ]).pipe(eslint({
+        useEslintrc: true
+    })).pipe(eslint.format()).pipe(eslint.failAfterError());
 });
-gulp.task('jscs', [ 'eslint' ], function () {
-    return gulp.src([ SRC, TEST_SRC ])
-        .pipe(jscs({
-            fix: true,
-            configPath: '.jscsrc',
-            esnext: true
-        }));
-});
-gulp.task('istanbul:src', [ 'jscs' ], istanbulHandler.bind(null, SRC));
+gulp.task('istanbul:src', [ 'eslint' ], istanbulHandler.bind(null, SRC));
 gulp.task(
     'istanbul:dist',
     [ 'babel' ],
@@ -81,30 +70,30 @@ gulp.task('babel', function(cb) {
 
 // Utility Tasks
 gulp.task('bump', function() {
-    const version = argv.version,
-        bump = f => fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(
-            /[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}/,
-            version
-        ));
-    if (version) {
+    const VERSION = argv.version;
+    const BUMP = f => fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(
+        /[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}/,
+        VERSION
+    ));
+    if (VERSION) {
 
         // Verify that the version is in the CHANGELOG
         if (
-            fs.readFileSync('./md/CHANGELOG.md', 'utf8').indexOf(version) === -1
+            fs.readFileSync('./md/CHANGELOG.md', 'utf8').indexOf(VERSION) === -1
         ) {
             throw new Error(bread('Version has no entry in CHANGELOG.md'));
         }
 
-        bump('bin/angie');
-        bump('bin/angie-dist');
-        bump('package.json');
+        BUMP('bin/angie');
+        BUMP('bin/angie-dist');
+        BUMP('package.json');
     } else {
         throw new Error(bread('No version specified!!'));
     }
 });
 
 // Bundled Tasks
-gulp.task('test:src', [ 'jscs', 'mocha:src' ]);
+gulp.task('test:src', [ 'mocha:src' ]);
 gulp.task('test:dist', [ 'mocha:dist' ]);
 gulp.task('test', [ 'test:src' ]);
 gulp.task('watch', [ 'test' ], function() {
@@ -125,15 +114,15 @@ function istanbulHandler(src, cb) {
     })).pipe(istanbul.hookRequire()).on('finish', cb);
 }
 
-function mochaHandler(src, coverage = '/tmp') {
+function mochaHandler(src, coverage = '/tmp', cb) {
     global.TEST_ENV = src;
-    return gulp.src(TEST_SRC).pipe(mocha({
+    gulp.src(TEST_SRC).pipe(mocha({
         reporter: 'spec'
     })).pipe(istanbul.writeReports({
-        dir: 'coverage',
+        dir: coverage,
         reportOpts: {
-            dir: 'coverage'
+            dir: coverage
         },
         reporters: [ 'text', 'text-summary', 'lcov' ]
-    }));
+    }).on('end', cb));
 }

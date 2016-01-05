@@ -5,16 +5,16 @@
  */
 
 // System Modules
-import fs from                      'fs';
-import {default as $Injector} from  'angie-injector';
+import fs from                          'fs';
+import { default as $Injector } from    'angie-injector';
 
 // Angie Modules
-import {config} from                '../Config';
-import $CacheFactory from           './$CacheFactory';
+import { config } from                  '../Config';
+import $CacheFactory from               './$CacheFactory';
 import {
     $StringUtil,
     $FileUtil
-} from                              '../util/util';
+} from                                  '../util/util';
 
 /**
  * @desc `$TemplateCache` is a subclass wrapper around `$CacheFactory`. It
@@ -59,10 +59,10 @@ class $TemplateCache extends $CacheFactory {
 function $$templateLoader(url, type = 'template', encoding) {
 
     // Clone the template dirs
-    const TEMPLATE_DIRS = $Injector.get(
+    const TEMPLATE_DIRS = Array.from($Injector.get(
         `ANGIE_${type === 'template' ? 'TEMPLATE' : 'STATIC'}_DIRS`
-    );
-    let template;
+    ));
+    let template = false;
 
     // Deliberately use a for loop so that we can break out of it
     for (var i = TEMPLATE_DIRS.length - 1; i >= 0; --i) {
@@ -73,14 +73,12 @@ function $$templateLoader(url, type = 'template', encoding) {
             template = fs.readFileSync(path, encoding);
         }
 
-        if (template) {
+        if (template || template === '') {
             break;
         }
     }
 
-    if (!template) {
-        return false;
-    } else if (config.cacheStaticAssets === true) {
+    if (template && config.cacheStaticAssets === true) {
         new $CacheFactory('staticAssets').put(url, template);
     }
     return template;
@@ -91,9 +89,11 @@ function $$templateLoader(url, type = 'template', encoding) {
  * to any respose. It will attach it inside of the body if the file is requested
  * to be attached on an HTML response.
  * @since 0.3.2
- * @todo Make this work with .css, .less, .scss, .haml
+ * @todo Make this work with .css, .less, .scss, .haml, .html (for web
+ * components)
  * @todo Auto load Angular, jQuery, Underscore, etc. from their names alone
  * via Bower installs. Must create bower.json & bump bower version.
+ * @todo Use `util.format` and put the script tempate strings into templates
  * @param {string|Array} [param=10] filename Valid JS filename in Angie static
  * directories
  * @param {string} [param='src'] loadStyle How is this resource attached to the
@@ -105,8 +105,11 @@ function $$templateLoader(url, type = 'template', encoding) {
  * @access public
  * @example $resourceLoader('test.js');
  */
-function $resourceLoader(files = [], loadStyle = 'src') {
-    let [ $request, $response ] = $Injector.get('$request', '$response');
+function $resourceLoader(files = [], scoping, loadStyle = 'src') {
+    let [
+        $request,
+        $response
+    ] = $Injector.get('$request', '$response', scoping);
     if (
         !$request || typeof $request !== 'object' ||
         !$response || typeof $response !== 'object'
@@ -122,15 +125,12 @@ function $resourceLoader(files = [], loadStyle = 'src') {
         files = [ files ];
     }
 
-    files.forEach(function(resource) {
-
-        // Return if not a js file
-        if (resource.split('.').pop() !== 'js') {
-            return;
+    for (let resource of files) {
+        if (!/\.(js|es)/.test(resource)) {
+            continue;
         }
 
-        // TODO put this into a template?
-        let asset = '<script type="text/javascript"';
+        let asset = '<script type="text/javascript" async defer';
         if (loadStyle === 'src') {
             asset += ` src="${[
                 $StringUtil.removeTrailingSlashes($request.path)
@@ -158,16 +158,17 @@ function $resourceLoader(files = [], loadStyle = 'src') {
 
         asset += '</script>';
 
-        const BODY = '</body>',
-            STR = $response.content;
+        const BODY = '</body>';
+        const STR = $response.content;
+
         if (STR.indexOf(BODY) > -1) {
             let body = STR.lastIndexOf(BODY);
             $response.content =
                 `${STR.substr(0, body)}${asset}${STR.substr(body)}`;
         } else {
-            $response.content = $response.content + asset;
+            $response.content += asset;
         }
-    });
+    }
 
     // For testing purposes
     return true;

@@ -2,9 +2,10 @@
 import { expect } from  'chai';
 
 // Angie Modules
-const TEST_ENV =        global.TEST_ENV || 'src',
-    $cacheFactory =     require(`../../../${TEST_ENV}/factories/$CacheFactory`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $cacheFactory = require(`../../../${TEST_ENV}/factories/$CacheFactory`);
 
+/* eslint-disable no-unused-expressions */
 describe('$CacheFactory', function() {
     let cache;
 
@@ -52,3 +53,5 @@ describe('$CacheFactory', function() {
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */

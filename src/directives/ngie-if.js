@@ -1,5 +1,5 @@
 /**
- * @module ngieRepeat.js
+ * @module ngie-repeat.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 10/01/2015
  */
@@ -29,15 +29,15 @@ function $$ngieIfFactory() {
 
             // Evaluate expression
             try {
-                if (!$$safeEvalFn.call($scope, iif)) {
-                    el.remove();
-                } else {
+                if ($$safeEvalFn.call($scope, iif)) {
 
                     // Remove the if clause from the element
                     el.removeAttr('ngie-if');
                     delete attrs.ngieIf;
+                } else {
+                    el.remove();
                 }
-            } catch(e) {
+            } catch (e) {
                 el.remove();
             }
         }

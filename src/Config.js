@@ -5,12 +5,14 @@
  */
 
 // System Modules
-import fs from                          'fs';
+import fs from                              'fs';
+import { argv } from                        'yargs';
 
 // Angie Modules
-import { $$InvalidConfigError } from    './services/$Exceptions';
-import { $FileUtil } from               './util/util';
+import { $$InvalidConfigError } from        './services/exceptions';
+import * as $Util from                      './util/util';
 
+const CWD = process.cwd();
 let config = {};
 
 /**
@@ -40,8 +42,7 @@ class Config {
             ],
             acceptedFileNames = [],
             file,
-            ext,
-            content;
+            ext;
         fileNames.forEach(function(name) {
 
             // Add .es6 just in case we have lingering .es6 file users
@@ -53,7 +54,7 @@ class Config {
         for (let i = acceptedFileNames.length - 1; i >= 0; --i) {
 
             // Check to see if we can find the absolute path to our configs
-            file = $FileUtil.find(process.cwd(), acceptedFileNames[ i ]);
+            file = $Util.file.find(CWD, acceptedFileNames[ i ]);
             if (file) {
 
                 // Get the file extension, so we know how to parse the configs
@@ -62,21 +63,55 @@ class Config {
             }
         }
 
+        if (!file && argv._[ 0 ].indexOf('create') > -1) {
+            config = {
+                templateDirs: new Set(),
+                staticDirs: new Set()
+            };
+            return this;
+        }
+
         try {
             if (ext === 'json') {
                 config = JSON.parse(fs.readFileSync(file, 'utf8'));
             } else {
                 config = require(file);
             }
-        } catch(e) {
+        } catch (e) {
             throw new $$InvalidConfigError();
         } finally {
             if (Object.keys(config).length) {
+                if (!$Util.isArray(config.templateDirs)) {
+                    config.templateDirs = [];
+                }
+
+                if (!$Util.isArray(config.staticDirs)) {
+                    config.staticDirs = [];
+                }
 
                 // Set the template and static dirs to something if they do not
                 // exist
-                config.templateDirs = config.templateDirs || [];
-                config.staticDirs = config.staticDirs || [];
+                config.templateDirs = $Util.toSet(
+                    config.templateDirs.map(v => {
+                        if (v.indexOf(CWD) === -1) {
+                            v = `${CWD}/${v}`;
+                        }
+                        return v;
+                    })
+                ).add(`${__dirname}/../templates`);
+
+                config.staticDirs = $Util.toSet(
+                    config.staticDirs.map(v => {
+                        if (v.indexOf(CWD) === -1) {
+                            v = `${CWD}/${v}`;
+                        }
+                        return v;
+                    })
+                ).add(`${__dirname}/../static`);
+
+                config.loadDefaultScriptFile = new Set(
+                    $Util.toArray(config.loadDefaultScriptFile)
+                );
             } else {
                 throw new $$InvalidConfigError();
             }
@@ -85,7 +120,10 @@ class Config {
 }
 
 // Instantiate application configs based on AngieFile
+/* eslint-disable no-new */
 new Config();
+
+/* eslint-enable no-new */
 
 export default Config;
 export { config };

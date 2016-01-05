@@ -1,21 +1,73 @@
 /**
- * @module $ScopeProvider.js
+ * @module scope.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 8/16/2015
  */
 
-let handlers = [];
+// System Modules
+import uuid from        'node-uuid';
+import $Injector from   'angie-injector';
+
+let handlers = [],
+    sessionStorage,
+    sessionInterval;
 
 /**
  * @desc $ScopeProvider is the parent class on which all of the content shared
  * across the request can be shared. It also provides methods for messaging
  * against and across the scope.
+ * @todo Warning if key does not map to an object value on the given $scope
+ * @todo persistence options for $scopes
  * @since 0.3.1
  * @access private
  */
-class $$ScopeProvider {
+class $$ScopeFactory {
     constructor() {
-        this.$$id = 1;
+        this.$$iid = uuid.v4();
+        this.$$bindings = {};
+
+        if (!sessionInterval) {
+
+            // Clear out stale sessions
+            sessionInterval = setInterval(function() {
+                if (typeof sessionStorage === 'object') {
+                    for (let key of sessionStorage) {
+                        let value = sessionStorage[ key ];
+
+                        if (+value.expiry < +new Date()) {
+                            delete sessionStorage[ key ];
+                        }
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    $bind(key, model) {
+
+        // First we need to check that the key actually exists on the $scope
+        if (this.hasOwnProperty(key)) {
+
+            /**
+             * The key exists in some capacity on the scope, we need to validate
+             * that the model exists
+             */
+            if (typeof model === 'string') {
+
+                // Attempt to look up our model by name
+                model = $Injector.get(model);
+            }
+
+            if (typeof model === 'object') {
+                this.$$bindings[ key ] = model.name;
+            }
+        }
+
+        return this;
+    }
+
+    $createBinding() {
+        return this.$bind.apply(this, arguments);
     }
 
     /**
@@ -136,15 +188,9 @@ class $$ScopeProvider {
      * @access private
      */
     $$handlers($handlers) {
-        return (handlers = $handlers || handlers);
+        handlers = $handlers || handlers;
+        return handlers;
     }
 }
 
-/**
- * @desc $scope is the instance of $$ScopeProvider allocated to resources
- * @since 0.3.1
- * @access private
- */
-const $scope = new $$ScopeProvider();
-export default $$ScopeProvider;
-export {$scope};
+export default $$ScopeFactory;

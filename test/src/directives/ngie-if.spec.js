@@ -1,13 +1,13 @@
 // Test Modules
 import { expect } from              'chai';
-import simple, { mock } from        'simple-mock';
 
 // Angie Modules
 import $compile from                '../../../src/factories/$Compile';
 
-const TEST_ENV =                    global.TEST_ENV || 'src',
-    $$ngieIfFactory =               require(`../../../${TEST_ENV}/directives/ngie-if`);
+const TEST_ENV = global.TEST_ENV || 'src';
+const $$ngieIfFactory = require(`../../../${TEST_ENV}/directives/ngie-if`);
 
+/* eslint-disable no-unused-expressions */
 describe('$$ngieIfFactory', function() {
     it('test $$ngieIfFactory returns', function() {
         let obj = $$ngieIfFactory();
@@ -41,7 +41,8 @@ describe('$$ngieIfFactory', function() {
             function() {
                 scope.test1 = 'test';
                 $compile(
-                    '<div><div class="test" ngie-if="test">{{test1}}</div></div>'
+                    '<div><div class="test" ngie-if="test">{{test1}}</div>' +
+                    '</div>'
                 )(scope).then(function(t) {
                     expect(t).to.eq('<div><div class="test">test</div></div>');
                 });
@@ -78,3 +79,5 @@ describe('$$ngieIfFactory', function() {
         });
     });
 });
+
+/* eslint-enable no-unused-expressions */
