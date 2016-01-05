@@ -11,9 +11,8 @@ const $Routes = require(`../../../${TEST_ENV}/factories/routes`);
 const $Responses = require(`../../../${TEST_ENV}/services/response`);
 const $Request = require(`../../../${TEST_ENV}/services/request`);
 
-/* eslint-disable quote-props,no-unused-expressions */
+/* eslint-disable quote-props,max-nested-callbacks,no-unused-expressions */
 describe('$Request', function() {
-    const noop = () => false;
     let req = {
         url: 'http://localhost:3000/test.html?id=1'
     };
@@ -166,7 +165,7 @@ describe('$Request', function() {
                         }
                     }
                 }));
-                mock($Routes, '$$parseURLParams', noop);
+                mock($Routes, '$$parseURLParams', () => false);
                 request = new $Request(req);
                 mock(
                     $Responses,
@@ -338,4 +337,4 @@ describe('$Request', function() {
     });
 });
 
-/* eslint-enable quote-props,no-unused-expressions */
+/* eslint-enable quote-props,max-nested-callbacks,no-unused-expressions */

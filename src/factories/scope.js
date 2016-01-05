@@ -1,5 +1,5 @@
 /**
- * @module $ScopeProvider.js
+ * @module scope.js
  * @author Joe Groseclose <@benderTheCrime>
  * @date 8/16/2015
  */
@@ -8,21 +8,9 @@
 import uuid from        'node-uuid';
 import $Injector from   'angie-injector';
 
-let sessionStorage,
-    handlers = [];
-
-// Clear out stale sessions
-setInterval(function() {
-    if (typeof sessionStorage === 'object') {
-        for (let key of sessionStorage) {
-            let value = sessionStorage[ key ];
-
-            if (+value.expiry < +new Date()) {
-                delete sessionStorage[ key ];
-            }
-        }
-    }
-}, 300);
+let handlers = [],
+    sessionStorage,
+    sessionInterval;
 
 /**
  * @desc $ScopeProvider is the parent class on which all of the content shared
@@ -37,6 +25,22 @@ class $$ScopeFactory {
     constructor() {
         this.$$iid = uuid.v4();
         this.$$bindings = {};
+
+        if (!sessionInterval) {
+
+            // Clear out stale sessions
+            sessionInterval = setInterval(function() {
+                if (typeof sessionStorage === 'object') {
+                    for (let key of sessionStorage) {
+                        let value = sessionStorage[ key ];
+
+                        if (+value.expiry < +new Date()) {
+                            delete sessionStorage[ key ];
+                        }
+                    }
+                }
+            }, 300);
+        }
     }
 
     $bind(key, model) {

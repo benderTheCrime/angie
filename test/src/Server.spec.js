@@ -132,6 +132,7 @@ describe('Server', function() {
                 return { listen };
             });
             timeoutMock = mock(global, 'setTimeout', () => true);
+            mock(global, 'setInterval', noop);
             mock(global, 'clearTimeout', () => true);
             dataMock = mock($Request.prototype, '$$data', PROM_MOCK);
             routeMock = mock($Request.prototype, '$$route', noop);

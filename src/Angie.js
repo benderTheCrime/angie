@@ -26,7 +26,7 @@ import $$ngieIgnoreFactory from                 './directives/ngie-ignore';
 import $$ngieRepeatFactory from                 './directives/ngie-repeat';
 import $$ngieIfFactory from                     './directives/ngie-if';
 import $$ngieValueFactory from                  './directives/ngie-value';
-import * as $Util from                         './util/util';
+import * as $Util from                          './util/util';
 
 const CWD = process.cwd();
 const MODULE_MAP = new Map();

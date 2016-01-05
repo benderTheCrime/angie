@@ -1,19 +1,23 @@
 // Test Modules
-import { expect } from          'chai';
-import { spy } from             'simple-mock';
+import { expect } from                  'chai';
+import simple, { spy, mock } from       'simple-mock';
 
 // Angie Modules
-import $Response from           '../../../src/services/response';
+import $Response from                   '../../../src/services/response';
 
 /* eslint-disable no-unused-expressions */
 describe('$Response', function() {
+    beforeEach(function() {
+        mock(global, 'setInterval', () => false);
+    });
+    afterEach(simple.restore);
     it('constructor', function() {
         const $response = new $Response({});
         expect($response.hasOwnProperty('$$iid')).to.be.true;
         expect($response.hasOwnProperty('$scope')).to.be.true;
+        expect($response.$scope.hasOwnProperty('$$iid')).to.be.true;
         expect($response.$scope.hasOwnProperty('$$bindings')).to.be.true;
         expect($response.$scope.$$bindings).to.deep.eq({});
-        expect($response.$scope.hasOwnProperty('$$iid')).to.be.true;
     });
     describe('header', function() {
         let $response;
